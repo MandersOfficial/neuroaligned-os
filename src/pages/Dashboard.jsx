@@ -6,6 +6,7 @@ import TodayTasks from '../components/dashboard/TodayTasks';
 import RegulationTools from '../components/dashboard/RegulationTools';
 import DailyInsight from '../components/dashboard/DailyInsight';
 import QuickStats from '../components/dashboard/QuickStats';
+import RegulationWidget from '../components/regulation/RegulationWidget';
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -102,6 +103,8 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+
+      <RegulationWidget />
     </div>
   );
 }

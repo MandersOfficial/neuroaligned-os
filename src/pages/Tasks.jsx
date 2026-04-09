@@ -8,6 +8,7 @@ import TaskBoard from '../components/tasks/TaskBoard';
 import TaskForm from '../components/tasks/TaskForm';
 import EnergyScheduler from '../components/tasks/EnergyScheduler';
 import AIGuidancePanel from '../components/tasks/AIGuidancePanel';
+import RegulationWidget from '../components/regulation/RegulationWidget';
 
 export default function Tasks() {
   const [user, setUser] = useState(null);
@@ -113,6 +114,8 @@ export default function Tasks() {
           </div>
         </div>
       </main>
+
+      <RegulationWidget />
 
       {/* Task Form Modal */}
       <AnimatePresence>
