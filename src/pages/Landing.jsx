@@ -8,11 +8,11 @@ import FAQSection from '../components/landing/FAQSection';
 import CTASection from '../components/landing/CTASection';
 import Footer from '../components/landing/Footer';
 
-const HERO_IMAGE = "/__generating__/img_0f7652b37712.png";
+const HERO_IMAGE = "https://media.base44.com/images/public/69d83404dff23f1198ddc883/2d0c19a74_generated_e8d44661.png";
 const TESTIMONIAL_IMAGES = [
-  "/__generating__/img_d9df12c64c05.png",
-  "/__generating__/img_0e5df6cc0517.png",
-  "/__generating__/img_8f87961ce194.png",
+  "https://media.base44.com/images/public/69d83404dff23f1198ddc883/af210a5a3_generated_7d3e678b.png",
+  "https://media.base44.com/images/public/69d83404dff23f1198ddc883/b2a4bc80f_generated_87b5976e.png",
+  "https://media.base44.com/images/public/69d83404dff23f1198ddc883/263657275_generated_cf3b4cfc.png",
 ];
 
 export default function Landing() {
