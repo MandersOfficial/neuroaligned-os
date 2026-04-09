@@ -1,0 +1,65 @@
+{
+  "name": "ForumPost",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "content": {
+      "type": "string",
+      "title": "Content"
+    },
+    "author_email": {
+      "type": "string",
+      "title": "Author Email"
+    },
+    "author_name": {
+      "type": "string",
+      "title": "Author Name"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "General",
+        "ADHD Support",
+        "Autism Support",
+        "Business Strategy",
+        "Burnout Recovery",
+        "Tools & Tips",
+        "Wins & Celebrations"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "pending",
+        "approved",
+        "removed",
+        "flagged"
+      ],
+      "default": "pending"
+    },
+    "flag_reason": {
+      "type": "string",
+      "title": "Flag Reason"
+    },
+    "likes": {
+      "type": "number",
+      "title": "Likes",
+      "default": 0
+    },
+    "replies_count": {
+      "type": "number",
+      "title": "Replies Count",
+      "default": 0
+    }
+  },
+  "required": [
+    "title",
+    "content",
+    "author_email"
+  ]
+}

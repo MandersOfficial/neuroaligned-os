@@ -1,0 +1,43 @@
+{
+  "name": "AppSettings",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "title": "Setting Key"
+    },
+    "value": {
+      "type": "string",
+      "title": "Setting Value"
+    },
+    "label": {
+      "type": "string",
+      "title": "Display Label"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "general",
+        "onboarding",
+        "community",
+        "ai",
+        "email"
+      ]
+    },
+    "type": {
+      "type": "string",
+      "title": "Input Type",
+      "enum": [
+        "text",
+        "boolean",
+        "number",
+        "select"
+      ]
+    }
+  },
+  "required": [
+    "key",
+    "value"
+  ]
+}
