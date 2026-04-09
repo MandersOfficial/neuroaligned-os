@@ -7,6 +7,7 @@ import ProjectPanel from '../components/tasks/ProjectPanel';
 import TaskBoard from '../components/tasks/TaskBoard';
 import TaskForm from '../components/tasks/TaskForm';
 import EnergyScheduler from '../components/tasks/EnergyScheduler';
+import AIGuidancePanel from '../components/tasks/AIGuidancePanel';
 
 export default function Tasks() {
   const [user, setUser] = useState(null);
@@ -93,6 +94,10 @@ export default function Tasks() {
                 tasks={visibleTasks}
                 onRecommend={setRecommendedIds}
               />
+            </div>
+
+            <div className="mt-4">
+              <AIGuidancePanel energy={energy} tasks={visibleTasks} />
             </div>
           </div>
 

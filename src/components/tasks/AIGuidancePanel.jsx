@@ -1,0 +1,253 @@
+import { useState } from 'react';
+import { base44 } from '@/api/base44Client';
+import { Sparkles, ChevronDown, ChevronUp, Zap, Scissors, RotateCcw, Copy, Check } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+
+const ENERGY_LABELS = {
+  1: 'Depleted (1/5)',
+  2: 'Low (2/5)',
+  3: 'Moderate (3/5)',
+  4: 'Good (4/5)',
+  5: 'Peak (5/5)',
+};
+
+function ResponseBlock({ text, onCopy }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className="relative bg-primary/5 border border-primary/15 rounded-xl p-4 text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+      {text}
+      <button
+        onClick={handleCopy}
+        className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground transition-colors border border-border/40"
+        title="Copy response"
+      >
+        {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3" />}
+      </button>
+    </div>
+  );
+}
+
+function PromptCard({ icon: Icon, color, bg, title, description, children }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={`border rounded-2xl overflow-hidden transition-all ${open ? 'border-primary/30' : 'border-border/60'}`}>
+      <button
+        onClick={() => setOpen(!open)}
+        className={`w-full flex items-center gap-3 p-4 text-left transition-colors hover:bg-secondary/40 ${open ? 'bg-secondary/30' : 'bg-card'}`}
+      >
+        <div className={`w-9 h-9 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
+          <Icon className={`w-4 h-4 ${color}`} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-foreground">{title}</p>
+          <p className="text-xs text-muted-foreground mt-0.5 truncate">{description}</p>
+        </div>
+        {open ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 pt-1 border-t border-border/40 bg-card space-y-3">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// Prompt 1: What's the most important task given your energy?
+function EnergyPriorityPrompt({ energy, tasks }) {
+  const [result, setResult] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const run = async () => {
+    setLoading(true);
+    setResult('');
+    const pending = tasks
+      .filter(t => t.status !== 'done')
+      .slice(0, 15)
+      .map(t => `- "${t.title}" [energy: ${t.energy_required}, category: ${t.category || 'general'}${t.due_date ? `, due: ${t.due_date}` : ''}${t.estimated_minutes ? `, ~${t.estimated_minutes}min` : ''}]`)
+      .join('\n');
+
+    const res = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are a compassionate AI coach for neurodivergent entrepreneurs.
+
+The user's current energy level is ${energy}/5 (${ENERGY_LABELS[energy]}).
+
+Their pending tasks are:
+${pending || '(no tasks yet)'}
+
+Answer the question: "What is the single most important task I should do right now, given my energy?"
+
+Guidelines:
+- Be direct and specific — name ONE task (or suggest a short task if all are mismatched)
+- Explain WHY it's the right fit for their energy level in 1-2 sentences
+- If energy is low (1-2), protect them from overcommitting — suggest the gentlest option
+- If energy is high (4-5), help them capitalise on it with the highest-leverage task
+- End with one tiny encouraging sentence. Keep total response under 100 words.`,
+    });
+    setResult(res);
+    setLoading(false);
+  };
+
+  return (
+    <>
+      <p className="text-xs text-muted-foreground">
+        Current energy: <span className="font-semibold text-foreground">{ENERGY_LABELS[energy]}</span> · {tasks.filter(t => t.status !== 'done').length} pending tasks
+      </p>
+      <button
+        onClick={run}
+        disabled={loading}
+        className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground rounded-full text-xs font-semibold transition-colors"
+      >
+        <Sparkles className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+        {loading ? 'Thinking...' : 'Ask AI'}
+      </button>
+      {result && (
+        <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>
+          <ResponseBlock text={result} />
+        </motion.div>
+      )}
+    </>
+  );
+}
+
+// Prompt 2: Break down a large task
+function TaskBreakdownPrompt({ tasks }) {
+  const [selectedTaskId, setSelectedTaskId] = useState('');
+  const [customTask, setCustomTask] = useState('');
+  const [result, setResult] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const highEnergyTasks = tasks.filter(t => t.status !== 'done' && (t.energy_required === 'high' || t.category === 'deep_work'));
+  const allPending = tasks.filter(t => t.status !== 'done');
+
+  const getTaskTitle = () => {
+    if (customTask.trim()) return customTask.trim();
+    const task = allPending.find(t => t.id === selectedTaskId);
+    return task?.title || '';
+  };
+
+  const run = async () => {
+    const title = getTaskTitle();
+    if (!title) return;
+    setLoading(true);
+    setResult('');
+
+    const res = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are a compassionate AI coach for neurodivergent entrepreneurs (ADHD, Autistic, Dyslexic, Burnout survivors).
+
+The user needs help breaking down this task into small, manageable steps:
+"${title}"
+
+Create a step-by-step breakdown that:
+1. Starts with the absolute smallest possible first action (under 2 minutes)
+2. Keeps each step concrete and actionable — no vague verbs
+3. Groups related micro-steps together
+4. Includes a "rest checkpoint" after every 3-4 steps
+5. Flags which steps need high energy vs can be done on low energy
+6. Stays under 250 words total
+
+Format as numbered steps. Be warm and non-judgmental in tone.`,
+    });
+    setResult(res);
+    setLoading(false);
+  };
+
+  const taskTitle = getTaskTitle();
+
+  return (
+    <>
+      <div className="space-y-2.5">
+        {allPending.length > 0 && (
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground font-medium">Pick a task from your list</label>
+            <select
+              value={selectedTaskId}
+              onChange={e => { setSelectedTaskId(e.target.value); setCustomTask(''); setResult(''); }}
+              className="w-full h-8 text-xs border border-input rounded-lg px-2.5 bg-background text-foreground focus:ring-1 focus:ring-primary outline-none"
+            >
+              <option value="">— choose a task —</option>
+              {allPending.map(t => (
+                <option key={t.id} value={t.id}>{t.title}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        <div className="space-y-1">
+          <label className="text-xs text-muted-foreground font-medium">{allPending.length > 0 ? 'Or type a task manually' : 'Describe the task'}</label>
+          <input
+            type="text"
+            placeholder="e.g. Write Q2 client proposal..."
+            value={customTask}
+            onChange={e => { setCustomTask(e.target.value); setSelectedTaskId(''); setResult(''); }}
+            className="w-full h-8 text-xs border border-input rounded-lg px-2.5 bg-background text-foreground placeholder:text-muted-foreground focus:ring-1 focus:ring-primary outline-none"
+          />
+        </div>
+      </div>
+      <button
+        onClick={run}
+        disabled={loading || !taskTitle}
+        className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground rounded-full text-xs font-semibold transition-colors"
+      >
+        <Scissors className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+        {loading ? 'Breaking it down...' : 'Break It Down'}
+      </button>
+      {result && (
+        <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>
+          <ResponseBlock text={result} />
+        </motion.div>
+      )}
+    </>
+  );
+}
+
+export default function AIGuidancePanel({ energy, tasks }) {
+  return (
+    <div className="bg-card border border-border/60 rounded-2xl overflow-hidden">
+      <div className="px-4 py-3.5 border-b border-border/40 flex items-center gap-2.5">
+        <div className="w-7 h-7 rounded-xl bg-primary/10 flex items-center justify-center">
+          <Sparkles className="w-3.5 h-3.5 text-primary" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-foreground">AI Guidance</p>
+          <p className="text-xs text-muted-foreground">Neurodivergent-aware coaching</p>
+        </div>
+      </div>
+      <div className="p-3 space-y-2">
+        <PromptCard
+          icon={Zap}
+          color="text-primary"
+          bg="bg-primary/10"
+          title="What's my most important task?"
+          description="Get energy-matched task recommendation"
+        >
+          <EnergyPriorityPrompt energy={energy} tasks={tasks} />
+        </PromptCard>
+
+        <PromptCard
+          icon={Scissors}
+          color="text-amber-600"
+          bg="bg-amber-50"
+          title="Break down a large task"
+          description="Turn overwhelming tasks into tiny steps"
+        >
+          <TaskBreakdownPrompt tasks={tasks} />
+        </PromptCard>
+      </div>
+    </div>
+  );
+}
