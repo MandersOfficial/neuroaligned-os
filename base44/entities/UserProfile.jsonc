@@ -1,0 +1,95 @@
+{
+  "name": "UserProfile",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "display_name": {
+      "type": "string",
+      "title": "Display Name"
+    },
+    "pronouns": {
+      "type": "string",
+      "title": "Pronouns"
+    },
+    "neurotypes": {
+      "type": "array",
+      "title": "Neurotypes",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ADHD",
+          "Autistic",
+          "Dyslexic",
+          "Dyscalculia",
+          "Burnout Survivor",
+          "Late-Diagnosed",
+          "OCD",
+          "Anxiety",
+          "Other",
+          "Prefer not to say"
+        ]
+      }
+    },
+    "business_type": {
+      "type": "string",
+      "title": "Business Type",
+      "enum": [
+        "Freelancer / Consultant",
+        "Agency / Studio",
+        "Product Business",
+        "Coaching / Mentoring",
+        "Creator / Content",
+        "Non-profit / Social enterprise",
+        "Early-stage startup",
+        "Other"
+      ]
+    },
+    "biggest_challenge": {
+      "type": "string",
+      "title": "Biggest Challenge",
+      "enum": [
+        "Task initiation & getting started",
+        "Staying focused & avoiding distractions",
+        "Managing energy & avoiding burnout",
+        "Context-switching between roles",
+        "Client communication & deadlines",
+        "Consistent revenue & business growth",
+        "Work-life separation"
+      ]
+    },
+    "energy_peak": {
+      "type": "string",
+      "title": "Peak Energy Time",
+      "enum": [
+        "Early morning (5-9am)",
+        "Morning (9am-12pm)",
+        "Afternoon (12-4pm)",
+        "Evening (4-8pm)",
+        "Night (8pm+)",
+        "It varies \u2014 I'm unpredictable"
+      ]
+    },
+    "work_style": {
+      "type": "string",
+      "title": "Work Style",
+      "enum": [
+        "Deep focus blocks",
+        "Short sprints with breaks",
+        "Hyperfocus until done",
+        "Flexible, mood-dependent",
+        "Structured routines"
+      ]
+    },
+    "onboarding_completed": {
+      "type": "boolean",
+      "title": "Onboarding Completed",
+      "default": false
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}
