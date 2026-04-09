@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import Tasks from './pages/Tasks';
 import FocusModes from './pages/FocusModes';
+import Integrations from './pages/Integrations';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -45,6 +46,7 @@ const AuthenticatedApp = () => {
       <Route path="/admin" element={<Admin />} />
       <Route path="/tasks" element={<Tasks />} />
       <Route path="/focus-modes" element={<FocusModes />} />
+      <Route path="/integrations" element={<Integrations />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
