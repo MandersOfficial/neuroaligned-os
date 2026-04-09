@@ -1,0 +1,68 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Task Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "todo",
+        "in_progress",
+        "done",
+        "deferred"
+      ],
+      "default": "todo"
+    },
+    "energy_required": {
+      "type": "string",
+      "title": "Energy Required",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "deep_work",
+        "admin",
+        "creative",
+        "communication",
+        "self_care",
+        "planning"
+      ]
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Due Date"
+    },
+    "estimated_minutes": {
+      "type": "number",
+      "title": "Estimated Minutes"
+    },
+    "is_today": {
+      "type": "boolean",
+      "title": "In Today's Queue",
+      "default": false
+    },
+    "completed_at": {
+      "type": "string",
+      "title": "Completed At"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}
