@@ -11,6 +11,7 @@ import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import Tasks from './pages/Tasks';
+import FocusModes from './pages/FocusModes';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -43,6 +44,7 @@ const AuthenticatedApp = () => {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/tasks" element={<Tasks />} />
+      <Route path="/focus-modes" element={<FocusModes />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

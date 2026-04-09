@@ -1,0 +1,100 @@
+{
+  "name": "FocusMode",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Mode Name"
+    },
+    "emoji": {
+      "type": "string",
+      "title": "Emoji",
+      "default": "\ud83e\udde0"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "neurotype": {
+      "type": "string",
+      "title": "Based On Neurotype"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Currently Active",
+      "default": false
+    },
+    "is_custom": {
+      "type": "boolean",
+      "title": "User Created",
+      "default": false
+    },
+    "work_block_minutes": {
+      "type": "number",
+      "title": "Work Block (minutes)",
+      "default": 25
+    },
+    "break_minutes": {
+      "type": "number",
+      "title": "Break (minutes)",
+      "default": 5
+    },
+    "long_break_minutes": {
+      "type": "number",
+      "title": "Long Break (minutes)",
+      "default": 20
+    },
+    "blocks_before_long_break": {
+      "type": "number",
+      "title": "Blocks Before Long Break",
+      "default": 4
+    },
+    "task_energy_filter": {
+      "type": "string",
+      "title": "Show Tasks With Energy",
+      "enum": [
+        "all",
+        "low",
+        "low_medium",
+        "high_only"
+      ],
+      "default": "all"
+    },
+    "show_one_task": {
+      "type": "boolean",
+      "title": "Show One Task At A Time",
+      "default": false
+    },
+    "reduce_visual_noise": {
+      "type": "boolean",
+      "title": "Reduce Visual Noise",
+      "default": false
+    },
+    "regulation_reminder_minutes": {
+      "type": "number",
+      "title": "Regulation Reminder Interval (min)",
+      "default": 45
+    },
+    "ambient_sound": {
+      "type": "string",
+      "title": "Ambient Sound",
+      "enum": [
+        "none",
+        "white_noise",
+        "rain",
+        "lo_fi",
+        "forest",
+        "cafe"
+      ],
+      "default": "none"
+    },
+    "color_accent": {
+      "type": "string",
+      "title": "Accent Color",
+      "default": "#8B5CF6"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
