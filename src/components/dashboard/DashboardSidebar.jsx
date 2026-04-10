@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Brain, LayoutDashboard, CheckSquare, Zap, HeartPulse, Settings, LogOut, ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert } from 'lucide-react';
+import { Brain, LayoutDashboard, CheckSquare, Zap, HeartPulse, Settings, LogOut, ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert, BookOpen, Users } from 'lucide-react';
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
@@ -9,9 +9,9 @@ const NAV = [
   { icon: CheckSquare, label: 'My Tasks', href: '/tasks' },
   { icon: Focus, label: 'Focus Modes', href: '/focus-modes' },
   { icon: ShieldAlert, label: 'Burnout Risk', href: '/burnout' },
+  { icon: BookOpen, label: 'Knowledge Base', href: '/knowledge' },
+  { icon: Users, label: 'Community', href: '/forum' },
   { icon: Plug, label: 'Integrations', href: '/integrations' },
-  { icon: Zap, label: 'Energy Log', href: '/energy' },
-  { icon: HeartPulse, label: 'Regulation', href: '/regulation' },
 ];
 
 export default function DashboardSidebar({ user }) {

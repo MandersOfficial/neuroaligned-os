@@ -14,6 +14,8 @@ import Tasks from './pages/Tasks';
 import FocusModes from './pages/FocusModes';
 import Integrations from './pages/Integrations';
 import BurnoutRisk from './pages/BurnoutRisk';
+import KnowledgeBase from './pages/KnowledgeBase';
+import Forum from './pages/Forum';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -49,6 +51,8 @@ const AuthenticatedApp = () => {
       <Route path="/focus-modes" element={<FocusModes />} />
       <Route path="/integrations" element={<Integrations />} />
       <Route path="/burnout" element={<BurnoutRisk />} />
+      <Route path="/knowledge" element={<KnowledgeBase />} />
+      <Route path="/forum" element={<Forum />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
