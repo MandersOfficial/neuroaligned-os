@@ -63,7 +63,7 @@ export default function Dashboard() {
       <DashboardSidebar user={user} />
 
       {/* Main */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
         <TrialBanner daysLeft={trialDaysLeft} />
         <div className="max-w-5xl mx-auto px-5 lg:px-8 py-7 space-y-6">
 

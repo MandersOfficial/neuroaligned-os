@@ -57,7 +57,7 @@ export default function Tasks() {
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
 
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden pb-16 md:pb-0">
         {/* Top bar */}
         <div className="px-6 py-4 border-b border-border/40 flex items-center justify-between gap-4 shrink-0">
           <div>

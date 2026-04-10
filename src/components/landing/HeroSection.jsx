@@ -13,7 +13,7 @@ export default function HeroSection({ heroImage }) {
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -47,12 +47,12 @@ export default function HeroSection({ heroImage }) {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-semibold group">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-semibold group w-full sm:w-auto">
                 Unlock Your NeuroAligned OS
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-base border-border/60 hover:bg-secondary">
+              <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-base border-border/60 hover:bg-secondary w-full sm:w-auto">
                 See How It Works
               </Button>
             </div>
@@ -68,7 +68,7 @@ export default function HeroSection({ heroImage }) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="relative hidden lg:block"
+            className="relative block"
           >
             <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-primary/20 border border-border/30">
               <img

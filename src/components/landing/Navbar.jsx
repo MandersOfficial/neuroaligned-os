@@ -50,6 +50,13 @@ export default function Navbar() {
             </Button>
           </div>
 
+          {/* Mobile CTA */}
+          <div className="md:hidden">
+            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-xs">
+              Free Trial
+            </Button>
+          </div>
+
           {/* Mobile Toggle */}
           <button
             className="md:hidden p-2 text-foreground"
