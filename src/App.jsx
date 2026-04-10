@@ -15,6 +15,7 @@ import FocusModes from './pages/FocusModes';
 import Integrations from './pages/Integrations';
 import BurnoutRisk from './pages/BurnoutRisk';
 import KnowledgeBase from './pages/KnowledgeBase';
+import Upgrade from './pages/Upgrade';
 import Forum from './pages/Forum';
 
 const AuthenticatedApp = () => {
@@ -52,6 +53,7 @@ const AuthenticatedApp = () => {
       <Route path="/integrations" element={<Integrations />} />
       <Route path="/burnout" element={<BurnoutRisk />} />
       <Route path="/knowledge" element={<KnowledgeBase />} />
+      <Route path="/upgrade" element={<Upgrade />} />
       <Route path="/forum" element={<Forum />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>

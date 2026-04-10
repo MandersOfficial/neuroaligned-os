@@ -1,0 +1,70 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "plan": {
+      "type": "string",
+      "title": "Plan",
+      "enum": [
+        "trial",
+        "starter",
+        "pro",
+        "cancelled"
+      ],
+      "default": "trial"
+    },
+    "trial_start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Trial Start Date"
+    },
+    "trial_end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Trial End Date"
+    },
+    "subscription_start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Subscription Start Date"
+    },
+    "billing_interval": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "annual"
+      ],
+      "default": "monthly"
+    },
+    "payment_last4": {
+      "type": "string",
+      "title": "Card Last 4 Digits"
+    },
+    "payment_brand": {
+      "type": "string",
+      "title": "Card Brand"
+    },
+    "next_billing_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Next Billing Date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "past_due",
+        "cancelled",
+        "trialing"
+      ],
+      "default": "trialing"
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}
