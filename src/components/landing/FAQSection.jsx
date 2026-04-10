@@ -37,7 +37,7 @@ export default function FAQSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0 }}
           className="text-center mb-14"
         >
           <span className="inline-block text-sm font-semibold text-primary uppercase tracking-wider mb-4">
@@ -56,7 +56,7 @@ export default function FAQSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0 }}
           transition={{ delay: 0.1 }}
         >
           <Accordion type="single" collapsible className="space-y-3">

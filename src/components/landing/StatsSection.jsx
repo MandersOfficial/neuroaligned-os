@@ -28,7 +28,7 @@ export default function StatsSection() {
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, amount: 0 }}
               transition={{ delay: i * 0.15, duration: 0.6 }}
               className="text-center md:text-left"
             >

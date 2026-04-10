@@ -1,8 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { Analytics } from '@/lib/analytics';
 
 export default function HeroSection({ heroImage }) {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    Analytics.heroCTAClicked();
+    navigate('/onboarding');
+  };
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
       {/* Background gradient */}
@@ -48,11 +57,11 @@ export default function HeroSection({ heroImage }) {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-semibold group w-full sm:w-auto">
+              <Button size="lg" onClick={handleGetStarted} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-semibold group w-full sm:w-auto">
                 Unlock Your NeuroAligned OS
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-base border-border/60 hover:bg-secondary w-full sm:w-auto">
+              <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="rounded-full px-8 py-6 text-base border-border/60 hover:bg-secondary w-full sm:w-auto">
                 See How It Works
               </Button>
             </div>

@@ -33,7 +33,7 @@ export default function TestimonialsSection({ images }) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0 }}
           className="max-w-3xl mx-auto text-center mb-16"
         >
           <span className="inline-block text-sm font-semibold text-primary uppercase tracking-wider mb-4">
@@ -52,8 +52,7 @@ export default function TestimonialsSection({ images }) {
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-30px' }}
-              transition={{ delay: i * 0.15, duration: 0.5 }}
+              viewport={{ once: true, amount: 0 }}
               className="bg-card rounded-2xl p-7 border border-border/60 flex flex-col"
             >
               {/* Stars */}

@@ -9,6 +9,11 @@ export const track = (eventName, properties = {}) => {
 };
 
 export const Analytics = {
+  // Landing
+  landingPageViewed: () => track('landing_page_viewed'),
+  heroCTAClicked: () => track('hero_cta_clicked'),
+  pricingViewed: () => track('pricing_section_viewed'),
+
   // Onboarding
   onboardingStarted: () => track('onboarding_started'),
   onboardingCompleted: (neurotypes) => track('onboarding_completed', { neurotypes: neurotypes?.join(',') }),

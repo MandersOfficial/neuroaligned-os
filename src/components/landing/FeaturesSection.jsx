@@ -48,8 +48,7 @@ export default function FeaturesSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true, amount: 0 }}
           className="max-w-3xl mx-auto text-center mb-16 lg:mb-20"
         >
           <span className="inline-block text-sm font-semibold text-primary uppercase tracking-wider mb-4">
@@ -72,8 +71,7 @@ export default function FeaturesSection() {
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-30px' }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
+              viewport={{ once: true, amount: 0 }}
               className="group relative p-7 rounded-2xl border border-border/60 bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
             >
               <div className="flex items-center gap-3 mb-4">

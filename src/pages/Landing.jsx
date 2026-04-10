@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { Analytics } from '@/lib/analytics';
 import Navbar from '../components/landing/Navbar';
 import HeroSection from '../components/landing/HeroSection';
 import StatsSection from '../components/landing/StatsSection';
@@ -16,6 +18,8 @@ const TESTIMONIAL_IMAGES = [
 ];
 
 export default function Landing() {
+  useEffect(() => { Analytics.landingPageViewed(); }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
