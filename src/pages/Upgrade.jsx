@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Analytics } from '@/lib/analytics';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -185,7 +187,11 @@ function PaymentForm({ plan, onSuccess, onBack }) {
         )}
       </button>
 
-      <p className="text-center text-xs text-muted-foreground">Cancel anytime. No hidden fees.</p>
+      <p className="text-center text-xs text-muted-foreground">
+        Cancel anytime. No hidden fees. By subscribing you agree to our{' '}
+        <Link to="/terms" className="underline hover:text-foreground">Terms</Link>{' '}and{' '}
+        <Link to="/privacy" className="underline hover:text-foreground">Privacy Policy</Link>.
+      </p>
     </form>
   );
 }
@@ -198,6 +204,7 @@ export default function Upgrade() {
   const [step, setStep] = useState('plans'); // 'plans' | 'payment'
 
   useEffect(() => {
+    Analytics.upgradePageViewed();
     Promise.all([base44.auth.me(), base44.entities.Subscription.list('-created_date', 1)])
       .then(([u, subs]) => {
         setUser(u);
@@ -230,6 +237,11 @@ export default function Upgrade() {
       });
     }
     navigate('/dashboard');
+  };
+
+  const handleSelectPlan = (planId) => {
+    setSelectedPlan(planId);
+    Analytics.planSelected(planId);
   };
 
   const activePlan = PLANS.find(p => p.id === selectedPlan);
@@ -280,7 +292,7 @@ export default function Upgrade() {
               <motion.div key="plans" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   {PLANS.map(plan => (
-                    <PlanCard key={plan.id} plan={plan} selected={selectedPlan === plan.id} onSelect={setSelectedPlan} />
+                    <PlanCard key={plan.id} plan={plan} selected={selectedPlan === plan.id} onSelect={handleSelectPlan} />
                   ))}
                 </div>
                 <button

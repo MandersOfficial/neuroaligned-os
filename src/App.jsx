@@ -16,6 +16,8 @@ import Integrations from './pages/Integrations';
 import BurnoutRisk from './pages/BurnoutRisk';
 import KnowledgeBase from './pages/KnowledgeBase';
 import Upgrade from './pages/Upgrade';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 import Forum from './pages/Forum';
 
 const AuthenticatedApp = () => {
@@ -54,6 +56,8 @@ const AuthenticatedApp = () => {
       <Route path="/burnout" element={<BurnoutRisk />} />
       <Route path="/knowledge" element={<KnowledgeBase />} />
       <Route path="/upgrade" element={<Upgrade />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       <Route path="/forum" element={<Forum />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>

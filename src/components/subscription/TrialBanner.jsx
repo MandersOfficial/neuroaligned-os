@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Analytics } from '@/lib/analytics';
 import { Zap, X } from 'lucide-react';
 import { useState } from 'react';
 
