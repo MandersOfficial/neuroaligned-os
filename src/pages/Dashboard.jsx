@@ -22,6 +22,7 @@ function getDate() {
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [energy, setEnergy] = useState('flow');
   const [trialDaysLeft, setTrialDaysLeft] = useState(null);
   const [tasks, setTasks] = useState([]);
@@ -29,19 +30,19 @@ export default function Dashboard() {
 
   useEffect(() => {
     const load = async () => {
-      const [u, t, subs] = await Promise.all([
-        base44.auth.me(),
-        base44.entities.Task.filter({ is_today: true }),
-        base44.entities.Subscription.list('-created_date', 1),
-      ]);
+      const u = await base44.auth.me();
       setUser(u);
+      const [t, subs, profiles] = await Promise.all([
+        base44.entities.Task.filter({ is_today: true }),
+        base44.entities.Subscription.filter({ user_email: u.email }, '-created_date', 1),
+        base44.entities.UserProfile.filter({ user_email: u.email }),
+      ]);
       setTasks(t);
-      const sub = subs.find(s => s.user_email === u.email);
+      if (profiles.length > 0) setProfile(profiles[0]);
+      const sub = subs[0];
       if (sub?.trial_end_date) {
         const days = Math.max(0, Math.ceil((new Date(sub.trial_end_date) - new Date()) / (1000 * 60 * 60 * 24)));
         setTrialDaysLeft(days);
-      } else if (!sub || sub.plan === 'trial') {
-        setTrialDaysLeft(10); // default mock
       }
       setLoading(false);
     };
@@ -93,19 +94,19 @@ export default function Dashboard() {
             <div className="space-y-5">
               <RegulationTools />
 
-              {/* Brain Tip */}
+              {/* Profile Summary */}
               <div className="bg-card border border-border/60 rounded-2xl p-5 space-y-3">
                 <h4 className="font-display font-semibold text-sm text-foreground">Your Profile</h4>
                 <div className="space-y-2">
                   {[
-                    ['Neurotype', 'ADHD · Autistic'],
-                    ['Peak Window', 'Morning 9–12pm'],
-                    ['Work Style', 'Deep focus blocks'],
-                    ['Plan', 'Pro · 14-day trial'],
+                    ['Neurotype', profile?.neurotypes?.length > 0 ? profile.neurotypes.slice(0, 2).join(' · ') : 'Not set'],
+                    ['Peak Window', profile?.energy_peak || 'Not set'],
+                    ['Work Style', profile?.work_style || 'Not set'],
+                    ['Plan', trialDaysLeft != null ? `Trial · ${trialDaysLeft}d left` : 'Active'],
                   ].map(([label, val]) => (
                     <div key={label} className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">{label}</span>
-                      <span className="font-medium text-foreground">{val}</span>
+                      <span className="font-medium text-foreground truncate ml-2 text-right max-w-[130px]">{val}</span>
                     </div>
                   ))}
                 </div>

@@ -6,9 +6,12 @@ import StepWelcome from '../components/onboarding/StepWelcome';
 import StepNeurotype from '../components/onboarding/StepNeurotype';
 import StepBusiness from '../components/onboarding/StepBusiness';
 import StepEnergy from '../components/onboarding/StepEnergy';
+import StepGoals from '../components/onboarding/StepGoals';
+import StepPersonalize from '../components/onboarding/StepPersonalize';
+import { FOCUS_PRESETS } from '../components/onboarding/StepPersonalize';
 import StepComplete from '../components/onboarding/StepComplete';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 7;
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -23,6 +26,9 @@ export default function Onboarding() {
     biggest_challenge: '',
     energy_peak: '',
     work_style: '',
+    initial_goals: [],
+    focus_preset: '',
+    dashboard_widgets: ['energy_checkin', 'ai_insight'],
   });
 
   useEffect(() => {
@@ -30,10 +36,9 @@ export default function Onboarding() {
       if (u) {
         setUser(u);
         setData(prev => ({ ...prev, display_name: u.full_name?.split(' ')[0] || '' }));
-        // Check if already onboarded
         base44.entities.UserProfile.filter({ user_email: u.email }).then(profiles => {
           if (profiles.length > 0 && profiles[0].onboarding_completed) {
-            navigate('/');
+            navigate('/dashboard');
           }
         });
       }
@@ -44,59 +49,93 @@ export default function Onboarding() {
 
   const handleFinish = async () => {
     setLoading(true);
-    const profileData = {
-      ...data,
-      user_email: user?.email || '',
-      onboarding_completed: true,
-    };
-    // Update name on user record
+
+    // Update display name
     if (data.display_name) {
       await base44.auth.updateMe({ full_name: data.display_name });
     }
-    await base44.entities.UserProfile.create(profileData);
-    navigate('/');
+
+    // Save user profile
+    await base44.entities.UserProfile.create({
+      user_email: user?.email || '',
+      display_name: data.display_name,
+      pronouns: data.pronouns,
+      neurotypes: data.neurotypes,
+      business_type: data.business_type,
+      biggest_challenge: data.biggest_challenge,
+      energy_peak: data.energy_peak,
+      work_style: data.work_style,
+      onboarding_completed: true,
+    });
+
+    // Seed initial tasks from goals
+    if (data.initial_goals?.length > 0) {
+      await Promise.all(
+        data.initial_goals.map(title =>
+          base44.entities.Task.create({
+            title,
+            status: 'todo',
+            energy_required: 'medium',
+            is_today: true,
+          })
+        )
+      );
+    }
+
+    // Seed selected focus mode
+    if (data.focus_preset) {
+      const preset = FOCUS_PRESETS.find(p => p.value === data.focus_preset);
+      if (preset) {
+        await base44.entities.FocusMode.create({
+          name: preset.label,
+          emoji: preset.emoji,
+          description: preset.desc,
+          is_active: true,
+          is_custom: false,
+          work_block_minutes: preset.work_block_minutes,
+          break_minutes: preset.break_minutes,
+          show_one_task: preset.show_one_task,
+        });
+      }
+    }
+
+    // Create trial subscription record
+    const now = new Date();
+    const trialEnd = new Date(now);
+    trialEnd.setDate(trialEnd.getDate() + 14);
+    await base44.entities.Subscription.create({
+      user_email: user?.email || '',
+      plan: 'trial',
+      status: 'trialing',
+      trial_start_date: now.toISOString().split('T')[0],
+      trial_end_date: trialEnd.toISOString().split('T')[0],
+    });
+
+    navigate('/dashboard');
   };
 
   return (
     <OnboardingLayout step={step} totalSteps={TOTAL_STEPS}>
       {step === 1 && (
-        <StepWelcome
-          data={data}
-          onChange={onChange}
-          onNext={() => setStep(2)}
-        />
+        <StepWelcome data={data} onChange={onChange} onNext={() => setStep(2)} />
       )}
       {step === 2 && (
-        <StepNeurotype
-          data={data}
-          onChange={onChange}
-          name={data.display_name}
-          onNext={() => setStep(3)}
-          onBack={() => setStep(1)}
-        />
+        <StepNeurotype data={data} onChange={onChange} name={data.display_name} onNext={() => setStep(3)} onBack={() => setStep(1)} />
       )}
       {step === 3 && (
-        <StepBusiness
-          data={data}
-          onChange={onChange}
-          onNext={() => setStep(4)}
-          onBack={() => setStep(2)}
-        />
+        <StepBusiness data={data} onChange={onChange} onNext={() => setStep(4)} onBack={() => setStep(2)} />
       )}
       {step === 4 && (
-        <StepEnergy
-          data={data}
-          onChange={onChange}
-          onNext={() => setStep(5)}
-          onBack={() => setStep(3)}
-        />
+        <StepEnergy data={data} onChange={onChange} onNext={() => setStep(5)} onBack={() => setStep(3)} />
       )}
       {step === 5 && (
-        <StepComplete
-          name={data.display_name}
-          onFinish={handleFinish}
-          loading={loading}
-        />
+        <StepGoals data={data} onChange={onChange} onNext={() => setStep(6)} onBack={() => setStep(4)} />
+      )}
+      {step === 6 && (
+        <StepPersonalize data={data} onChange={onChange} onNext={() => setStep(7)} onBack={() => setStep(5)} />
+      )}
+      {step === 7 && (
+        <StepComplete name={data.display_name} data={data} onFinish={handleFinish} loading={loading} />
       )}
     </OnboardingLayout>
   );
