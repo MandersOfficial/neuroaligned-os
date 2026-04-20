@@ -22,7 +22,7 @@ function getDate() {
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
-  const [energy, setEnergy] = useState(3);
+  const [energy, setEnergy] = useState('flow');
   const [trialDaysLeft, setTrialDaysLeft] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);

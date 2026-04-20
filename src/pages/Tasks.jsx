@@ -15,7 +15,7 @@ export default function Tasks() {
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
-  const [energy, setEnergy] = useState(3);
+  const [energy, setEnergy] = useState('flow');
   const [showForm, setShowForm] = useState(false);
   const [recommendedIds, setRecommendedIds] = useState([]);
   const [loading, setLoading] = useState(true);

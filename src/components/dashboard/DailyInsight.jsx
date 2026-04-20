@@ -1,30 +1,26 @@
 import { Sparkles } from 'lucide-react';
 
-const INSIGHTS_BY_ENERGY = {
-  1: [
-    "Your brain needs rest, not more tasks. What's the one micro-task that would make tomorrow easier?",
-    "Depleted days are data, not failure. Rest is productive for a neurodivergent nervous system.",
+const INSIGHTS_BY_STATE = {
+  hyperfocus: [
+    "Peak state. Drop everything else — do the hardest, most meaningful work on your list right now.",
+    "This is your hyperfocus window. Go all-in, but set a timer to surface for air.",
   ],
-  2: [
-    "Low energy is perfect for gentle admin, organizing, or short replies. Save the deep work for later.",
-    "You're in recovery mode — and that's a valid mode. Pick one small win and protect your energy.",
-  ],
-  3: [
-    "Moderate energy = sustainable work. This is your baseline — protect it with regular breaks.",
-    "You're in a good working zone. Consider a 25-minute focus sprint before your energy shifts.",
-  ],
-  4: [
+  flow: [
     "Good energy day! This is the time to tackle that creative challenge you've been deferring.",
     "Your brain is primed for complex work. Block distractions and let yourself go deep.",
   ],
-  5: [
-    "Peak state. Drop everything else — do the hardest, most meaningful work on your list right now.",
-    "This is your hyperfocus window. Go all-in, but set a timer to surface for air.",
+  sluggish: [
+    "Low energy is perfect for gentle admin, organizing, or short replies. Save the deep work for later.",
+    "You're in recovery mode — and that's a valid mode. Pick one small win and protect your energy.",
+  ],
+  burnout_risk: [
+    "Your brain needs rest, not more tasks. What's the one micro-task that would make tomorrow easier?",
+    "Depleted days are data, not failure. Rest is productive for a neurodivergent nervous system.",
   ],
 };
 
 export default function DailyInsight({ energy }) {
-  const insights = INSIGHTS_BY_ENERGY[energy] || INSIGHTS_BY_ENERGY[3];
+  const insights = INSIGHTS_BY_STATE[energy] || INSIGHTS_BY_STATE.flow;
   const insight = insights[new Date().getDate() % insights.length];
 
   return (

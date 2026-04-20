@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Check, Clock, Flame, Zap, Leaf, Calendar, ChevronDown, Sparkles, Trash2, FolderOpen } from 'lucide-react';
+import { Check, Clock, Flame, Zap, Leaf, Calendar, ChevronDown, Sparkles, Trash2, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ENERGY_STATES } from '@/components/dashboard/EnergyCheckIn';
 
 const ENERGY_CONFIG = {
   low: { icon: Leaf, color: 'text-green-600', bg: 'bg-green-50', label: 'Low' },
@@ -108,10 +109,13 @@ function TaskCard({ task, projects, recommended, onUpdate, onDelete }) {
 }
 
 export default function TaskBoard({ tasks, projects, energy, recommendedIds, onTasksChange }) {
+  const energyState = ENERGY_STATES.find(s => s.value === energy) || ENERGY_STATES[1];
+  const isFiltering = energyState.allowedEnergy.length < 3;
+
   const filteredByEnergy = (colTasks) => {
-    if (energy >= 4) return colTasks;
-    if (energy === 3) return colTasks.filter(t => t.energy_required !== 'high');
-    return colTasks.filter(t => t.energy_required === 'low');
+    if (energyState.allowedEnergy.length === 3) return colTasks; // hyperfocus — show all
+    if (energyState.value === 'burnout_risk') return []; // burnout — show nothing
+    return colTasks.filter(t => energyState.allowedEnergy.includes(t.energy_required));
   };
 
   const handleUpdate = async (task, changes) => {
@@ -125,7 +129,26 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1">
+    <div className="flex flex-col gap-4 flex-1">
+      {/* Energy filter banner */}
+      {isFiltering && (
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`flex items-start gap-3 px-4 py-3 rounded-xl border-2 ${energyState.bg}`}
+        >
+          <span className="text-lg leading-none mt-0.5">{energyState.emoji}</span>
+          <div>
+            <p className={`text-sm font-semibold ${energyState.color}`}>
+              {energyState.label} mode active
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">{energyState.hint}</p>
+          </div>
+          <Info className="w-4 h-4 text-muted-foreground ml-auto shrink-0 mt-0.5" />
+        </motion.div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {STATUS_COLS.map(col => {
         const colTasks = tasks.filter(t => t.status === col.id);
         const matchingTasks = col.id === 'done' ? colTasks : filteredByEnergy(colTasks);
@@ -142,7 +165,7 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
             {/* Energy mismatch notice */}
             {dimmedCount > 0 && (
               <p className="text-xs text-muted-foreground px-1">
-                ⚡ {dimmedCount} task{dimmedCount > 1 ? 's' : ''} need more energy than you have
+                🔒 {dimmedCount} task{dimmedCount > 1 ? 's' : ''} hidden — too demanding right now
               </p>
             )}
 
@@ -152,7 +175,11 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
                 {matchingTasks.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground border-2 border-dashed border-border/40 rounded-xl">
                     <p className="text-xs">
-                      {col.id === 'done' ? '✅ Nothing done yet' : col.id === 'todo' ? '🌿 All clear' : '▶️ Nothing in progress'}
+                      {energyState.value === 'burnout_risk'
+                        ? '🛑 Rest. You don\'t have to do anything right now.'
+                        : col.id === 'done' ? '✅ Nothing done yet'
+                        : col.id === 'todo' ? '🌿 All clear'
+                        : '▶️ Nothing in progress'}
                     </p>
                   </div>
                 ) : (
@@ -172,6 +199,7 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
           </div>
         );
       })}
+      </div>
     </div>
   );
 }
