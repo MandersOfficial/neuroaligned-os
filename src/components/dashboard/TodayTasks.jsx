@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Check, Plus, Clock, Flame, Leaf, Zap, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
+import SmartSortButton from '../tasks/SmartSortButton';
 
 const ENERGY_CONFIG = {
   low: { label: 'Low energy', icon: Leaf, color: 'text-green-500', bg: 'bg-green-50' },
@@ -11,7 +12,7 @@ const ENERGY_CONFIG = {
   high: { label: 'High energy', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-50' },
 };
 
-function TaskItem({ task, onComplete }) {
+function TaskItem({ task, reason, onComplete }) {
   const cfg = ENERGY_CONFIG[task.energy_required] || ENERGY_CONFIG.medium;
   const Icon = cfg.icon;
   const done = task.status === 'done';
@@ -35,7 +36,7 @@ function TaskItem({ task, onComplete }) {
         <p className={`text-sm font-medium leading-snug ${done ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
           {task.title}
         </p>
-        <div className="flex items-center gap-2 mt-1.5">
+        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${cfg.bg} ${cfg.color}`}>
             <Icon className="w-3 h-3" />
             {cfg.label}
@@ -46,22 +47,40 @@ function TaskItem({ task, onComplete }) {
               {task.estimated_minutes}m
             </span>
           )}
+          {reason && (
+            <span className="text-xs text-primary font-medium italic">· {reason}</span>
+          )}
         </div>
       </div>
     </motion.div>
   );
 }
 
-export default function TodayTasks({ tasks, onTasksChange }) {
+export default function TodayTasks({ tasks, onTasksChange, energy, profile }) {
   const [adding, setAdding] = useState(false);
   const [newTitle, setNewTitle] = useState('');
+  const [sortedTasks, setSortedTasks] = useState(null);
+  const [reasonMap, setReasonMap] = useState({});
+  const [focusMinutes, setFocusMinutes] = useState(25);
+
+  // Derive remaining focus minutes from the current time (rough heuristic based on 25-min blocks)
+  useEffect(() => {
+    const mins = new Date().getMinutes();
+    const remaining = 25 - (mins % 25);
+    setFocusMinutes(remaining);
+  }, []);
+
+  const displayTasks = sortedTasks || tasks;
+  const isSorted = sortedTasks !== null;
 
   const handleComplete = async (task) => {
     const updated = await base44.entities.Task.update(task.id, {
       status: task.status === 'done' ? 'todo' : 'done',
       completed_at: task.status === 'done' ? null : new Date().toISOString(),
     });
-    onTasksChange(tasks.map(t => t.id === task.id ? { ...t, ...updated } : t));
+    const patcher = t => t.id === task.id ? { ...t, ...updated } : t;
+    onTasksChange(tasks.map(patcher));
+    if (sortedTasks) setSortedTasks(sortedTasks.map(patcher));
   };
 
   const handleAdd = async () => {
@@ -73,34 +92,46 @@ export default function TodayTasks({ tasks, onTasksChange }) {
       energy_required: 'medium',
     });
     onTasksChange([...tasks, task]);
+    if (sortedTasks) setSortedTasks([...sortedTasks, task]);
     setNewTitle('');
     setAdding(false);
   };
 
-  const done = tasks.filter(t => t.status === 'done').length;
+  const done = displayTasks.filter(t => t.status === 'done').length;
 
   return (
     <div className="bg-card border border-border/60 rounded-2xl p-5 flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         <div>
           <h3 className="font-display font-semibold text-base text-foreground">Today's Queue</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">{done} of {tasks.length} done</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{done} of {displayTasks.length} done</p>
         </div>
-        <button
-          onClick={() => setAdding(true)}
-          className="w-8 h-8 rounded-xl bg-primary/10 hover:bg-primary/15 flex items-center justify-center text-primary transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          <SmartSortButton
+            tasks={displayTasks}
+            profile={profile}
+            energy={energy}
+            focusMinutes={focusMinutes}
+            onSorted={(sorted, reasons) => { setSortedTasks(sorted); setReasonMap(reasons); }}
+            onReset={() => { setSortedTasks(null); setReasonMap({}); }}
+            isSorted={isSorted}
+          />
+          <button
+            onClick={() => setAdding(true)}
+            className="w-8 h-8 rounded-xl bg-primary/10 hover:bg-primary/15 flex items-center justify-center text-primary transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Progress */}
-      {tasks.length > 0 && (
+      {displayTasks.length > 0 && (
         <div className="h-1.5 bg-secondary rounded-full mb-4 overflow-hidden">
           <motion.div
             className="h-full bg-primary rounded-full"
-            animate={{ width: `${tasks.length ? (done / tasks.length) * 100 : 0}%` }}
+            animate={{ width: `${displayTasks.length ? (done / displayTasks.length) * 100 : 0}%` }}
             transition={{ duration: 0.4 }}
           />
         </div>
@@ -136,14 +167,19 @@ export default function TodayTasks({ tasks, onTasksChange }) {
       {/* Tasks */}
       <div className="space-y-2 flex-1 overflow-y-auto">
         <AnimatePresence>
-          {tasks.length === 0 ? (
+          {displayTasks.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <p className="text-2xl mb-2">✨</p>
               <p className="text-sm">Your queue is clear. Add a task or take a breath.</p>
             </div>
           ) : (
-            tasks.map(task => (
-              <TaskItem key={task.id} task={task} onComplete={handleComplete} />
+            displayTasks.map(task => (
+              <TaskItem
+                key={task.id}
+                task={task}
+                reason={reasonMap[task.id]}
+                onComplete={handleComplete}
+              />
             ))
           )}
         </AnimatePresence>

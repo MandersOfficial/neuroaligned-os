@@ -88,7 +88,7 @@ export default function Dashboard() {
           {/* Main content grid */}
           <div className="grid lg:grid-cols-[1fr_300px] gap-5">
             {/* Tasks */}
-            <TodayTasks tasks={tasks} onTasksChange={setTasks} />
+            <TodayTasks tasks={tasks} onTasksChange={setTasks} energy={energy} profile={profile} />
 
             {/* Sidebar tools */}
             <div className="space-y-5">
