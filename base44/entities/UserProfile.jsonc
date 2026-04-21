@@ -87,6 +87,31 @@
       "type": "boolean",
       "title": "Onboarding Completed",
       "default": false
+    },
+    "last_brain_state": {
+      "type": "string",
+      "title": "Last Brain State",
+      "enum": [
+        "overwhelmed",
+        "low_energy",
+        "scattered",
+        "neutral",
+        "focused"
+      ]
+    },
+    "session_count": {
+      "type": "number",
+      "title": "Total Check-in Sessions",
+      "default": 0
+    },
+    "checkin_preference": {
+      "type": "string",
+      "title": "Check-in Preference",
+      "enum": [
+        "daily",
+        "stuck",
+        "no"
+      ]
     }
   },
   "required": [

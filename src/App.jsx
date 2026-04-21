@@ -19,6 +19,7 @@ import Upgrade from './pages/Upgrade';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Forum from './pages/Forum';
+import CheckIn from './pages/CheckIn';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -59,6 +60,7 @@ const AuthenticatedApp = () => {
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/forum" element={<Forum />} />
+      <Route path="/check-in" element={<CheckIn />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

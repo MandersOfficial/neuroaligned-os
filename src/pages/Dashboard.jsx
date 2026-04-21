@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import EnergyCheckIn from '../components/dashboard/EnergyCheckIn';
@@ -78,6 +79,19 @@ export default function Dashboard() {
             </div>
             <EnergyCheckIn energy={energy} onEnergyChange={setEnergy} />
           </div>
+
+          {/* Check-in prompt */}
+          <Link
+            to="/check-in"
+            className="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-primary/5 border border-primary/15 hover:bg-primary/10 transition-colors group"
+          >
+            <span className="text-xl">🧠</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground">How's your brain right now?</p>
+              <p className="text-xs text-muted-foreground">Start your session with a check-in</p>
+            </div>
+            <span className="text-muted-foreground group-hover:text-foreground transition-colors text-sm">→</span>
+          </Link>
 
           {/* Insight */}
           <DailyInsight energy={energy} />
