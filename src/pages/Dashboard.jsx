@@ -35,7 +35,7 @@ export default function Dashboard() {
       setUser(u);
       const [t, subs, profiles] = await Promise.all([
         base44.entities.Task.filter({ is_today: true }),
-        base44.entities.Subscription.filter({ user_email: u.email }, '-created_date', 1),
+        base44.entities.Subscription.filter({ created_by: u.email }, '-created_date', 1),
         base44.entities.UserProfile.filter({ user_email: u.email }),
       ]);
       setTasks(t);
