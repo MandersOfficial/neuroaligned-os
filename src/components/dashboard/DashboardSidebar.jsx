@@ -77,7 +77,7 @@ export default function DashboardSidebar({ user }) {
         {/* Bottom */}
         <div className="border-t border-border/40 p-2 space-y-1">
           <button
-            onClick={() => base44.auth.logout()}
+            onClick={() => base44.auth.logout('/')}
             title={collapsed ? 'Sign out' : undefined}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-all"
           >
