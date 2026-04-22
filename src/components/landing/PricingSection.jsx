@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Check, ArrowRight, Zap } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 
 const plans = [
   {
@@ -109,6 +110,7 @@ export default function PricingSection() {
 
               <Button
                 size="lg"
+                onClick={() => base44.auth.redirectToLogin('/onboarding')}
                 className={`w-full rounded-full py-6 text-base font-semibold group ${
                   plan.popular
                     ? 'bg-primary hover:bg-primary/90 text-primary-foreground'

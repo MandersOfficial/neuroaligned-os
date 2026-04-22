@@ -51,6 +51,8 @@ export default function Onboarding() {
 
   const handleFinish = async () => {
     setLoading(true);
+    // Small delay to let the progress animation run before redirect
+    await new Promise(r => setTimeout(r, 4800));
 
     // Update display name
     if (data.display_name) {

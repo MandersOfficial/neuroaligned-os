@@ -1,15 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { Analytics } from '@/lib/analytics';
+import { base44 } from '@/api/base44Client';
 
 export default function HeroSection({ heroImage }) {
-  const navigate = useNavigate();
 
   const handleGetStarted = () => {
     Analytics.heroCTAClicked();
-    navigate('/onboarding');
+    base44.auth.redirectToLogin('/onboarding');
   };
 
   return (
