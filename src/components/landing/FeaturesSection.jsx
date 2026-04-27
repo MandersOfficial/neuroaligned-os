@@ -4,38 +4,38 @@ import { Battery, Brain, Shield, Sparkles, Route, HeartPulse } from 'lucide-reac
 const features = [
   {
     icon: Battery,
-    title: 'Energy-Aware Task Engine',
-    description: 'Tasks automatically adapt to your energy levels. Hyperfocusing? We surface deep work. Crashing? Only gentle tasks appear. No more guilt spirals from unfinished lists.',
-    tag: 'Core System',
+    title: 'Tasks that match your energy',
+    description: 'Tell us how you feel right now — focused, tired, or scattered — and we show you only the tasks that make sense. No more staring at a giant list and shutting down.',
+    tag: 'Smart Tasks',
   },
   {
     icon: Brain,
-    title: 'AI Guidance That Gets You',
-    description: 'Our AI learns your patterns — not to optimize you into a neurotypical mold, but to help you leverage your spiky profile. It knows when to push and when to pause.',
-    tag: 'Intelligence',
+    title: 'An AI that actually gets you',
+    description: 'Our AI learns your patterns over time and gives you simple, personalized tips. It knows when to encourage you to push forward — and when to tell you to rest.',
+    tag: 'AI Coach',
   },
   {
     icon: HeartPulse,
-    title: 'Nervous System Regulation',
-    description: 'Built-in breathwork, grounding exercises, and sensory check-ins. Because you can\'t think your way through a meltdown, and your OS should know that.',
+    title: 'Calm-down tools built right in',
+    description: 'Feeling overwhelmed? One tap opens breathing exercises and grounding tools. You don\'t have to leave the app or figure it out yourself.',
     tag: 'Regulation',
   },
   {
     icon: Route,
-    title: 'Non-Linear Workflows',
-    description: 'Forget rigid step-by-step processes. Map your projects as interconnected webs that match how your brain actually navigates complex ideas.',
-    tag: 'Workflows',
+    title: 'Projects your way',
+    description: 'Your brain doesn\'t think in straight lines, and your projects don\'t have to either. Organize work in a way that actually makes sense to you.',
+    tag: 'Projects',
   },
   {
     icon: Shield,
-    title: 'Burnout Prevention System',
-    description: 'Real-time monitoring of your capacity with gentle guardrails. NeuroAligned intervenes before you hit the wall — not after you\'ve been down for a week.',
+    title: 'Burnout warning system',
+    description: 'We watch your patterns and give you a heads-up before you crash. You get a gentle nudge to slow down — before it becomes a lost week on the couch.',
     tag: 'Protection',
   },
   {
     icon: Sparkles,
-    title: 'Context-Switching Bridges',
-    description: 'Smooth transitions between tasks with built-in buffers. Because jumping from client call to creative work without a bridge is a recipe for executive dysfunction.',
+    title: 'Easy task switching',
+    description: 'Going from a client call to creative work is hard. NeuroAligned gives you a short reset between tasks so your brain can switch gears without the friction.',
     tag: 'Transitions',
   },
 ];
@@ -52,15 +52,16 @@ export default function FeaturesSection() {
           className="max-w-3xl mx-auto text-center mb-16 lg:mb-20"
         >
           <span className="inline-block text-sm font-semibold text-primary uppercase tracking-wider mb-4">
-            Features
+            How It Works
           </span>
           <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight mb-6">
-            An operating system that works{' '}
-            <span className="text-primary">with</span> your wiring, not against it
+            Everything you need to{' '}
+            <span className="text-primary">stop fighting yourself</span>{' '}
+            and start getting things done
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Every feature was co-designed with neurodivergent entrepreneurs who were tired 
-            of abandoning yet another productivity tool after two weeks.
+            Every feature was built by and for people with ADHD, autism, dyslexia, and burnout — 
+            who were tired of quitting yet another productivity app after two weeks.
           </p>
         </motion.div>
 

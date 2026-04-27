@@ -37,27 +37,25 @@ export default function HeroSection({ heroImage }) {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20"
             >
               <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Built for how your brain actually works</span>
+              <span className="text-sm font-medium text-primary">For ADHD, Autistic & neurodivergent business owners</span>
             </motion.div>
 
             {/* Headline */}
             <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl xl:text-7xl tracking-tight leading-[1.1]">
-              <span className="text-foreground">Stop forcing your </span>
-              <span className="text-primary">brilliant brain</span>
-              <span className="text-foreground"> into neurotypical systems</span>
+              <span className="text-foreground">A to-do app that </span>
+              <span className="text-primary">fits your brain,</span>
+              <span className="text-foreground"> not the other way around</span>
             </h1>
 
             {/* Subheadline */}
             <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl">
-              NeuroAligned is the first operating system that matches your tasks to your energy, 
-              regulates your nervous system, and gives you AI guidance — all designed around 
-              neurodivergent thinking patterns.
+              NeuroAligned shows you the <strong className="text-foreground">right tasks at the right time</strong> — based on how much energy you have <em>right now</em>. No guilt. No overwhelm. Just work that actually gets done.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
               <Button size="lg" onClick={handleGetStarted} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-semibold group w-full sm:w-auto">
-                Unlock Your NeuroAligned OS
+                Try It Free for 14 Days
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="rounded-full px-8 py-6 text-base border-border/60 hover:bg-secondary w-full sm:w-auto">
@@ -67,7 +65,7 @@ export default function HeroSection({ heroImage }) {
 
             {/* Trust line */}
             <p className="text-sm text-muted-foreground">
-              14-day free trial · No credit card required · Cancel anytime
+              Free 14-day trial · No credit card · Cancel anytime
             </p>
           </motion.div>
 

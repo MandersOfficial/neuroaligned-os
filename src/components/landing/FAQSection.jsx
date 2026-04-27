@@ -44,11 +44,11 @@ export default function FAQSection() {
             FAQ
           </span>
           <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight mb-6">
-            Your skepticism is valid.{' '}
-            <span className="text-primary">Here are real answers.</span>
+            Good questions.{' '}
+            <span className="text-primary">Straight answers.</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            We built this for people who've been burned by "life-changing" tools before.
+            We know you've tried other tools before. Here's why this one is different.
           </p>
         </motion.div>
 

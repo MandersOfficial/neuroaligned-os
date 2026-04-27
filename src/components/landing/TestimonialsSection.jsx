@@ -40,8 +40,8 @@ export default function TestimonialsSection({ images }) {
             Testimonials
           </span>
           <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight">
-            Built by neurodivergent founders,{' '}
-            <span className="text-primary">loved by neurodivergent founders</span>
+            Real people. Real results.{' '}
+            <span className="text-primary">Real brains like yours.</span>
           </h2>
         </motion.div>
 

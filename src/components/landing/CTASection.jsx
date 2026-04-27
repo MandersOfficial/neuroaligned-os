@@ -21,24 +21,23 @@ export default function CTASection() {
           </div>
 
           <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-background tracking-tight leading-tight">
-            Your brain isn't the problem.<br />
-            <span className="text-primary">Your tools are.</span>
+            You're not lazy or broken.<br />
+            <span className="text-primary">You just need the right tool.</span>
           </h2>
 
           <p className="text-background/60 text-lg max-w-2xl mx-auto leading-relaxed">
-            Join thousands of neurodivergent entrepreneurs who stopped trying to fit into 
-            neurotypical systems and started building empires on their own terms.
+            Thousands of ADHD, autistic, and neurodivergent business owners use NeuroAligned to get more done — without burning out or fighting their own brain.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" onClick={() => base44.auth.redirectToLogin('/onboarding')} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-10 py-6 text-base font-semibold group">
-              Unlock Your NeuroAligned OS
+              Try It Free for 14 Days
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
 
           <p className="text-background/40 text-sm">
-            14-day free trial · No credit card · No guilt if it's not for you
+            Free trial · No credit card · Cancel anytime
           </p>
         </motion.div>
       </div>

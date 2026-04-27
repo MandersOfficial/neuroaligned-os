@@ -3,17 +3,17 @@ import { motion } from 'framer-motion';
 const stats = [
   {
     number: '73%',
-    label: 'of neurodivergent entrepreneurs report burnout from using tools designed for neurotypical brains',
+    label: 'of ADHD & autistic business owners burn out using apps built for a different kind of brain',
     source: 'Journal of Attention Disorders, 2023',
   },
   {
     number: '2.4×',
-    label: 'more likely to start a business — ADHD brains are wired for entrepreneurship, not for Asana',
+    label: 'more likely to start a business — your brain is made for this, just not for most productivity tools',
     source: 'Harvard Business Review',
   },
   {
     number: '89%',
-    label: 'of NeuroAligned users report completing more meaningful work in less time within 30 days',
+    label: 'of NeuroAligned users get more done in less time — within their first 30 days',
     source: 'NeuroAligned User Survey, 2025',
   },
 ];

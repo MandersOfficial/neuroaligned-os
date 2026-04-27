@@ -56,12 +56,12 @@ export default function PricingSection() {
             Pricing
           </span>
           <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight mb-6">
-            Invest in an OS that{' '}
-            <span className="text-primary">actually fits your brain</span>
+            Simple pricing.{' '}
+            <span className="text-primary">Try it free first.</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Both plans include a 14-day free trial. No credit card required. 
-            Because we know commitment anxiety is real.
+            Both plans come with a free 14-day trial. No credit card needed. 
+            Try it, and if it doesn't work for you, no hard feelings.
           </p>
         </motion.div>
 
