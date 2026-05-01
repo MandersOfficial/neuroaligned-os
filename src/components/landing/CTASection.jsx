@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 
 export default function CTASection() {
   return (
-    <section className="py-20 lg:py-32 bg-foreground relative overflow-hidden">
+    <section className="bg-[#113d73] py-20 lg:py-32 relative overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/20 rounded-full blur-[120px]" />
 
@@ -14,8 +14,8 @@ export default function CTASection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="space-y-8"
-        >
+          className="space-y-8">
+          
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/20 mb-2">
             <Brain className="w-8 h-8 text-primary" />
           </div>
@@ -41,6 +41,6 @@ export default function CTASection() {
           </p>
         </motion.div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
