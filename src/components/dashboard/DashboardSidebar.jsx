@@ -39,7 +39,7 @@ export default function DashboardSidebar({ user }) {
           <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shrink-0">
             <Brain className="w-4 h-4 text-primary-foreground" />
           </div>
-          {!collapsed && <span className="font-display font-bold text-base text-foreground">NeuroAligned</span>}
+          {!collapsed && <span className="font-display font-bold text-base text-foreground">NeuroAligned OS</span>}
         </div>
 
         {/* Nav */}
