@@ -6,6 +6,10 @@ import { base44 } from '@/api/base44Client';
 export default function CTASection() {
   return (
     <section className="py-20 lg:py-32 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #000000 0%, #1a0033 30%, #2d0060 55%, #0d1b6e 80%, #000820 100%)' }}>
+      {/* Top fade */}
+      <div className="absolute top-0 left-0 right-0 h-24 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), transparent)' }} />
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }} />
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full blur-[120px]" style={{ background: 'radial-gradient(ellipse, rgba(120,40,200,0.35) 0%, rgba(30,60,180,0.2) 60%, transparent 100%)' }} />
 
