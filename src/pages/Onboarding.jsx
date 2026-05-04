@@ -50,13 +50,21 @@ export default function Onboarding() {
   const onChange = (field, value) => setData(prev => ({ ...prev, [field]: value }));
 
   const handleFinish = async () => {
+    if (!user) {
+      base44.auth.redirectToLogin('/onboarding');
+      return;
+    }
     setLoading(true);
     // Small delay to let the progress animation run before redirect
     await new Promise(r => setTimeout(r, 4800));
 
-    // Update display name
-    if (data.display_name) {
-      await base44.auth.updateMe({ full_name: data.display_name });
+    // Update display name (only if authenticated)
+    if (data.display_name && user) {
+      try {
+        await base44.auth.updateMe({ full_name: data.display_name });
+      } catch (e) {
+        // ignore if not authenticated
+      }
     }
 
     // Save user profile
