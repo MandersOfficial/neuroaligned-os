@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import EnergyCheckIn from '../components/dashboard/EnergyCheckIn';
@@ -52,6 +52,7 @@ export default function Dashboard() {
     load();
   }, []);
 
+  const navigate = useNavigate();
   const firstName = user?.full_name?.split(' ')[0] || 'there';
 
   if (loading) {
@@ -82,18 +83,31 @@ export default function Dashboard() {
             <EnergyCheckIn energy={energy} onEnergyChange={setEnergy} />
           </div>
 
-          {/* Check-in prompt */}
-          <Link
-            to="/check-in"
-            className="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-primary/5 border border-primary/15 hover:bg-primary/10 transition-colors group"
-          >
-            <span className="text-xl">🧠</span>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground">How's your brain right now?</p>
-              <p className="text-xs text-muted-foreground">Start your session with a check-in</p>
-            </div>
-            <span className="text-muted-foreground group-hover:text-foreground transition-colors text-sm">→</span>
-          </Link>
+          {/* Quick actions row */}
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Link
+              to="/check-in"
+              className="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-primary/5 border border-primary/15 hover:bg-primary/10 transition-colors group"
+            >
+              <span className="text-xl">🧠</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">How's your brain right now?</p>
+                <p className="text-xs text-muted-foreground">Start your session with a check-in</p>
+              </div>
+              <span className="text-muted-foreground group-hover:text-foreground transition-colors text-sm">→</span>
+            </Link>
+            <button
+              onClick={() => navigate('/body-doubling')}
+              className="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-green-500/5 border border-green-500/20 hover:bg-green-500/10 transition-colors group text-left"
+            >
+              <span className="text-xl">👥</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">Start Body Doubling</p>
+                <p className="text-xs text-muted-foreground">25-min focus sprint with a peer</p>
+              </div>
+              <span className="text-muted-foreground group-hover:text-foreground transition-colors text-sm">→</span>
+            </button>
+          </div>
 
           {/* Insight */}
           <DailyInsight energy={energy} />

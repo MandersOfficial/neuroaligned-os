@@ -1,0 +1,73 @@
+{
+  "name": "BodyDoublingSession",
+  "type": "object",
+  "properties": {
+    "host_email": {
+      "type": "string",
+      "title": "Host Email"
+    },
+    "host_name": {
+      "type": "string",
+      "title": "Host Name"
+    },
+    "partner_email": {
+      "type": "string",
+      "title": "Partner Email"
+    },
+    "partner_name": {
+      "type": "string",
+      "title": "Partner Name"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "waiting",
+        "active",
+        "completed"
+      ],
+      "default": "waiting"
+    },
+    "host_task": {
+      "type": "string",
+      "title": "Host's Focus Task"
+    },
+    "partner_task": {
+      "type": "string",
+      "title": "Partner's Focus Task"
+    },
+    "started_at": {
+      "type": "string",
+      "title": "Started At"
+    },
+    "completed_at": {
+      "type": "string",
+      "title": "Completed At"
+    },
+    "sprint_minutes": {
+      "type": "number",
+      "title": "Sprint Duration (minutes)",
+      "default": 25
+    }
+  },
+  "required": [
+    "host_email"
+  ],
+  "rls": {
+    "create": {},
+    "read": {},
+    "update": {},
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

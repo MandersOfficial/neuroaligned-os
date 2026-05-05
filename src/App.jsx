@@ -20,6 +20,7 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Forum from './pages/Forum';
 import CheckIn from './pages/CheckIn';
+import BodyDoubling from './pages/BodyDoubling';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -61,6 +62,7 @@ const AuthenticatedApp = () => {
       <Route path="/terms" element={<Terms />} />
       <Route path="/forum" element={<Forum />} />
       <Route path="/check-in" element={<CheckIn />} />
+      <Route path="/body-doubling" element={<BodyDoubling />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
