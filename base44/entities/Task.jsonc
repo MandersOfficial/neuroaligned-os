@@ -60,9 +60,58 @@
     "completed_at": {
       "type": "string",
       "title": "Completed At"
+    },
+    "eisenhower_quadrant": {
+      "type": "string",
+      "title": "Eisenhower Quadrant",
+      "enum": [
+        "do_first",
+        "schedule",
+        "delegate",
+        "eliminate"
+      ]
     }
   },
   "required": [
     "title"
-  ]
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }

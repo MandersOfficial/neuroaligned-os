@@ -9,6 +9,7 @@ import DailyInsight from '../components/dashboard/DailyInsight';
 import QuickStats from '../components/dashboard/QuickStats';
 import RegulationWidget from '../components/regulation/RegulationWidget';
 import TrialBanner from '../components/subscription/TrialBanner';
+import EisenhowerMatrix from '../components/dashboard/EisenhowerMatrix';
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -98,6 +99,9 @@ export default function Dashboard() {
 
           {/* Quick Stats */}
           <QuickStats tasks={tasks} />
+
+          {/* Eisenhower Matrix */}
+          <EisenhowerMatrix tasks={tasks} />
 
           {/* Main content grid */}
           <div className="grid lg:grid-cols-[1fr_300px] gap-5">
