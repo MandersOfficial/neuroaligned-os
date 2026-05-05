@@ -11,11 +11,25 @@ export default function StressInput({ brainState, onSteps }) {
     if (!text.trim()) return;
     setLoading(true);
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `The user is feeling ${brainState.label.toLowerCase()} right now. They said: "${text.trim()}"
+      prompt: `You are a supportive productivity coach for neurodivergent entrepreneurs using the Regulated Brain Framework.
 
-Break this down into 1-3 small, gentle, achievable steps they could take TODAY. 
-Keep each step under 10 words. Make them feel easy, not pressuring.
-Return ONLY a JSON array of strings like: ["step 1", "step 2", "step 3"]`,
+The user is currently in the ${brainState.zone?.toUpperCase() || 'GREEN'} ZONE (${brainState.label}).
+Nervous system state: ${brainState.sublabel}.
+Cognitive capacity right now: ${brainState.capacity}.
+Task tone guidance: ${brainState.taskTone}
+
+The user shared: "${text.trim()}"
+
+Break this into 1-3 actionable steps appropriate for their current nervous system state.
+Rules:
+- Each step must be under 12 words
+- Match the energy level: ${brainState.capacity} capacity
+- ${brainState.zone === 'red' || brainState.zone === 'blue' ? 'NO complex or multi-step tasks. Start with the tiniest possible first action.' : ''}
+- ${brainState.zone === 'flow' ? 'They have high capacity — one or two meaningful, deep-work steps are ideal.' : ''}
+- Frame steps as actions, not goals. Start with a verb.
+- Make each step feel doable, not overwhelming.
+
+Return JSON with a "steps" array of strings.`,
       response_json_schema: {
         type: 'object',
         properties: { steps: { type: 'array', items: { type: 'string' } } },

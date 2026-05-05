@@ -146,10 +146,67 @@ function GroundingTool({ onDone }) {
   );
 }
 
+// ── Gentle Movement / Activation ─────────────────────────────────
+const MOVEMENT_STEPS = [
+  { emoji: '🙆', label: 'Roll your shoulders back 3 times', cue: 'This opens up your posture and signals safety to your nervous system.' },
+  { emoji: '🤲', label: 'Rub your hands together until warm', cue: 'Generates mild sensory stimulation — helps activate your prefrontal cortex.' },
+  { emoji: '🦶', label: 'Stamp your feet on the floor 10 times', cue: 'Rhythmic movement grounds you in your body and the present moment.' },
+  { emoji: '💧', label: 'Take a few sips of water', cue: 'Dehydration deepens the freeze response. Water literally helps your brain work.' },
+  { emoji: '😮‍💨', label: 'Take one big exhale — longer than your inhale', cue: 'A long exhale activates the parasympathetic nervous system and brings you back online.' },
+];
+
+function MovementTool({ onDone }) {
+  const [step, setStep] = useState(0);
+
+  if (step >= MOVEMENT_STEPS.length) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-6">
+        <p className="text-3xl mb-3">⚡</p>
+        <p className="font-semibold text-foreground text-lg mb-1">You're coming back online.</p>
+        <p className="text-muted-foreground text-sm mb-6">Your nervous system is activating. Let's find you a small first task.</p>
+        <button onClick={onDone} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold hover:bg-primary/90 transition-colors">
+          Continue
+        </button>
+      </motion.div>
+    );
+  }
+
+  const current = MOVEMENT_STEPS[step];
+  return (
+    <div className="flex flex-col items-center py-6">
+      <p className="text-sm text-muted-foreground mb-6">Gentle activation · Step {step + 1} of {MOVEMENT_STEPS.length}</p>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.92 }}
+          className="text-center mb-8 max-w-xs"
+        >
+          <p className="text-5xl mb-4">{current.emoji}</p>
+          <p className="text-lg font-semibold text-foreground mb-3">{current.label}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">{current.cue}</p>
+        </motion.div>
+      </AnimatePresence>
+      <button
+        onClick={() => setStep(s => s + 1)}
+        className="px-8 py-3 bg-primary text-primary-foreground rounded-full text-sm font-semibold hover:bg-primary/90 transition-colors"
+      >
+        Done →
+      </button>
+      <button onClick={onDone} className="mt-4 text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors">
+        Skip for now
+      </button>
+    </div>
+  );
+}
+
 export default function RegulationTool({ type, onDone }) {
   return (
     <div className="w-full max-w-sm mx-auto">
-      {type === 'breathing' ? <BreathingTool onDone={onDone} /> : <GroundingTool onDone={onDone} />}
+      {type === 'breathing' && <BreathingTool onDone={onDone} />}
+      {type === 'grounding' && <GroundingTool onDone={onDone} />}
+      {type === 'movement' && <MovementTool onDone={onDone} />}
     </div>
   );
 }

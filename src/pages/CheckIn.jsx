@@ -172,19 +172,27 @@ export default function CheckIn() {
                   <p className="text-muted-foreground">{brainState.subMsg}</p>
                 </div>
 
+                {/* Zone badge */}
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${brainState.zoneBadge}`}>
+                  {brainState.emoji} {brainState.sublabel}
+                </div>
+
                 {brainState.regulationTool ? (
                   <div className="w-full max-w-sm space-y-3">
+                    <p className="text-xs text-muted-foreground text-center">
+                      Regulating first helps your brain access its prefrontal cortex — where planning and decision-making live.
+                    </p>
                     <button
                       onClick={() => setStep('regulate')}
                       className="w-full py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold hover:bg-primary/90 transition-colors"
                     >
-                      {brainState.regulationTool === 'breathing' ? '🌬️ Try a breathing reset (60s)' : '🌱 Try a grounding exercise (60s)'}
+                      {brainState.regulationLabel}
                     </button>
                     <button
                       onClick={() => setStep('stress')}
                       className="w-full py-3 border border-border rounded-2xl text-sm text-muted-foreground hover:bg-secondary transition-colors"
                     >
-                      Skip — I'm okay
+                      Skip — go straight to tasks
                     </button>
                   </div>
                 ) : (
