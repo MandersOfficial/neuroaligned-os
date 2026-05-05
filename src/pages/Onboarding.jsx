@@ -39,11 +39,13 @@ export default function Onboarding() {
       }
       setUser(u);
       setData(prev => ({ ...prev, display_name: u.full_name?.split(' ')[0] || '' }));
-      base44.entities.UserProfile.filter({ user_email: u.email }).then(profiles => {
+      return base44.entities.UserProfile.filter({ user_email: u.email }).then(profiles => {
         if (profiles.length > 0 && profiles[0].onboarding_completed) {
           navigate('/dashboard');
         }
       });
+    }).catch(() => {
+      base44.auth.redirectToLogin('/onboarding');
     });
   }, []);
 

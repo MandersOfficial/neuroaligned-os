@@ -209,6 +209,8 @@ export default function BodyDoubling() {
       setUser(u);
       setLoading(false);
       joinOrCreate(u);
+    }).catch(() => {
+      base44.auth.redirectToLogin('/body-doubling');
     });
     return () => clearInterval(pollRef.current);
   }, []);
