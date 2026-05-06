@@ -34,6 +34,7 @@ export default function Dashboard() {
   useEffect(() => {
     const load = async () => {
       const u = await base44.auth.me();
+      if (!u) { base44.auth.redirectToLogin('/dashboard'); return; }
       setUser(u);
       const [t, subs, profiles] = await Promise.all([
         base44.entities.Task.filter({ is_today: true }),
