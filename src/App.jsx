@@ -4,6 +4,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { SensoryProvider } from '@/lib/SensoryContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 // Add page imports here
 import Landing from './pages/Landing';
@@ -21,6 +22,7 @@ import Terms from './pages/Terms';
 import Forum from './pages/Forum';
 import CheckIn from './pages/CheckIn';
 import BodyDoubling from './pages/BodyDoubling';
+import SensorySettings from './pages/SensorySettings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -63,6 +65,7 @@ const AuthenticatedApp = () => {
       <Route path="/forum" element={<Forum />} />
       <Route path="/check-in" element={<CheckIn />} />
       <Route path="/body-doubling" element={<BodyDoubling />} />
+      <Route path="/sensory" element={<SensorySettings />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
@@ -73,12 +76,14 @@ function App() {
 
   return (
     <AuthProvider>
+      <SensoryProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <AuthenticatedApp />
         </Router>
         <Toaster />
       </QueryClientProvider>
+      </SensoryProvider>
     </AuthProvider>
   )
 }

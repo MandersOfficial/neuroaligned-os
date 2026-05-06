@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
+import { useSensory } from '@/lib/SensoryContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Brain } from 'lucide-react';
 import BrainStateSelector from '../components/checkin/BrainStateSelector';
@@ -19,6 +20,7 @@ import SessionComplete from '../components/checkin/SessionComplete';
 
 export default function CheckIn() {
   const navigate = useNavigate();
+  const { applyBrainStateTheme } = useSensory();
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [isFirstSession, setIsFirstSession] = useState(false);
@@ -67,6 +69,9 @@ export default function CheckIn() {
   const handleStateSelect = async (state) => {
     setBrainState(state);
     setStep('support');
+
+    // Auto-apply sensory theme based on brain state
+    applyBrainStateTheme(state.value);
 
     // Persist last state + increment session count
     if (profile) {

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Brain, LayoutDashboard, CheckSquare, Settings, LogOut, ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert, BookOpen, Users, Zap } from 'lucide-react';
+import { Brain, LayoutDashboard, CheckSquare, LogOut, ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert, BookOpen, Users, Zap, Eye } from 'lucide-react';
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,7 @@ const NAV = [
   { icon: BookOpen, label: 'Knowledge Base', href: '/knowledge' },
   { icon: Users, label: 'Community', href: '/forum' },
   { icon: Plug, label: 'Integrations', href: '/integrations' },
+  { icon: Eye, label: 'Sensory Settings', href: '/sensory' },
 ];
 
 // Show only 5 most important items on mobile bottom nav
