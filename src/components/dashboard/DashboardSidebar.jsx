@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Brain, LayoutDashboard, CheckSquare, LogOut, ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert, BookOpen, Users, Zap, Eye } from 'lucide-react';
+import { Brain, LayoutDashboard, CheckSquare, LogOut, ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert, BookOpen, Users, Zap, Eye, Moon, Sun } from 'lucide-react';
+import { useSensory } from '@/lib/SensoryContext';
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
@@ -27,6 +28,7 @@ const MOBILE_NAV = [
 export default function DashboardSidebar({ user }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { prefs, updatePref } = useSensory();
 
   return (
     <>
@@ -84,6 +86,14 @@ export default function DashboardSidebar({ user }) {
           >
             <LogOut className="w-4 h-4 shrink-0" />
             {!collapsed && 'Sign out'}
+          </button>
+          <button
+            onClick={() => updatePref('darkMode', !prefs.darkMode)}
+            title={prefs.darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="w-full flex items-center justify-center gap-2 py-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {prefs.darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {!collapsed && <span className="text-xs">{prefs.darkMode ? 'Light mode' : 'Dark mode'}</span>}
           </button>
           <button
             onClick={() => setCollapsed(!collapsed)}

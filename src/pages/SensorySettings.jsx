@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Brain, ArrowLeft, Eye, Type, Zap, Palette, Check, Wind } from 'lucide-react';
+import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSensory, THEMES } from '../lib/SensoryContext';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
@@ -128,6 +128,22 @@ export default function SensorySettings() {
                 </div>
               </div>
             </div>
+          </section>
+
+          {/* Dark Mode */}
+          <section className="bg-card border border-border/60 rounded-2xl p-6 space-y-1">
+            <div className="flex items-center gap-2 mb-4">
+              <Moon className="w-4 h-4 text-primary" />
+              <h2 className="font-display font-semibold text-base text-foreground">Appearance</h2>
+            </div>
+            <Toggle
+              checked={prefs.darkMode}
+              onChange={v => updatePref('darkMode', v)}
+              icon={Moon}
+              color="bg-slate-700"
+              label="Dark mode"
+              description="Switch to a dark background — easier on the eyes at night or in low-light environments."
+            />
           </section>
 
           {/* Accessibility */}

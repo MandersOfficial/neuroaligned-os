@@ -82,6 +82,7 @@ const defaultPrefs = {
   dyslexiaFont: false,          // OpenDyslexic-style font
   reducedMotion: false,         // disable framer-motion animations
   largerText: false,            // bump base font size
+  darkMode: false,              // dark mode
 };
 
 function loadPrefs() {
@@ -93,12 +94,20 @@ function loadPrefs() {
   }
 }
 
-function applyTheme(themeId) {
-  const theme = THEMES[themeId] || THEMES.default;
+function applyTheme(themeId, darkMode) {
   const root = document.documentElement;
-  Object.entries(theme.vars).forEach(([key, val]) => {
-    root.style.setProperty(key, val);
-  });
+  // Toggle dark class — CSS vars in .dark handle the dark palette
+  if (darkMode) {
+    root.classList.add('dark');
+    // Clear any light-mode color overrides so .dark vars take effect
+    Object.keys(THEMES.default.vars).forEach(key => root.style.removeProperty(key));
+  } else {
+    root.classList.remove('dark');
+    const theme = THEMES[themeId] || THEMES.default;
+    Object.entries(theme.vars).forEach(([key, val]) => {
+      root.style.setProperty(key, val);
+    });
+  }
 }
 
 function applyAccessibility(prefs) {
@@ -138,7 +147,7 @@ export function SensoryProvider({ children }) {
 
   // Apply on mount + whenever prefs change
   useEffect(() => {
-    applyTheme(activeThemeId);
+    applyTheme(activeThemeId, prefs.darkMode);
     applyAccessibility(prefs);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
   }, [prefs, activeThemeId]);
