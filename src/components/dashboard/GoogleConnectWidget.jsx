@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Calendar, Mail, ExternalLink, Loader2 } from 'lucide-react';
+import { Calendar, Mail, Video, ExternalLink, Loader2 } from 'lucide-react';
 
 const GOOGLE_CALENDAR_CONNECTOR_ID = '69fd1ec20e0e670e38251275';
 const GMAIL_CONNECTOR_ID = '69fd1ff7759e80cf1cc1e1e9';
@@ -84,6 +84,13 @@ export default function GoogleConnectWidget() {
           connectorId={GMAIL_CONNECTOR_ID}
           color="text-red-500"
           bg="bg-red-50"
+        />
+        <ConnectorRow
+          icon={Video}
+          name="Google Meet"
+          connectorId="69fd203fe5416ec116a6593a"
+          color="text-green-500"
+          bg="bg-green-50"
         />
       </div>
     </div>
