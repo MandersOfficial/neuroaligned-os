@@ -1,4 +1,4 @@
-import { Users, Clock, Lock } from 'lucide-react';
+import { Users, Clock, Lock, X, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -8,7 +8,7 @@ const STATUS_CONFIG = {
   closed: { label: 'Closed', dot: 'bg-muted-foreground', text: 'text-muted-foreground' },
 };
 
-export default function FocusRoomCard({ room, currentUser, onJoin, onLeave }) {
+export default function FocusRoomCard({ room, currentUser, onJoin, onLeave, onClose, onDelete }) {
   const status = STATUS_CONFIG[room.status] || STATUS_CONFIG.open;
   const isFull = (room.participant_count || 1) >= (room.max_participants || 6);
   const isHost = room.host_email === currentUser?.email;
@@ -34,9 +34,29 @@ export default function FocusRoomCard({ room, currentUser, onJoin, onLeave }) {
           <h3 className="font-display font-semibold text-base text-foreground truncate">{room.name}</h3>
           <p className="text-xs text-muted-foreground mt-0.5">Hosted by {room.host_name || room.host_email.split('@')[0]}</p>
         </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-          <Clock className="w-3.5 h-3.5" />
-          {room.duration_minutes || 25}m
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Clock className="w-3.5 h-3.5" />
+            {room.duration_minutes || 25}m
+          </div>
+          {isHost && room.status !== 'closed' && (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => onClose(room)}
+                title="Close room"
+                className="p-1 rounded-lg hover:bg-amber-50 text-muted-foreground hover:text-amber-600 transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => onDelete(room)}
+                title="Delete room"
+                className="p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

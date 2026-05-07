@@ -14,22 +14,31 @@ export default function FocusRooms() {
   const [showCreate, setShowCreate] = useState(false);
   const [joiningRoom, setJoiningRoom] = useState(null);
 
-  const loadRooms = useCallback(async () => {
-    const data = await base44.entities.FocusRoom.filter({ status: 'open' }, '-created_date', 30);
-    const active = await base44.entities.FocusRoom.filter({ status: 'active' }, '-created_date', 30);
-    setRooms([...active, ...data]);
+  const loadRooms = useCallback(async (currentUser) => {
+    const [open, active, allMine] = await Promise.all([
+      base44.entities.FocusRoom.filter({ status: 'open' }, '-created_date', 30),
+      base44.entities.FocusRoom.filter({ status: 'active' }, '-created_date', 30),
+      currentUser ? base44.entities.FocusRoom.list('-created_date', 50) : Promise.resolve([]),
+    ]);
+    // Merge: open/active for everyone + closed rooms hosted by current user
+    const seen = new Set();
+    const merged = [...active, ...open];
+    merged.forEach(r => seen.add(r.id));
+    allMine.forEach(r => {
+      if (!seen.has(r.id)) { seen.add(r.id); merged.push(r); }
+    });
+    setRooms(merged);
   }, []);
 
   useEffect(() => {
-    Promise.all([base44.auth.me(), base44.entities.FocusRoom.filter({ status: 'open' }, '-created_date', 30), base44.entities.FocusRoom.filter({ status: 'active' }, '-created_date', 30)])
-      .then(([u, open, active]) => {
-        setUser(u);
-        setRooms([...active, ...open]);
-        setLoading(false);
-      });
+    base44.auth.me().then(async (u) => {
+      setUser(u);
+      await loadRooms(u);
+      setLoading(false);
+    });
 
     // Poll every 15s for real-time-ish feel
-    const interval = setInterval(loadRooms, 15000);
+    const interval = setInterval(() => loadRooms(null), 15000);
     return () => clearInterval(interval);
   }, [loadRooms]);
 
@@ -82,6 +91,16 @@ export default function FocusRooms() {
     setRooms(prev => prev.map(r => r.id === room.id ? updated : r));
   };
 
+  const handleCloseRoom = async (room) => {
+    const updated = await base44.entities.FocusRoom.update(room.id, { status: 'closed' });
+    setRooms(prev => prev.map(r => r.id === room.id ? { ...r, ...updated } : r));
+  };
+
+  const handleDeleteRoom = async (room) => {
+    await base44.entities.FocusRoom.delete(room.id);
+    setRooms(prev => prev.filter(r => r.id !== room.id));
+  };
+
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
@@ -104,7 +123,7 @@ export default function FocusRooms() {
               <p className="text-sm text-muted-foreground mt-1">Join a live body-doubling room and work alongside others. Presence creates accountability.</p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={loadRooms} className="p-2 rounded-xl border border-border hover:bg-secondary transition-colors" title="Refresh">
+              <button onClick={() => loadRooms(user)} className="p-2 rounded-xl border border-border hover:bg-secondary transition-colors" title="Refresh">
                 <RefreshCw className="w-4 h-4 text-muted-foreground" />
               </button>
               <button
@@ -152,6 +171,8 @@ export default function FocusRooms() {
                     currentUser={user}
                     onJoin={(r) => setJoiningRoom(r)}
                     onLeave={handleLeave}
+                    onClose={handleCloseRoom}
+                    onDelete={handleDeleteRoom}
                   />
                 ))}
               </AnimatePresence>

@@ -11,6 +11,7 @@ import RegulationWidget from '../components/regulation/RegulationWidget';
 import TrialBanner from '../components/subscription/TrialBanner';
 import EisenhowerMatrix from '../components/dashboard/EisenhowerMatrix';
 import RegulationZoneWidget from '../components/dashboard/RegulationZoneWidget';
+import GoogleConnectWidget from '../components/dashboard/GoogleConnectWidget';
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -126,6 +127,7 @@ export default function Dashboard() {
 
             {/* Sidebar tools */}
             <div className="space-y-5">
+              <GoogleConnectWidget />
               <RegulationZoneWidget lastBrainState={profile?.last_brain_state} />
               <RegulationTools />
 
