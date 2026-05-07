@@ -28,6 +28,11 @@
       ],
       "default": "waiting"
     },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
+    },
     "host_task": {
       "type": "string",
       "title": "Host's Focus Task"

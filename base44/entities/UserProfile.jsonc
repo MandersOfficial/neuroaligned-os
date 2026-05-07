@@ -10,6 +10,11 @@
       "type": "string",
       "title": "Display Name"
     },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
+    },
     "pronouns": {
       "type": "string",
       "title": "Pronouns"
@@ -116,5 +121,44 @@
   },
   "required": [
     "user_email"
-  ]
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }
