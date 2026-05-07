@@ -1,0 +1,97 @@
+{
+  "name": "FocusRoom",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Room Name"
+    },
+    "host_email": {
+      "type": "string",
+      "title": "Host Email"
+    },
+    "host_name": {
+      "type": "string",
+      "title": "Host Name"
+    },
+    "focus_topic": {
+      "type": "string",
+      "title": "Focus Topic"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "open",
+        "active",
+        "closed"
+      ],
+      "default": "open"
+    },
+    "max_participants": {
+      "type": "number",
+      "title": "Max Participants",
+      "default": 6
+    },
+    "participant_count": {
+      "type": "number",
+      "title": "Participant Count",
+      "default": 1
+    },
+    "participant_emails": {
+      "type": "array",
+      "title": "Participant Emails",
+      "items": {
+        "type": "string"
+      }
+    },
+    "participant_names": {
+      "type": "array",
+      "title": "Participant Names",
+      "items": {
+        "type": "string"
+      }
+    },
+    "participant_tasks": {
+      "type": "array",
+      "title": "Participant Tasks",
+      "items": {
+        "type": "string"
+      }
+    },
+    "duration_minutes": {
+      "type": "number",
+      "title": "Session Duration (min)",
+      "default": 25
+    },
+    "started_at": {
+      "type": "string",
+      "title": "Started At"
+    },
+    "ends_at": {
+      "type": "string",
+      "title": "Ends At"
+    }
+  },
+  "required": [
+    "name",
+    "host_email"
+  ],
+  "rls": {
+    "create": {},
+    "read": {},
+    "update": {},
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -24,6 +24,8 @@ import CheckIn from './pages/CheckIn';
 import BodyDoubling from './pages/BodyDoubling';
 import SensorySettings from './pages/SensorySettings';
 import Journal from './pages/Journal';
+import FocusRooms from './pages/FocusRooms';
+import Productivity from './pages/Productivity';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -68,6 +70,8 @@ const AuthenticatedApp = () => {
       <Route path="/body-doubling" element={<BodyDoubling />} />
       <Route path="/sensory" element={<SensorySettings />} />
       <Route path="/journal" element={<Journal />} />
+      <Route path="/focus-rooms" element={<FocusRooms />} />
+      <Route path="/productivity" element={<Productivity />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

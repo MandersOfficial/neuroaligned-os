@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
-  BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, Settings
+  BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, DoorOpen
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import { useState } from 'react';
@@ -17,6 +17,7 @@ const NAV_GROUPS = [
       { icon: CheckSquare, label: 'Tasks', href: '/tasks' },
       { icon: NotebookPen, label: 'Journal', href: '/journal' },
       { icon: Focus, label: 'Focus Modes', href: '/focus-modes' },
+      { icon: TrendingUp, label: 'Trends', href: '/productivity' },
     ],
   },
   {
@@ -24,6 +25,7 @@ const NAV_GROUPS = [
     items: [
       { icon: ShieldAlert, label: 'Burnout Risk', href: '/burnout' },
       { icon: Users, label: 'Community', href: '/forum' },
+      { icon: DoorOpen, label: 'Focus Rooms', href: '/focus-rooms' },
       { icon: BookOpen, label: 'Knowledge Base', href: '/knowledge' },
     ],
   },
