@@ -4,6 +4,8 @@ import { Check, Clock, Flame, Zap, Leaf, Calendar, ChevronDown, Sparkles, Trash2
 import { motion, AnimatePresence } from 'framer-motion';
 import { ENERGY_STATES } from '@/components/dashboard/EnergyCheckIn';
 import PullToRefresh from '@/components/ui/PullToRefresh';
+import DueSoonBanner from './DueSoonBanner';
+import useDeadlineNotifications from '@/hooks/useDeadlineNotifications';
 
 const ENERGY_CONFIG = {
   low: { icon: Leaf, color: 'text-green-600', bg: 'bg-green-50', label: 'Low' },
@@ -113,6 +115,8 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
   const energyState = ENERGY_STATES.find(s => s.value === energy) || ENERGY_STATES[1];
   const isFiltering = energyState.allowedEnergy.length < 3;
 
+  useDeadlineNotifications(tasks);
+
   const handleRefresh = useCallback(async () => {
     const refreshed = await base44.entities.Task.list('-created_date', 100);
     onTasksChange(refreshed);
@@ -137,6 +141,9 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div className="flex flex-col gap-5 flex-1 px-4 py-5 overflow-x-auto">
+      {/* Due Soon banner */}
+      <DueSoonBanner tasks={tasks} onUpdate={handleUpdate} />
+
       {/* Energy filter banner */}
       {isFiltering && (
         <motion.div
