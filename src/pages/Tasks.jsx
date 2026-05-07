@@ -100,26 +100,20 @@ export default function Tasks() {
         {/* Body */}
         <div className="flex flex-1 overflow-hidden">
           {/* Project sidebar */}
-          <div className="hidden md:block w-64 border-r border-border/40 px-4 py-5 overflow-y-auto shrink-0">
+          <div className="hidden md:block w-56 border-r border-border/40 py-5 overflow-y-auto shrink-0 space-y-6 px-3">
             <ProjectPanel
               projects={projects}
               selectedProjectId={selectedProjectId}
               onSelectProject={setSelectedProjectId}
               onProjectsChange={setProjects}
             />
-
-            <div className="mt-6">
-              <EnergyScheduler
-                energy={energy}
-                onEnergyChange={setEnergy}
-                tasks={visibleTasks}
-                onRecommend={setRecommendedIds}
-              />
-            </div>
-
-            <div className="mt-4">
-              <AIGuidancePanel energy={energy} tasks={visibleTasks} />
-            </div>
+            <EnergyScheduler
+              energy={energy}
+              onEnergyChange={setEnergy}
+              tasks={visibleTasks}
+              onRecommend={setRecommendedIds}
+            />
+            <AIGuidancePanel energy={energy} tasks={visibleTasks} />
           </div>
 
           {/* Task board */}
