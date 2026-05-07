@@ -92,4 +92,25 @@
 
 html {
   scroll-behavior: smooth;
+  overscroll-behavior: none;
+}
+
+body {
+  overscroll-behavior: none;
+}
+
+button,
+nav a,
+nav button,
+[role="button"] {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+svg {
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon, Trash2, AlertTriangle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSensory, THEMES } from '../lib/SensoryContext';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import { base44 } from '@/api/base44Client';
@@ -9,10 +9,35 @@ import { base44 } from '@/api/base44Client';
 export default function SensorySettings() {
   const { prefs, updatePref, activeThemeId } = useSensory();
   const [user, setUser] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteInput, setDeleteInput] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin('/sensory'));
   }, []);
+
+  const handleDeleteAccount = async () => {
+    if (deleteInput !== 'DELETE') return;
+    setDeleting(true);
+    // Delete all user data then sign out
+    if (user) {
+      const [tasks, profiles, subs, modes] = await Promise.all([
+        base44.entities.Task.filter({ created_by: user.email }),
+        base44.entities.UserProfile.filter({ user_email: user.email }),
+        base44.entities.Subscription.filter({ user_email: user.email }),
+        base44.entities.FocusMode.filter({ created_by: user.email }),
+      ]);
+      await Promise.all([
+        ...tasks.map(t => base44.entities.Task.delete(t.id)),
+        ...profiles.map(p => base44.entities.UserProfile.delete(p.id)),
+        ...subs.map(s => base44.entities.Subscription.delete(s.id)),
+        ...modes.map(m => base44.entities.FocusMode.delete(m.id)),
+      ]);
+    }
+    base44.auth.logout('/');
+  };
 
   const Toggle = ({ checked, onChange, label, description, icon: Icon, color = 'bg-primary' }) => (
     <div className="flex items-start justify-between gap-4 py-4 border-b border-border/50 last:border-0">
@@ -187,8 +212,86 @@ export default function SensorySettings() {
             </p>
           </div>
 
+          {/* Danger Zone */}
+          <section className="bg-card border border-destructive/30 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-destructive" />
+              <h2 className="font-display font-semibold text-base text-destructive">Danger Zone</h2>
+            </div>
+            <p className="text-xs text-muted-foreground">Permanently delete your account and all associated data. This cannot be undone.</p>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-destructive/40 text-destructive text-sm font-semibold hover:bg-destructive/5 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" /> Delete Account
+            </button>
+          </section>
+
         </div>
       </main>
+
+      {/* Delete confirmation dialog */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/30 backdrop-blur-sm"
+            onClick={e => e.target === e.currentTarget && setShowDeleteConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 10 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 10 }}
+              className="bg-card border border-border/60 rounded-2xl w-full max-w-md shadow-2xl p-6 space-y-5"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
+                  <AlertTriangle className="w-5 h-5 text-destructive" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-base text-foreground">Delete Account</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">This will permanently erase all your data.</p>
+                </div>
+              </div>
+
+              <ul className="text-xs text-muted-foreground space-y-1 bg-secondary/50 rounded-xl p-4">
+                <li>✗ All tasks and projects</li>
+                <li>✗ Your profile and preferences</li>
+                <li>✗ Focus modes and subscription</li>
+              </ul>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-foreground">Type <span className="font-mono text-destructive">DELETE</span> to confirm</label>
+                <input
+                  value={deleteInput}
+                  onChange={e => setDeleteInput(e.target.value)}
+                  placeholder="DELETE"
+                  className="w-full px-3 py-2.5 text-sm rounded-xl border border-border bg-background focus:outline-none focus:ring-1 focus:ring-destructive text-foreground placeholder:text-muted-foreground font-mono"
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => { setShowDeleteConfirm(false); setDeleteInput(''); }}
+                  className="px-4 py-2 rounded-xl border border-border text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteInput !== 'DELETE' || deleting}
+                  className="px-4 py-2 rounded-xl bg-destructive text-white text-sm font-semibold hover:bg-destructive/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                >
+                  {deleting ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                  {deleting ? 'Deleting…' : 'Delete my account'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { X, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion } from 'framer-motion';
 
 const EMOJIS = ['🧠', '⚡', '🔭', '🌊', '🌿', '🔥', '🎯', '🌙', '☀️', '🦋'];
@@ -167,12 +168,16 @@ export default function FocusModeEditor({ initial, onSave, onClose }) {
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Environment</h4>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-xs mb-1.5 block">Ambient sound</Label>
-                  <select value={form.ambient_sound} onChange={e => set('ambient_sound', e.target.value)}
-                    className="w-full h-9 text-sm border border-input rounded-lg px-2.5 bg-background text-foreground focus:ring-1 focus:ring-primary outline-none">
-                    {SOUNDS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-                  </select>
-                </div>
+                   <Label className="text-xs mb-1.5 block">Ambient sound</Label>
+                   <Select value={form.ambient_sound} onValueChange={v => set('ambient_sound', v)}>
+                     <SelectTrigger className="h-9 text-sm">
+                       <SelectValue placeholder="Select sound" />
+                     </SelectTrigger>
+                     <SelectContent>
+                       {SOUNDS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                     </SelectContent>
+                   </Select>
+                 </div>
                 <div>
                   <Label className="text-xs mb-1.5 block">Regulation reminder (min)</Label>
                   <Input type="number" min={5} value={form.regulation_reminder_minutes} onChange={e => set('regulation_reminder_minutes', Number(e.target.value))} className="h-9 text-sm" />

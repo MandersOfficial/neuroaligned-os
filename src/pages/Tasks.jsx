@@ -68,7 +68,7 @@ export default function Tasks() {
 
       <main className="flex-1 flex flex-col overflow-hidden pb-16 md:pb-0">
         {/* Top bar */}
-        <div className="px-6 py-4 border-b border-border/40 flex items-center justify-between gap-4 shrink-0">
+        <div className="px-6 py-4 border-b border-border/40 flex items-center justify-between gap-4 shrink-0" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 1rem)' }}>
           <div>
             <h1 className="font-display font-bold text-xl text-foreground">
               {selectedProject ? `${selectedProject.emoji} ${selectedProject.name}` : 'All Tasks'}
@@ -123,7 +123,7 @@ export default function Tasks() {
           </div>
 
           {/* Task board */}
-          <div className="flex-1 overflow-y-auto px-5 py-5">
+          <div className="flex-1 overflow-hidden flex flex-col">
             <TaskBoard
               tasks={visibleTasks}
               projects={projects}

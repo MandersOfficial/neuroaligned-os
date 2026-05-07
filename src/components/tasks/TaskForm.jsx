@@ -3,6 +3,7 @@ import { X, Calendar, Clock, Zap, FolderOpen, Flame, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion } from 'framer-motion';
 
 const ENERGY_OPTIONS = [
@@ -113,24 +114,26 @@ export default function TaskForm({ projects, onSave, onClose, initialProjectId =
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-sm font-medium flex items-center gap-1.5"><FolderOpen className="w-3.5 h-3.5" />Project</Label>
-              <select
-                value={form.project_id}
-                onChange={e => set('project_id', e.target.value)}
-                className="w-full h-9 text-sm border border-input rounded-lg px-2.5 bg-background text-foreground focus:ring-1 focus:ring-primary outline-none"
-              >
-                <option value="">No project</option>
-                {projects.map(p => <option key={p.id} value={p.id}>{p.emoji} {p.name}</option>)}
-              </select>
+              <Select value={form.project_id} onValueChange={v => set('project_id', v)}>
+                <SelectTrigger className="h-9 text-sm">
+                  <SelectValue placeholder="No project" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={null}>No project</SelectItem>
+                  {projects.map(p => <SelectItem key={p.id} value={p.id}>{p.emoji} {p.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label className="text-sm font-medium">Category</Label>
-              <select
-                value={form.category}
-                onChange={e => set('category', e.target.value)}
-                className="w-full h-9 text-sm border border-input rounded-lg px-2.5 bg-background text-foreground focus:ring-1 focus:ring-primary outline-none"
-              >
-                {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-              </select>
+              <Select value={form.category} onValueChange={v => set('category', v)}>
+                <SelectTrigger className="h-9 text-sm">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

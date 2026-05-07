@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Check, Clock, Flame, Zap, Leaf, Calendar, ChevronDown, Sparkles, Trash2, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ENERGY_STATES } from '@/components/dashboard/EnergyCheckIn';
+import PullToRefresh from '@/components/ui/PullToRefresh';
 
 const ENERGY_CONFIG = {
   low: { icon: Leaf, color: 'text-green-600', bg: 'bg-green-50', label: 'Low' },
@@ -112,6 +113,11 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
   const energyState = ENERGY_STATES.find(s => s.value === energy) || ENERGY_STATES[1];
   const isFiltering = energyState.allowedEnergy.length < 3;
 
+  const handleRefresh = useCallback(async () => {
+    const refreshed = await base44.entities.Task.list('-created_date', 100);
+    onTasksChange(refreshed);
+  }, [onTasksChange]);
+
   const filteredByEnergy = (colTasks) => {
     if (energyState.allowedEnergy.length === 3) return colTasks; // hyperfocus — show all
     if (energyState.value === 'burnout_risk') return []; // burnout — show nothing
@@ -129,7 +135,8 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
   };
 
   return (
-    <div className="flex flex-col gap-4 flex-1">
+    <PullToRefresh onRefresh={handleRefresh}>
+    <div className="flex flex-col gap-4 flex-1 px-5 py-5">
       {/* Energy filter banner */}
       {isFiltering && (
         <motion.div
@@ -201,5 +208,6 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
       })}
       </div>
     </div>
+    </PullToRefresh>
   );
 }

@@ -105,7 +105,7 @@ export default function DashboardSidebar({ user }) {
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t border-border/60 flex items-stretch">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t border-border/60 flex items-stretch" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         {MOBILE_NAV.map(({ icon: Icon, label, href }) => {
           const active = location.pathname === href;
           return (

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import PostCard from '../components/forum/PostCard';
 import NewPostModal from '../components/forum/NewPostModal';
 import ThreadView from '../components/forum/ThreadView';
+import PullToRefresh from '../components/ui/PullToRefresh';
 import { Plus, Search, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -43,6 +44,11 @@ export default function Forum() {
     setShowNew(false);
   };
 
+  const handleRefresh = useCallback(async () => {
+    const p = await base44.entities.ForumPost.filter({ status: 'approved' }, '-created_date', 50);
+    setPosts(p);
+  }, []);
+
   const handleLike = async (post) => {
     const updated = await base44.entities.ForumPost.update(post.id, { likes: (post.likes || 0) + 1 });
     setPosts(prev => prev.map(p => p.id === post.id ? updated : p));
@@ -60,7 +66,8 @@ export default function Forum() {
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
 
-      <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+      <main className="flex-1 overflow-hidden pb-20 md:pb-0 flex flex-col">
+      <PullToRefresh onRefresh={handleRefresh}>
         <div className="max-w-3xl mx-auto px-5 lg:px-8 py-7 space-y-5">
 
           {/* Header */}
@@ -127,6 +134,7 @@ export default function Forum() {
             </div>
           )}
         </div>
+      </PullToRefresh>
       </main>
 
       <AnimatePresence>
