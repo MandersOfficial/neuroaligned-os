@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +7,8 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 const PRONOUNS = ['He/Him', 'She/Her', 'They/Them', 'He/They', 'She/They', 'Prefer not to say'];
 
 export default function StepWelcome({ data, onChange, onNext }) {
+  const [acknowledged, setAcknowledged] = useState(false);
+
   return (
     <div className="space-y-8">
       <div className="space-y-3">
@@ -58,10 +61,29 @@ export default function StepWelcome({ data, onChange, onNext }) {
         </div>
       </div>
 
+      {/* Disclaimer acknowledgment */}
+      <div
+        onClick={() => setAcknowledged(!acknowledged)}
+        className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
+          acknowledged
+            ? 'bg-primary/5 border-primary/30'
+            : 'bg-card border-border/60 hover:border-primary/20'
+        }`}
+      >
+        <div className={`w-5 h-5 rounded-md border-2 shrink-0 mt-0.5 flex items-center justify-center transition-colors ${
+          acknowledged ? 'bg-primary border-primary' : 'border-border'
+        }`}>
+          {acknowledged && <span className="text-white text-xs font-bold">✓</span>}
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          I understand that NeuroAligned is a <strong className="text-foreground">productivity and self-management tool</strong>, not a substitute for therapy or professional mental health support. The creator is <strong className="text-foreground">not a licensed therapist or medical professional</strong>. If I'm in crisis or need clinical support, I'll seek help from a qualified professional.
+        </p>
+      </div>
+
       <Button
         size="lg"
         onClick={onNext}
-        disabled={!data.display_name?.trim()}
+        disabled={!data.display_name?.trim() || !acknowledged}
         className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-10 py-6 text-base font-semibold group disabled:opacity-50"
       >
         Let's go
