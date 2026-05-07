@@ -136,7 +136,7 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-    <div className="flex flex-col gap-5 flex-1 px-6 py-6">
+    <div className="flex flex-col gap-5 flex-1 px-4 py-5 overflow-x-auto">
       {/* Energy filter banner */}
       {isFiltering && (
         <motion.div
@@ -155,7 +155,7 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
         </motion.div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(3, minmax(260px, 1fr))' }}>
       {STATUS_COLS.map(col => {
         const colTasks = tasks.filter(t => t.status === col.id);
         const matchingTasks = col.id === 'done' ? colTasks : filteredByEnergy(colTasks);

@@ -100,7 +100,7 @@ export default function Tasks() {
         {/* Body */}
         <div className="flex flex-1 overflow-hidden">
           {/* Project sidebar */}
-          <div className="hidden md:block w-56 border-r border-border/40 py-5 overflow-y-auto shrink-0 space-y-6 px-3">
+          <div className="hidden xl:block w-52 border-r border-border/40 py-5 overflow-y-auto shrink-0 space-y-6 px-3">
             <ProjectPanel
               projects={projects}
               selectedProjectId={selectedProjectId}
