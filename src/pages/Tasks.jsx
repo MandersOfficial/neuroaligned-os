@@ -10,6 +10,7 @@ import TaskForm from '../components/tasks/TaskForm';
 import EnergyScheduler from '../components/tasks/EnergyScheduler';
 import AIGuidancePanel from '../components/tasks/AIGuidancePanel';
 import RegulationWidget from '../components/regulation/RegulationWidget';
+import CreateProjectModal from '../components/tasks/CreateProjectModal';
 
 export default function Tasks() {
   const [user, setUser] = useState(null);
@@ -23,6 +24,7 @@ export default function Tasks() {
   const [showForm, setShowForm] = useState(false);
   const [recommendedIds, setRecommendedIds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showCreateProject, setShowCreateProject] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -97,6 +99,40 @@ export default function Tasks() {
           </div>
         </div>
 
+        {/* Project filter bar */}
+        <div className="flex items-center gap-2 px-6 py-2.5 border-b border-border/40 overflow-x-auto shrink-0">
+          <button
+            onClick={() => setSelectedProjectId(null)}
+            className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              !selectedProjectId
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'border-border text-muted-foreground hover:text-foreground bg-card'
+            }`}
+          >
+            All Tasks
+          </button>
+          {projects.map(p => (
+            <button
+              key={p.id}
+              onClick={() => setSelectedProjectId(p.id === selectedProjectId ? null : p.id)}
+              className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                selectedProjectId === p.id
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'border-border text-muted-foreground hover:text-foreground bg-card'
+              }`}
+            >
+              <span>{p.emoji}</span>
+              {p.name}
+            </button>
+          ))}
+          <button
+            onClick={() => setShowCreateProject(true)}
+            className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-primary/50 bg-card transition-all"
+          >
+            + New Project
+          </button>
+        </div>
+
         {/* Body */}
         <div className="flex flex-1 overflow-hidden">
           {/* Project sidebar */}
@@ -133,6 +169,12 @@ export default function Tasks() {
 
       {/* Task Form Modal */}
       <AnimatePresence>
+        {showCreateProject && (
+          <CreateProjectModal
+            onCreated={(p) => setProjects(prev => [...prev, p])}
+            onClose={() => setShowCreateProject(false)}
+          />
+        )}
         {showForm && (
           <TaskForm
             projects={projects}
