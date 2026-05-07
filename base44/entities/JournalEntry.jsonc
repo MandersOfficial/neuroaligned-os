@@ -1,0 +1,94 @@
+{
+  "name": "JournalEntry",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string",
+      "title": "Brain Dump Content"
+    },
+    "mood": {
+      "type": "string",
+      "title": "Mood",
+      "enum": [
+        "overwhelmed",
+        "low_energy",
+        "scattered",
+        "neutral",
+        "focused"
+      ]
+    },
+    "ai_insights": {
+      "type": "array",
+      "title": "AI Insights",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ai_action_steps": {
+      "type": "array",
+      "title": "AI Suggested Action Steps",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ai_themes": {
+      "type": "array",
+      "title": "AI Detected Themes",
+      "items": {
+        "type": "string"
+      }
+    },
+    "analyzed": {
+      "type": "boolean",
+      "title": "AI Analyzed",
+      "default": false
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Entry Date"
+    }
+  },
+  "required": [
+    "content"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

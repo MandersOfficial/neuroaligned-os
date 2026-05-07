@@ -23,6 +23,7 @@ import Forum from './pages/Forum';
 import CheckIn from './pages/CheckIn';
 import BodyDoubling from './pages/BodyDoubling';
 import SensorySettings from './pages/SensorySettings';
+import Journal from './pages/Journal';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
       <Route path="/check-in" element={<CheckIn />} />
       <Route path="/body-doubling" element={<BodyDoubling />} />
       <Route path="/sensory" element={<SensorySettings />} />
+      <Route path="/journal" element={<Journal />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
