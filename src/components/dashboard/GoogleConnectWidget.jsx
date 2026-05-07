@@ -24,7 +24,11 @@ function ConnectorRow({ icon: Icon, name, connectorId, color, bg }) {
 
   const handleDisconnect = async () => {
     setLoading(true);
-    await base44.connectors.disconnectAppUser(connectorId);
+    try {
+      await base44.connectors.disconnectAppUser(connectorId);
+    } catch {
+      // ignore if no active connection
+    }
     setConnected(false);
     setLoading(false);
   };

@@ -61,7 +61,11 @@ function IntegrationCard({ integration }) {
 
   const handleDisconnect = async () => {
     setLoading(true);
-    await base44.connectors.disconnectAppUser(integration.connectorId);
+    try {
+      await base44.connectors.disconnectAppUser(integration.connectorId);
+    } catch {
+      // ignore if no active connection
+    }
     setConnected(false);
     setLoading(false);
   };
