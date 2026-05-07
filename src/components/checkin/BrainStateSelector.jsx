@@ -25,11 +25,12 @@ export const BRAIN_STATES = [
     emoji: '🔴',
     label: 'Overwhelmed',
     sublabel: 'Fight / flight / shutdown',
-    color: 'border-red-800/40 bg-red-950/30 hover:bg-red-900/40',
-    activeColor: 'border-red-500/70 bg-red-950/50 ring-2 ring-red-500/40',
-    textColor: 'text-red-300',
-    subColor: 'text-red-400/70',
-    zoneBadge: 'bg-red-500/20 text-red-300 border-red-500/30',
+    color: 'border-border/60 bg-card hover:bg-secondary/60',
+    activeColor: 'border-red-400 bg-red-50 dark:bg-red-950/30 ring-2 ring-red-400/30',
+    textColor: 'text-foreground',
+    subColor: 'text-muted-foreground',
+    accentColor: 'bg-red-500',
+    zoneBadge: 'bg-red-500/20 text-red-600 border-red-300',
     supportMsg: "Your nervous system is in the red zone right now.",
     subMsg: "This is fight-or-flight. You can't think straight here — and that's biology, not failure. Let's regulate first.",
     regulationTool: 'breathing',
@@ -44,11 +45,12 @@ export const BRAIN_STATES = [
     emoji: '🟡',
     label: 'Scattered / Anxious',
     sublabel: 'Edge of regulation',
-    color: 'border-yellow-800/40 bg-yellow-950/30 hover:bg-yellow-900/40',
-    activeColor: 'border-yellow-500/70 bg-yellow-950/50 ring-2 ring-yellow-500/40',
-    textColor: 'text-yellow-300',
-    subColor: 'text-yellow-400/70',
-    zoneBadge: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+    color: 'border-border/60 bg-card hover:bg-secondary/60',
+    activeColor: 'border-yellow-400 bg-yellow-50 dark:bg-yellow-950/30 ring-2 ring-yellow-400/30',
+    textColor: 'text-foreground',
+    subColor: 'text-muted-foreground',
+    accentColor: 'bg-yellow-400',
+    zoneBadge: 'bg-yellow-500/20 text-yellow-700 border-yellow-300',
     supportMsg: "You're in the yellow zone — close to regulated, but not quite there.",
     subMsg: "Your brain is revved up or stretched thin. A short grounding exercise can pull you back to centre.",
     regulationTool: 'grounding',
@@ -63,11 +65,12 @@ export const BRAIN_STATES = [
     emoji: '🟢',
     label: 'Okay / Neutral',
     sublabel: 'Window of tolerance',
-    color: 'border-green-800/40 bg-green-950/30 hover:bg-green-900/40',
-    activeColor: 'border-green-500/70 bg-green-950/50 ring-2 ring-green-500/40',
-    textColor: 'text-green-300',
-    subColor: 'text-green-400/70',
-    zoneBadge: 'bg-green-500/20 text-green-300 border-green-500/30',
+    color: 'border-border/60 bg-card hover:bg-secondary/60',
+    activeColor: 'border-green-400 bg-green-50 dark:bg-green-950/30 ring-2 ring-green-400/30',
+    textColor: 'text-foreground',
+    subColor: 'text-muted-foreground',
+    accentColor: 'bg-green-500',
+    zoneBadge: 'bg-green-500/20 text-green-700 border-green-300',
     supportMsg: "You're in the green zone — your window of tolerance.",
     subMsg: "You're regulated and present. This is where good work happens. Let's make the most of it.",
     regulationTool: null,
@@ -82,11 +85,12 @@ export const BRAIN_STATES = [
     emoji: '🔵',
     label: 'Low energy / Foggy',
     sublabel: 'Hypo-arousal / freeze',
-    color: 'border-blue-800/40 bg-blue-950/30 hover:bg-blue-900/40',
-    activeColor: 'border-blue-500/70 bg-blue-950/50 ring-2 ring-blue-500/40',
-    textColor: 'text-blue-300',
-    subColor: 'text-blue-400/70',
-    zoneBadge: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+    color: 'border-border/60 bg-card hover:bg-secondary/60',
+    activeColor: 'border-blue-400 bg-blue-50 dark:bg-blue-950/30 ring-2 ring-blue-400/30',
+    textColor: 'text-foreground',
+    subColor: 'text-muted-foreground',
+    accentColor: 'bg-blue-500',
+    zoneBadge: 'bg-blue-500/20 text-blue-700 border-blue-300',
     supportMsg: "You're in the blue zone — low activation, possibly freeze mode.",
     subMsg: "This is hypo-arousal. Your brain is conserving energy. Movement or stimulation can help bring you back online gently.",
     regulationTool: 'movement',
@@ -101,11 +105,12 @@ export const BRAIN_STATES = [
     emoji: '✨',
     label: 'Focused / In flow',
     sublabel: 'Extended green zone',
-    color: 'border-purple-800/40 bg-purple-950/30 hover:bg-purple-900/40',
-    activeColor: 'border-purple-500/70 bg-purple-950/50 ring-2 ring-purple-500/40',
-    textColor: 'text-purple-300',
-    subColor: 'text-purple-400/70',
-    zoneBadge: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+    color: 'border-border/60 bg-card hover:bg-secondary/60',
+    activeColor: 'border-purple-400 bg-purple-50 dark:bg-purple-950/30 ring-2 ring-purple-400/30',
+    textColor: 'text-foreground',
+    subColor: 'text-muted-foreground',
+    accentColor: 'bg-purple-500',
+    zoneBadge: 'bg-purple-500/20 text-purple-700 border-purple-300',
     supportMsg: "You're in flow state — extended green zone.",
     subMsg: "This is rare and precious. Protect this window. Go deep on your most meaningful work before the window closes.",
     regulationTool: null,
@@ -126,30 +131,32 @@ export const ZONE_LABELS = {
 
 export default function BrainStateSelector({ selected, onSelect }) {
   return (
-    <div className="grid grid-cols-1 gap-2.5 w-full max-w-sm mx-auto">
-      {BRAIN_STATES.map((state, i) => (
-        <motion.button
-          key={state.value}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.07 }}
-          onClick={() => onSelect(state)}
-          className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl border-2 transition-all text-left ${
-            selected?.value === state.value ? state.activeColor : state.color
-          }`}
-        >
-          <span className="text-xl leading-none">{state.emoji}</span>
-          <div className="flex-1 min-w-0">
-            <p className={`font-semibold text-sm ${state.textColor}`}>{state.label}</p>
-            <p className={`text-[11px] leading-tight ${state.subColor}`}>{state.sublabel}</p>
-          </div>
-          {selected?.value === state.value && (
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${state.zoneBadge}`}>
-              selected
-            </span>
-          )}
-        </motion.button>
-      ))}
+    <div className="grid grid-cols-1 gap-2 w-full max-w-sm mx-auto">
+      {BRAIN_STATES.map((state, i) => {
+        const isActive = selected?.value === state.value;
+        return (
+          <motion.button
+            key={state.value}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.07 }}
+            onClick={() => onSelect(state)}
+            className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl border-2 transition-all text-left ${
+              isActive ? state.activeColor : state.color
+            }`}
+          >
+            {/* Color accent dot */}
+            <div className={`w-3 h-3 rounded-full shrink-0 ${state.accentColor}`} />
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm text-foreground">{state.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{state.sublabel}</p>
+            </div>
+            {isActive && (
+              <div className={`w-2 h-2 rounded-full shrink-0 ${state.accentColor}`} />
+            )}
+          </motion.button>
+        );
+      })}
     </div>
   );
 }
