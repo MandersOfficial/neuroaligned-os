@@ -26,6 +26,7 @@ import SensorySettings from './pages/SensorySettings';
 import Journal from './pages/Journal';
 import FocusRooms from './pages/FocusRooms';
 import Productivity from './pages/Productivity';
+import Projects from './pages/Projects';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
       <Route path="/journal" element={<Journal />} />
       <Route path="/focus-rooms" element={<FocusRooms />} />
       <Route path="/productivity" element={<Productivity />} />
+      <Route path="/projects" element={<Projects />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

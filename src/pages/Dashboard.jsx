@@ -5,9 +5,8 @@ import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import RegulationWidget from '../components/regulation/RegulationWidget';
 import TrialBanner from '../components/subscription/TrialBanner';
 import GoogleConnectWidget from '../components/dashboard/GoogleConnectWidget';
-import { CheckCircle2, Circle, ArrowRight, Zap, Clock, Brain } from 'lucide-react';
+import { CheckCircle2, Circle, ArrowRight, Zap, Clock, Brain, Calendar, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 as b44 } from '@/api/base44Client';
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -99,6 +98,7 @@ export default function Dashboard() {
   const [profile, setProfile] = useState(null);
   const [energy, setEnergy] = useState('flow');
   const [tasks, setTasks] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [trialDaysLeft, setTrialDaysLeft] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -108,12 +108,14 @@ export default function Dashboard() {
       const u = await base44.auth.me();
       if (!u) { base44.auth.redirectToLogin('/dashboard'); return; }
       setUser(u);
-      const [t, subs, profiles] = await Promise.all([
+      const [t, subs, profiles, proj] = await Promise.all([
         base44.entities.Task.filter({ is_today: true }),
         base44.entities.Subscription.filter({ created_by: u.email }, '-created_date', 1),
         base44.entities.UserProfile.filter({ user_email: u.email }),
+        base44.entities.Project.filter({ status: 'active' }, '-created_date', 5),
       ]);
       setTasks(t);
+      setProjects(proj);
       if (profiles.length > 0) {
         const p = profiles[0];
         setProfile(p);
@@ -225,6 +227,63 @@ export default function Dashboard() {
             >
               + Add task for today
             </button>
+          </div>
+
+          {/* Projects */}
+          <div className="bg-card border border-border/60 rounded-2xl p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Active Projects</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{projects.length} in progress</p>
+              </div>
+              <Link to="/projects" className="text-xs text-primary font-semibold flex items-center gap-1 hover:underline">
+                Manage <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+
+            {projects.length === 0 ? (
+              <div className="text-center py-5 text-muted-foreground">
+                <p className="text-sm">✨ No active projects. <Link to="/projects" className="text-primary hover:underline">Create one</Link>.</p>
+              </div>
+            ) : (
+              <div>
+                {projects.map(project => (
+                  <div key={project.id} className="flex items-center gap-3 py-2.5 border-b border-border/30 last:border-0">
+                    <span className="text-lg leading-none shrink-0">{project.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{project.name}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        {project.client_name && (
+                          <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                            <User className="w-3 h-3" />{project.client_name}
+                          </span>
+                        )}
+                        {project.due_date && (
+                          <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                            <Calendar className="w-3 h-3" />{new Date(project.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </span>
+                        )}
+                        {project.priority && project.priority !== 'medium' && (
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${project.priority === 'high' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                            {project.priority}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <Link to="/projects" className="shrink-0 text-[10px] text-muted-foreground hover:text-primary transition-colors">
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <Link
+              to="/projects"
+              className="w-full py-2.5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 text-xs text-muted-foreground hover:text-primary transition-colors font-medium text-center block"
+            >
+              + New project
+            </Link>
           </div>
 
           {/* Quick actions — personalized based on onboarding */}
