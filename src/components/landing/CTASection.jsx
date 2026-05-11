@@ -24,13 +24,13 @@ export default function CTASection() {
             <Brain className="w-8 h-8 text-primary" />
           </div>
 
-          <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-background tracking-tight leading-tight">
-            You're not lazy or broken.<br />
-            <span className="text-primary">You just need the right tool.</span>
+          <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-tight text-[hsl(var(--card-foreground))]">You're not lazy or broken.
+You just need the right tool.
+
           </h2>
 
-          <p className="text-background/60 text-lg max-w-2xl mx-auto leading-relaxed">
-            Thousands of ADHD, autistic, and neurodivergent business owners use NeuroAligned to get more done — without burning out or fighting their own brain.
+          <p className="text-lg max-w-2xl mx-auto leading-relaxed text-[hsl(var(--foreground))]">Thousands of ADHD, autistic, and neurodivergent business owners use NeuroAligned to get more done — without burning out or fighting their own brain.
+
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
