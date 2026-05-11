@@ -40,8 +40,8 @@ You just need the right tool.
             </Button>
           </div>
 
-          <p className="text-background/40 text-sm">
-            Free trial · No credit card · Cancel anytime
+          <p className="text-sm text-[hsl(var(--foreground))]">Free trial · No credit card · Cancel anytime
+
           </p>
         </motion.div>
       </div>
