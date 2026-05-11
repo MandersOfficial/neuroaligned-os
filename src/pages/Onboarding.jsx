@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
+import DisclaimerModal from '../components/onboarding/DisclaimerModal';
 import OnboardingLayout from '../components/onboarding/OnboardingLayout';
 import StepWelcome from '../components/onboarding/StepWelcome';
 import StepNeurotype from '../components/onboarding/StepNeurotype';
@@ -17,6 +18,7 @@ export default function Onboarding() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [user, setUser] = useState(null);
   const [data, setData] = useState({
     display_name: '',
@@ -33,10 +35,7 @@ export default function Onboarding() {
 
   useEffect(() => {
     base44.auth.me().then(u => {
-      if (!u) {
-        base44.auth.redirectToLogin('/onboarding');
-        return;
-      }
+      if (!u) return; // allow unauthenticated users to browse onboarding
       setUser(u);
       setData(prev => ({ ...prev, display_name: u.full_name?.split(' ')[0] || '' }));
       return base44.entities.UserProfile.filter({ user_email: u.email }).then(profiles => {
@@ -44,14 +43,21 @@ export default function Onboarding() {
           navigate('/dashboard');
         }
       });
-    }).catch(() => {
-      base44.auth.redirectToLogin('/onboarding');
-    });
+    }).catch(() => {});
   }, []);
 
   const onChange = (field, value) => setData(prev => ({ ...prev, [field]: value }));
 
-  const handleFinish = async () => {
+  const handleDisclaimerAccept = () => {
+    setShowDisclaimer(false);
+    doFinish();
+  };
+
+  const handleFinish = () => {
+    setShowDisclaimer(true);
+  };
+
+  const doFinish = async () => {
     if (!user) {
       base44.auth.redirectToLogin('/onboarding');
       return;
@@ -129,6 +135,12 @@ export default function Onboarding() {
   };
 
   return (
+    <>
+    <DisclaimerModal
+      open={showDisclaimer}
+      onAccept={handleDisclaimerAccept}
+      onClose={() => setShowDisclaimer(false)}
+    />
     <OnboardingLayout step={step} totalSteps={TOTAL_STEPS}>
       {step === 1 && (
         <StepWelcome data={data} onChange={onChange} onNext={() => setStep(2)} />
@@ -152,5 +164,6 @@ export default function Onboarding() {
         <StepComplete name={data.display_name} data={data} onFinish={handleFinish} loading={loading} />
       )}
     </OnboardingLayout>
+    </>
   );
 }

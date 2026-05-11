@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Brain } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
 
 const navLinks = [
   { label: 'Features', href: '#features' },
@@ -13,6 +14,7 @@ const navLinks = [
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
@@ -46,14 +48,14 @@ export default function Navbar() {
             <Button variant="ghost" size="sm" onClick={() => base44.auth.redirectToLogin('/dashboard')} className="text-muted-foreground">
               Sign In
             </Button>
-            <Button size="sm" onClick={() => base44.auth.redirectToLogin('/onboarding')} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-5">
+            <Button size="sm" onClick={() => navigate('/onboarding')} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-5">
               Start Free Trial
             </Button>
           </div>
 
           {/* Mobile CTA */}
           <div className="md:hidden">
-            <Button size="sm" onClick={() => base44.auth.redirectToLogin('/onboarding')} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-xs">
+            <Button size="sm" onClick={() => navigate('/onboarding')} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-xs">
               Free Trial
             </Button>
           </div>
@@ -92,7 +94,7 @@ export default function Navbar() {
                 <Button variant="ghost" onClick={() => base44.auth.redirectToLogin('/dashboard')} className="w-full justify-start text-muted-foreground">
                   Sign In
                 </Button>
-                <Button onClick={() => base44.auth.redirectToLogin('/onboarding')} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full">
+                <Button onClick={() => navigate('/onboarding')} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full">
                   Start Free Trial
                 </Button>
               </div>

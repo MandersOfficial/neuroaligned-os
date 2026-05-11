@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Brain } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
 
 export default function CTASection() {
+  const navigate = useNavigate();
   return (
     <section className="py-20 lg:py-32 relative overflow-hidden opacity-100" style={{ background: 'linear-gradient(135deg, #000000 0%, #1a0033 30%, #2d0060 55%, #0d1b6e 80%, #000820 100%)' }}>
       {/* Top fade */}
@@ -34,7 +35,7 @@ You just need the right tool.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={() => base44.auth.redirectToLogin('/onboarding')} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-10 py-6 text-base font-semibold group">
+            <Button size="lg" onClick={() => navigate('/onboarding')} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-10 py-6 text-base font-semibold group">
               Try It Free for 14 Days
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
