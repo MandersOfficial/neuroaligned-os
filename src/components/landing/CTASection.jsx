@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 
 export default function CTASection() {
   return (
-    <section className="py-20 lg:py-32 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #000000 0%, #1a0033 30%, #2d0060 55%, #0d1b6e 80%, #000820 100%)' }}>
+    <section className="py-20 lg:py-32 relative overflow-hidden opacity-100" style={{ background: 'linear-gradient(135deg, #000000 0%, #1a0033 30%, #2d0060 55%, #0d1b6e 80%, #000820 100%)' }}>
       {/* Top fade */}
       <div className="absolute top-0 left-0 right-0 h-24 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), transparent)' }} />
       {/* Bottom fade */}
