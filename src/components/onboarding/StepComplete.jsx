@@ -34,21 +34,18 @@ export default function StepComplete({ name, data, onFinish, loading }) {
     goals.length > 0 && `${goals.length} task${goals.length > 1 ? 's' : ''} waiting in your dashboard`,
   ].filter(Boolean);
 
-  const handleStart = async () => {
+  const runAnimation = async () => {
     setBuilding(true);
     setStarted(true);
-
-    // Kick off the actual backend work in parallel
-    onFinish();
-
-    // Animate steps sequentially
-    let elapsed = 0;
     for (let i = 0; i < BUILD_STEPS.length; i++) {
-      elapsed += BUILD_STEPS[i].duration;
       await new Promise(r => setTimeout(r, BUILD_STEPS[i].duration));
       setCompletedSteps(prev => [...prev, i]);
     }
-    // onFinish handles the redirect once all backend calls are done
+  };
+
+  const handleStart = () => {
+    // Show disclaimer first; parent will call back via onFinish once accepted
+    onFinish(runAnimation);
   };
 
   const totalDuration = BUILD_STEPS.reduce((s, step) => s + step.duration, 0);

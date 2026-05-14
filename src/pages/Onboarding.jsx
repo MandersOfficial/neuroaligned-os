@@ -19,6 +19,7 @@ export default function Onboarding() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [pendingAnimation, setPendingAnimation] = useState(null);
   const [user, setUser] = useState(null);
   const [data, setData] = useState({
     display_name: '',
@@ -50,10 +51,12 @@ export default function Onboarding() {
 
   const handleDisclaimerAccept = () => {
     setShowDisclaimer(false);
+    if (pendingAnimation) pendingAnimation();
     doFinish();
   };
 
-  const handleFinish = () => {
+  const handleFinish = (runAnimation) => {
+    setPendingAnimation(() => runAnimation);
     setShowDisclaimer(true);
   };
 
@@ -63,8 +66,8 @@ export default function Onboarding() {
       return;
     }
     setLoading(true);
-    // Small delay to let the progress animation run before redirect
-    await new Promise(r => setTimeout(r, 4800));
+    // Wait for the build animation to complete (~3.7s total)
+    await new Promise(r => setTimeout(r, 3800));
 
     // Update display name (only if authenticated)
     if (data.display_name && user) {
