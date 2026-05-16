@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Brain } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const navLinks = [
   { label: 'Features', href: '#features' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'Testimonials', href: '#testimonials' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'About', href: '/about', isRoute: true },
+  { label: 'Contact', href: '/contact', isRoute: true },
 ];
 
 export default function Navbar() {
@@ -33,13 +33,23 @@ export default function Navbar() {
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map(link => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {link.label}
-              </a>
+              link.isRoute ? (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                </a>
+              )
             ))}
           </div>
 
@@ -81,14 +91,25 @@ export default function Navbar() {
           >
             <div className="px-4 py-4 space-y-3">
               {navLinks.map(link => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {link.label}
-                </a>
+                link.isRoute ? (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                )
               ))}
               <div className="pt-3 border-t border-border space-y-2">
                 <Button variant="ghost" onClick={() => base44.auth.redirectToLogin('/dashboard')} className="w-full justify-start text-muted-foreground">

@@ -11,6 +11,7 @@ const CATEGORIES = [
   { id: 'executive', label: 'Executive Function', icon: Zap },
   { id: 'burnout', label: 'Burnout', icon: Shield },
   { id: 'sensory', label: 'Sensory', icon: Heart },
+  { id: 'regulation', label: 'Regulation First™', icon: Heart },
 ];
 
 export const ARTICLES = [
@@ -279,6 +280,91 @@ Identify your top 3 techniques. Practice them when regulated so they're automati
     tags: ['Sensory', 'Regulation', 'Mental Health'],
   },
   {
+    id: 9, category: 'regulation', readTime: '5 min',
+    title: 'The Regulation First Framework™: Why Regulation Beats Productivity Hacks',
+    summary: 'Most productivity systems fail neurodivergent entrepreneurs because they skip the foundational step: nervous system regulation. Here\'s what to do instead.',
+    emoji: '🧬',
+    content: `## Why Productivity Hacks Don't Work for ND Brains
+
+You've tried time-blocking. You've tried Pomodoro. You've tried every planner. And yet — the moment your nervous system is dysregulated, none of it works.
+
+That's not a personal failing. That's neuroscience.
+
+## The Science of the Prefrontal Cortex
+
+Your prefrontal cortex (PFC) is responsible for planning, focus, decision-making, and task initiation — the core executive functions every entrepreneur needs. But the PFC is also the first region to go offline when your nervous system enters a stress or threat state.
+
+For neurodivergent people, the threshold for dysregulation is often lower, the recovery time is longer, and chronic masking creates a baseline state of cognitive tax that neurotypical productivity systems simply don't account for.
+
+## The Regulation First Framework™
+
+Developed in collaboration with **Amanda White** (mandawhite.com) — CPD Certified AI Consultant and neurodivergent entrepreneur — the Regulation First Framework™ flips the productivity script:
+
+**1. Assess** your nervous system state before you open your task list.
+**2. Regulate** if needed — regulation is your first task of the day.
+**3. Match** your work to your actual current energy capacity.
+**4. Build recovery** into your structure as a non-negotiable.
+**5. Track** patterns without shame for long-term self-knowledge.
+
+## How NeuroAligned Implements This
+
+Every feature in NeuroAligned is built around this framework:
+- **Brain Check-In** — assess before you plan
+- **Energy Selector** — match work to capacity
+- **Focus Modes** — work blocks designed around ND rhythms
+- **Regulation Widget** — regulation tools always one tap away
+- **Burnout Dashboard** — early warning before collapse
+
+## Your Takeaway
+
+Before you open your task list tomorrow morning, take 60 seconds to check in with your body. Are you regulated? If yes — great, proceed. If not — 5 minutes of regulation will return more productive output than forcing productivity from a dysregulated state.
+
+Regulate first. Then create.`,
+    tags: ['Regulation First', 'Framework', 'Neuroscience'],
+  },
+  {
+    id: 10, category: 'regulation', readTime: '4 min',
+    title: 'Morning Regulation Rituals for Neurodivergent Entrepreneurs',
+    summary: 'The first 20 minutes of your morning can set your nervous system up for a productive day — or tank it. Build a regulation-first morning ritual.',
+    emoji: '🌅',
+    content: `## Why Mornings Matter More for ND Brains
+
+For many neurodivergent entrepreneurs, mornings are the most vulnerable regulation window. Sleep inertia, cortisol spikes, and the sudden transition from rest to "being a human" can dysregulate your nervous system before you've opened a single app.
+
+Most morning routines say: check your phone, read email, jump into work. The Regulation First Framework™ says: don't.
+
+## A Regulation-First Morning Protocol
+
+**Minutes 0–5: Sensory Soft Start**
+Avoid screens. Drink water. Let your nervous system wake gently — not in a flood of notifications and decisions.
+
+**Minutes 5–10: Body Check-In**
+Before you plan your day, notice your body. Tight chest? Foggy head? Buzzing with anxiety? Name your state without judgment. This is the data your day should be built on.
+
+**Minutes 10–15: One Regulating Practice**
+Choose based on your state:
+- Dysregulated/anxious: box breathing or cold water
+- Low energy/shutdown: gentle movement, sunlight, music
+- Neutral: journaling or gratitude practice
+
+**Minutes 15–20: Set Your Intention (Not a Task List)**
+One sentence: "Today I am focused on ___." Keep it macro. Not a to-do list — a direction.
+
+## Then Open Your Task List
+
+Now — and only now — you open NeuroAligned, set your energy level, and build your day from a regulated nervous system.
+
+## Why This Works
+
+You have just:
+1. Given your PFC time to come online
+2. Assessed your actual capacity for the day
+3. Set a regulatory baseline before demands begin
+
+This is not woo. This is neuroscience applied to business.`,
+    tags: ['Regulation First', 'Morning Routine', 'Nervous System'],
+  },
+  {
     id: 8, category: 'adhd', readTime: '5 min',
     title: 'Time Blindness: Practical Fixes for the ADHD Entrepreneur',
     summary: 'ADHD time blindness is neurological, not a character flaw. Here are 10 external systems to compensate for a brain that doesn\'t feel time.',
@@ -337,7 +423,10 @@ export default function KnowledgeBase() {
           {/* Header */}
           <div>
             <h1 className="font-display font-bold text-2xl text-foreground">Knowledge Base</h1>
-            <p className="text-sm text-muted-foreground mt-1">Guides and strategies written for neurodivergent brains — by people who get it.</p>
+            <p className="text-sm text-muted-foreground mt-1">Guides and strategies written for neurodivergent brains — by Amanda White & the NeuroAligned team.</p>
+            <a href="/regulation-first" className="inline-flex items-center gap-1.5 mt-2 text-xs text-primary font-semibold hover:underline">
+              🧬 Learn about the Regulation First Framework™ →
+            </a>
           </div>
 
           {/* Search */}

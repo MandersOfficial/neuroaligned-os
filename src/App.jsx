@@ -27,6 +27,10 @@ import Journal from './pages/Journal';
 import FocusRooms from './pages/FocusRooms';
 import Productivity from './pages/Productivity';
 import Projects from './pages/Projects';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import RegulationFirst from './pages/RegulationFirst';
+import Disclaimer from './pages/Disclaimer';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -74,6 +78,10 @@ const AuthenticatedApp = () => {
       <Route path="/focus-rooms" element={<FocusRooms />} />
       <Route path="/productivity" element={<Productivity />} />
       <Route path="/projects" element={<Projects />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/regulation-first" element={<RegulationFirst />} />
+      <Route path="/disclaimer" element={<Disclaimer />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
