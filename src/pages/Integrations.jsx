@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import AutoBreakScheduler from '../components/integrations/AutoBreakScheduler';
 import ContextCapture from '../components/integrations/ContextCapture';
+import NotionSync from '../components/integrations/NotionSync';
 
 const INTEGRATIONS = [
   {
@@ -158,6 +159,7 @@ export default function Integrations() {
                 { id: 'overview', label: 'Overview', icon: Zap },
                 { id: 'breaks', label: 'Auto-Break Scheduler', icon: Coffee },
                 { id: 'capture', label: 'AI Context Capture', icon: Brain },
+                { id: 'notion', label: 'Notion Sync', icon: null },
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -168,7 +170,10 @@ export default function Integrations() {
                       : 'border-transparent text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  <tab.icon className="w-3.5 h-3.5" />
+                  {tab.icon
+                    ? <tab.icon className="w-3.5 h-3.5" />
+                    : <span className="w-3.5 h-3.5 rounded bg-slate-900 text-white text-[9px] font-bold flex items-center justify-center">N</span>
+                  }
                   <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               ))}
@@ -178,6 +183,7 @@ export default function Integrations() {
               {activeTab === 'overview' && <IntegrationsOverview onTabChange={setActiveTab} />}
               {activeTab === 'breaks' && <AutoBreakScheduler />}
               {activeTab === 'capture' && <ContextCapture />}
+              {activeTab === 'notion' && <NotionSync />}
             </div>
           </div>
         </div>
