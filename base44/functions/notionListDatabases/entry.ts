@@ -6,15 +6,13 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { notion_access_token } = await req.json();
-    if (!notion_access_token) {
-      return Response.json({ error: 'Missing notion_access_token' }, { status: 400 });
-    }
+    // Get the user's Notion OAuth access token
+    const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection('6a1cfa4c8db502aafb000e1a');
 
     const res = await fetch('https://api.notion.com/v1/search', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${notion_access_token}`,
+        'Authorization': `Bearer ${accessToken}`,
         'Notion-Version': '2022-06-28',
         'Content-Type': 'application/json',
       },
@@ -25,6 +23,11 @@ Deno.serve(async (req) => {
     });
 
     const data = await res.json();
+
+    if (data.object === 'error') {
+      return Response.json({ error: data.message }, { status: 400 });
+    }
+
     const databases = (data.results || []).map(db => ({
       id: db.id,
       name: db.title?.[0]?.plain_text || 'Untitled Database',

@@ -6,21 +6,24 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { notion_database_id, notion_access_token } = await req.json();
-    if (!notion_database_id || !notion_access_token) {
-      return Response.json({ error: 'Missing notion_database_id or notion_access_token' }, { status: 400 });
+    const { notion_database_id } = await req.json();
+    if (!notion_database_id) {
+      return Response.json({ error: 'Missing notion_database_id' }, { status: 400 });
     }
 
-    // Fetch the user's projects
-    const projects = await base44.entities.Project.filter({ created_by_id: user.id });
+    // Get the user's Notion OAuth access token
+    const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection('6a1cfa4c8db502aafb000e1a');
+
+    // Fetch only the user's ACTIVE projects
+    const allProjects = await base44.entities.Project.filter({ status: 'active' });
 
     const results = [];
-    for (const project of projects) {
-      // Check if a page for this project already exists
+    for (const project of allProjects) {
+      // Check if a page for this project already exists in Notion
       const searchRes = await fetch(`https://api.notion.com/v1/databases/${notion_database_id}/query`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${notion_access_token}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Notion-Version': '2022-06-28',
           'Content-Type': 'application/json',
         },
@@ -47,24 +50,31 @@ Deno.serve(async (req) => {
         properties['Due Date'] = { date: { start: project.due_date } };
       }
 
+      if (project.notes) {
+        properties['Notes'] = { rich_text: [{ text: { content: project.notes.slice(0, 2000) } }] };
+      }
+
       if (existing) {
-        // Update existing page
-        await fetch(`https://api.notion.com/v1/pages/${existing.id}`, {
+        const patchRes = await fetch(`https://api.notion.com/v1/pages/${existing.id}`, {
           method: 'PATCH',
           headers: {
-            'Authorization': `Bearer ${notion_access_token}`,
+            'Authorization': `Bearer ${accessToken}`,
             'Notion-Version': '2022-06-28',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ properties }),
         });
-        results.push({ name: project.name, action: 'updated' });
+        const patchData = await patchRes.json();
+        if (patchData.object === 'error') {
+          results.push({ name: project.name, action: 'error', error: patchData.message });
+        } else {
+          results.push({ name: project.name, action: 'updated' });
+        }
       } else {
-        // Create new page
-        await fetch('https://api.notion.com/v1/pages', {
+        const createRes = await fetch('https://api.notion.com/v1/pages', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${notion_access_token}`,
+            'Authorization': `Bearer ${accessToken}`,
             'Notion-Version': '2022-06-28',
             'Content-Type': 'application/json',
           },
@@ -73,11 +83,19 @@ Deno.serve(async (req) => {
             properties,
           }),
         });
-        results.push({ name: project.name, action: 'created' });
+        const createData = await createRes.json();
+        if (createData.object === 'error') {
+          results.push({ name: project.name, action: 'error', error: createData.message });
+        } else {
+          results.push({ name: project.name, action: 'created' });
+        }
       }
     }
 
-    return Response.json({ success: true, synced: results.length, results });
+    const synced = results.filter(r => r.action !== 'error').length;
+    const errors = results.filter(r => r.action === 'error');
+
+    return Response.json({ success: true, synced, results, errors });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
