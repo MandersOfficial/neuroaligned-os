@@ -82,7 +82,6 @@ function ProjectCard({ project, onUpdate, onDelete }) {
       {/* Project row — same format as task rows */}
       <div className="flex items-center gap-3 px-5 py-3.5 border-b border-border/30">
         <button
-          onClick={() => onUpdate({ ...project, status: project.status === 'completed' ? 'active' : 'completed' }).then && onUpdate({ ...project, status: project.status === 'completed' ? 'active' : 'completed' })}
           className="shrink-0"
           onClick={async () => {
             const newStatus = project.status === 'completed' ? 'active' : 'completed';
