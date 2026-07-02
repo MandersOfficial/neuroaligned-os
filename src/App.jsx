@@ -33,6 +33,7 @@ import FocusRooms from './pages/FocusRooms';
 import Productivity from './pages/Productivity';
 import Projects from './pages/Projects';
 import NotionDashboard from './pages/NotionDashboard';
+import CalendarSync from './pages/CalendarSync';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import RegulationFirst from './pages/RegulationFirst';
@@ -94,6 +95,7 @@ const AuthenticatedApp = () => {
       <Route path="/productivity" element={<Productivity />} />
       <Route path="/projects" element={<Projects />} />
       <Route path="/notion-sync" element={<NotionDashboard />} />
+      <Route path="/calendar-sync" element={<CalendarSync />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/regulation-first" element={<RegulationFirst />} />
