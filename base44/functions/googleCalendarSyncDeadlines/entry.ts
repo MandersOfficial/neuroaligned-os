@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
     const eventByProject = new Map();
     for (const ev of existingData.items || []) {
       const pid = ev.extendedProperties?.shared?.projectId;
-      if (pid) eventByProject.set(pid, ev.id);
+      if (pid) eventByProject.set(pid, ev);
     }
 
     if (dryRun) {
@@ -45,14 +45,20 @@ Deno.serve(async (req) => {
         dueCount: projects.length,
         skipped: allProjects.length - projects.length,
         existingCount: eventByProject.size,
-        projects: projects.map(p => ({
-          id: p.id,
-          name: p.name,
-          due_date: p.due_date,
-          status: p.status,
-          priority: p.priority,
-          client_name: p.client_name,
-        })),
+        projects: projects.map(p => {
+          const ev = eventByProject.get(p.id);
+          const meetLink = ev?.hangoutLink || ev?.conferenceData?.entryPoints?.find(ep => ep.entryPointType === 'video')?.uri || null;
+          return {
+            id: p.id,
+            name: p.name,
+            due_date: p.due_date,
+            status: p.status,
+            priority: p.priority,
+            client_name: p.client_name,
+            meetLink,
+            onCalendar: !!ev,
+          };
+        }),
       });
     }
 
@@ -67,6 +73,10 @@ Deno.serve(async (req) => {
         project.notes ? `Notes: ${project.notes.slice(0, 1500)}` : null,
       ].filter(Boolean).join('\n\n');
 
+      const existingEvent = eventByProject.get(project.id);
+      const hasMeet = existingEvent?.conferenceData?.entryPoints?.some(ep => ep.entryPointType === 'video')
+        || existingEvent?.hangoutLink;
+
       const body = {
         summary: `Deadline: ${project.name}`,
         description,
@@ -75,12 +85,21 @@ Deno.serve(async (req) => {
         extendedProperties: {
           shared: { neuroaligned: 'true', projectId: project.id },
         },
+        conferenceData: hasMeet
+          ? existingEvent.conferenceData
+          : {
+              createRequest: {
+                requestId: `${project.id}-${Date.now()}`,
+                conferenceSolutionKey: { type: 'hangoutsMeet' },
+              },
+            },
       };
 
-      const existingId = eventByProject.get(project.id);
+      const meetLink = (d) => d?.hangoutLink || d?.conferenceData?.entryPoints?.find(ep => ep.entryPointType === 'video')?.uri || null;
+
       try {
-        if (existingId) {
-          const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${existingId}`, {
+        if (existingEvent) {
+          const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${existingEvent.id}?conferenceDataVersion=1`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
@@ -89,10 +108,10 @@ Deno.serve(async (req) => {
           if (data.error) {
             results.push({ name: project.name, action: 'error', error: data.error.message });
           } else {
-            results.push({ name: project.name, action: 'updated' });
+            results.push({ name: project.name, action: 'updated', meetLink: meetLink(data) });
           }
         } else {
-          const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+          const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
@@ -101,7 +120,7 @@ Deno.serve(async (req) => {
           if (data.error) {
             results.push({ name: project.name, action: 'error', error: data.error.message });
           } else {
-            results.push({ name: project.name, action: 'created' });
+            results.push({ name: project.name, action: 'created', meetLink: meetLink(data) });
           }
         }
       } catch (e) {

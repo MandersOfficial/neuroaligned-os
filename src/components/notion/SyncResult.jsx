@@ -1,4 +1,4 @@
-import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Video } from 'lucide-react';
 
 export function StatusBadge({ status }) {
   if (status === 'success') return (
@@ -25,11 +25,16 @@ export function SyncResultBox({ result, status }) {
       {result.results?.length > 0 && (
         <ul className="space-y-0.5 mt-1">
           {result.results.map((r, i) => (
-            <li key={i} className="flex items-center gap-1.5">
+            <li key={i} className="flex items-center gap-1.5 flex-wrap">
               {r.action === 'error'
                 ? <AlertCircle className="w-3 h-3 shrink-0 text-red-500" />
                 : <CheckCircle2 className="w-3 h-3 shrink-0" />}
-              {r.name} — {r.action}
+              <span>{r.name} — {r.action}</span>
+              {r.meetLink && (
+                <a href={r.meetLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-blue-600 hover:underline">
+                  <Video className="w-3 h-3" /> Meet
+                </a>
+              )}
             </li>
           ))}
         </ul>
