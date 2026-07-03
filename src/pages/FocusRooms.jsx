@@ -43,6 +43,18 @@ export default function FocusRooms() {
   }, [loadRooms]);
 
   const handleCreateRoom = async (form) => {
+    // Generate a Google Meet link for the room
+    let meetLink = null;
+    try {
+      const res = await base44.functions.invoke('createGoogleMeetRoom', {
+        roomName: form.name,
+        durationMinutes: form.duration_minutes,
+      });
+      meetLink = res.data.meetLink || null;
+    } catch {
+      // Meet link is optional — room still works without it
+    }
+
     const room = await base44.entities.FocusRoom.create({
       ...form,
       host_email: user.email,
@@ -53,6 +65,7 @@ export default function FocusRooms() {
       participant_names: [user.full_name || user.email.split('@')[0]],
       participant_tasks: ['(Host)'],
       started_at: new Date().toISOString(),
+      meet_link: meetLink,
     });
     setRooms(prev => [room, ...prev]);
     setShowCreate(false);

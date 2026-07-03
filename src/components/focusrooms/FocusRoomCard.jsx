@@ -1,4 +1,4 @@
-import { Users, Clock, Lock, X, Trash2 } from 'lucide-react';
+import { Users, Clock, Lock, X, Trash2, Video } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -99,6 +99,19 @@ export default function FocusRoomCard({ room, currentUser, onJoin, onLeave, onCl
           </div>
         )}
       </div>
+
+      {/* Google Meet link */}
+      {room.meet_link && room.status !== 'closed' && (
+        <a
+          href={room.meet_link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors"
+        >
+          <Video className="w-4 h-4" />
+          Join Google Meet
+        </a>
+      )}
 
       {/* Action */}
       {room.status !== 'closed' && (
