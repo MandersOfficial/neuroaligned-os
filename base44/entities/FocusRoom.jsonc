@@ -71,6 +71,10 @@
     "ends_at": {
       "type": "string",
       "title": "Ends At"
+    },
+    "meet_link": {
+      "type": "string",
+      "title": "Google Meet Link"
     }
   },
   "required": [
@@ -84,10 +88,10 @@
     "read": {
       "$or": [
         {
-          "status": "open"
+          "data.status": "open"
         },
         {
-          "status": "active"
+          "data.status": "active"
         },
         {
           "data.participant_emails": {
