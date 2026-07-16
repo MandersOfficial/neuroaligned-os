@@ -8,6 +8,7 @@ import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPan
 import MeetingSummaryPanel from '@/components/integrations/MeetingSummaryPanel';
 import CalendarSchedulePanel from '@/components/integrations/CalendarSchedulePanel';
 import DeadlineCallPanel from '@/components/integrations/DeadlineCallPanel';
+import ProjectSyncPanel from '@/components/integrations/ProjectSyncPanel';
 
 const STATUS_OPTIONS = ['active', 'paused', 'completed', 'archived'];
 const STATUS_STYLES = {
@@ -496,6 +497,9 @@ export default function Projects() {
 
           {/* Deadline video call panel */}
           <DeadlineCallPanel />
+
+          {/* Project sync meet panel */}
+          <ProjectSyncPanel projects={projects} />
 
           {/* Project list */}
           {filtered.length === 0 ? (
