@@ -2,7 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
-  BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, DoorOpen, FolderKanban, Database, Calendar
+  BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, DoorOpen, FolderKanban, Database, Calendar,
+  HelpCircle
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import { useState } from 'react';
@@ -37,6 +38,8 @@ const NAV_GROUPS = [
       { icon: Plug, label: 'Integrations', href: '/integrations' },
       { icon: Database, label: 'Notion Sync', href: '/notion-sync' },
       { icon: Calendar, label: 'Calendar Sync', href: '/calendar-sync' },
+      { icon: Plug, label: 'Integrations', href: '/integration-settings' },
+      { icon: HelpCircle, label: 'Help Center', href: '/help-center' },
     ],
   },
 ];

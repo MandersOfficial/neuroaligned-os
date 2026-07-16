@@ -38,6 +38,8 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import RegulationFirst from './pages/RegulationFirst';
 import Disclaimer from './pages/Disclaimer';
+import IntegrationSettings from './pages/IntegrationSettings';
+import HelpCenter from './pages/HelpCenter';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -100,6 +102,8 @@ const AuthenticatedApp = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/regulation-first" element={<RegulationFirst />} />
       <Route path="/disclaimer" element={<Disclaimer />} />
+      <Route path="/integration-settings" element={<IntegrationSettings />} />
+      <Route path="/help-center" element={<HelpCenter />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
