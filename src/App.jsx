@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { useEffect } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { SensoryProvider } from '@/lib/SensoryContext';
@@ -18,7 +18,6 @@ import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import Tasks from './pages/Tasks';
 import FocusModes from './pages/FocusModes';
-import Integrations from './pages/Integrations';
 import BurnoutRisk from './pages/BurnoutRisk';
 import KnowledgeBase from './pages/KnowledgeBase';
 import Upgrade from './pages/Upgrade';
@@ -82,7 +81,7 @@ const AuthenticatedApp = () => {
       <Route path="/admin" element={<Admin />} />
       <Route path="/tasks" element={<Tasks />} />
       <Route path="/focus-modes" element={<FocusModes />} />
-      <Route path="/integrations" element={<Integrations />} />
+      <Route path="/integrations" element={<Navigate to="/integration-settings" replace />} />
       <Route path="/burnout" element={<BurnoutRisk />} />
       <Route path="/knowledge" element={<KnowledgeBase />} />
       <Route path="/upgrade" element={<Upgrade />} />

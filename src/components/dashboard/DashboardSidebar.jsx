@@ -35,10 +35,9 @@ const NAV_GROUPS = [
     label: 'Settings',
     items: [
       { icon: Eye, label: 'Sensory', href: '/sensory' },
-      { icon: Plug, label: 'Integrations', href: '/integrations' },
+      { icon: Plug, label: 'Integrations', href: '/integration-settings' },
       { icon: Database, label: 'Notion Sync', href: '/notion-sync' },
       { icon: Calendar, label: 'Calendar Sync', href: '/calendar-sync' },
-      { icon: Plug, label: 'Integrations', href: '/integration-settings' },
       { icon: HelpCircle, label: 'Help Center', href: '/help-center' },
     ],
   },
