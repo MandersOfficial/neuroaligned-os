@@ -1,27 +1,53 @@
-import { Users, Clock, Lock, X, Trash2, Video, Loader2, Plus } from 'lucide-react';
+import { Users, Clock, Lock, X, Trash2, Video, Loader2, Plus, Link2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
+import { base44 } from '@/api/base44Client';
+
+const CALENDAR_CONNECTOR_ID = '69fd1ec20e0e670e38251275';
 
 function GenerateMeetButton({ room, onGenerate }) {
   const [generating, setGenerating] = useState(false);
-  const [error, setError] = useState(false);
+  const [errorType, setErrorType] = useState(null);
 
   const handleGenerate = async () => {
     setGenerating(true);
-    setError(false);
+    setErrorType(null);
     try {
       await onGenerate(room);
-    } catch {
-      setError(true);
+    } catch (e) {
+      setErrorType(e.message === 'no_connection' ? 'no_connection' : 'error');
     }
     setGenerating(false);
   };
 
-  if (error) {
+  const handleConnect = async () => {
+    const url = await base44.connectors.connectAppUser(CALENDAR_CONNECTOR_ID);
+    const popup = window.open(url, '_blank');
+    const timer = setInterval(() => {
+      if (!popup || popup.closed) {
+        clearInterval(timer);
+        setErrorType(null);
+        handleGenerate();
+      }
+    }, 500);
+  };
+
+  if (errorType === 'no_connection') {
     return (
       <div className="space-y-1.5">
-        <p className="text-xs text-amber-600 text-center">Couldn't generate Meet link. Is Google Calendar connected?</p>
+        <p className="text-xs text-amber-600 text-center">Connect Google Calendar to generate a Meet link.</p>
+        <button onClick={handleConnect} className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-green-600 text-white text-xs font-semibold hover:bg-green-700 transition-colors">
+          <Link2 className="w-3.5 h-3.5" /> Connect Google Calendar
+        </button>
+      </div>
+    );
+  }
+
+  if (errorType === 'error') {
+    return (
+      <div className="space-y-1.5">
+        <p className="text-xs text-amber-600 text-center">Couldn't generate Meet link. Please try again.</p>
         <button onClick={handleGenerate} className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl border border-border text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors">
           Try again
         </button>

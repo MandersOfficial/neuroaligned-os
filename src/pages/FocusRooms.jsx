@@ -74,19 +74,23 @@ export default function FocusRooms() {
   };
 
   const handleGenerateMeet = async (room) => {
+    let res;
     try {
-      const res = await base44.functions.invoke('createGoogleMeetRoom', {
+      res = await base44.functions.invoke('createGoogleMeetRoom', {
         roomName: room.name,
         durationMinutes: room.duration_minutes || 25,
       });
-      const meetLink = res.data.meetLink || null;
-      if (meetLink) {
-        const updated = await base44.entities.FocusRoom.update(room.id, { meet_link: meetLink });
-        setRooms(prev => prev.map(r => r.id === room.id ? updated : r));
-      }
-    } catch {
-      // ignore — user hasn't connected Google Calendar
+    } catch (e) {
+      const msg = e?.response?.data?.error || e.message || '';
+      throw new Error(msg.includes('connection') || msg.includes('connector') ? 'no_connection' : msg);
     }
+    const meetLink = res.data?.meetLink || null;
+    if (!meetLink) {
+      const errMsg = res.data?.error || '';
+      throw new Error(errMsg.includes('connection') || errMsg.includes('connector') ? 'no_connection' : errMsg || 'unknown');
+    }
+    const updated = await base44.entities.FocusRoom.update(room.id, { meet_link: meetLink });
+    setRooms(prev => prev.map(r => r.id === room.id ? updated : r));
   };
 
   const handleJoin = async (room, task) => {
