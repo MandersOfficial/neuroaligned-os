@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NotionTaskSyncPanel from '@/components/notion/NotionTaskSyncPanel';
 import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPanel';
 import MeetingSummaryPanel from '@/components/integrations/MeetingSummaryPanel';
+import CalendarSchedulePanel from '@/components/integrations/CalendarSchedulePanel';
 
 const STATUS_OPTIONS = ['active', 'paused', 'completed', 'archived'];
 const STATUS_STYLES = {
@@ -488,6 +489,9 @@ export default function Projects() {
 
           {/* Meeting summary panel */}
           <MeetingSummaryPanel projects={projects} />
+
+          {/* Calendar schedule panel */}
+          <CalendarSchedulePanel projects={projects} />
 
           {/* Project list */}
           {filtered.length === 0 ? (
