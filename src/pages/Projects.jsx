@@ -11,6 +11,7 @@ import DeadlineCallPanel from '@/components/integrations/DeadlineCallPanel';
 import ProjectSyncPanel from '@/components/integrations/ProjectSyncPanel';
 import UpcomingMeetingsPanel from '@/components/integrations/UpcomingMeetingsPanel';
 import GoogleTasksSyncPanel from '@/components/integrations/GoogleTasksSyncPanel';
+import PitchDeckPanel from '@/components/integrations/PitchDeckPanel';
 
 const STATUS_OPTIONS = ['active', 'paused', 'completed', 'archived'];
 const STATUS_STYLES = {
@@ -528,6 +529,9 @@ export default function Projects() {
 
           {/* Google Tasks sync panel */}
           <GoogleTasksSyncPanel projects={projects} />
+
+          {/* Pitch deck panel */}
+          <PitchDeckPanel projects={projects} />
 
           {/* Project list */}
           {filtered.length === 0 ? (
