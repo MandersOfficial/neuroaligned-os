@@ -1,6 +1,45 @@
-import { Users, Clock, Lock, X, Trash2, Video } from 'lucide-react';
+import { Users, Clock, Lock, X, Trash2, Video, Loader2, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
+import { useState } from 'react';
+
+function GenerateMeetButton({ room, onGenerate }) {
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleGenerate = async () => {
+    setGenerating(true);
+    setError(false);
+    try {
+      await onGenerate(room);
+    } catch {
+      setError(true);
+    }
+    setGenerating(false);
+  };
+
+  if (error) {
+    return (
+      <div className="space-y-1.5">
+        <p className="text-xs text-amber-600 text-center">Couldn't generate Meet link. Is Google Calendar connected?</p>
+        <button onClick={handleGenerate} className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl border border-border text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors">
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={handleGenerate}
+      disabled={generating}
+      className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-green-200 bg-green-50 text-green-700 text-sm font-semibold hover:bg-green-100 disabled:opacity-50 transition-colors"
+    >
+      {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+      {generating ? 'Generating Meet link…' : 'Generate Google Meet Link'}
+    </button>
+  );
+}
 
 const STATUS_CONFIG = {
   open: { label: 'Open', dot: 'bg-green-500', text: 'text-green-600' },
@@ -8,7 +47,7 @@ const STATUS_CONFIG = {
   closed: { label: 'Closed', dot: 'bg-muted-foreground', text: 'text-muted-foreground' },
 };
 
-export default function FocusRoomCard({ room, currentUser, onJoin, onLeave, onClose, onDelete }) {
+export default function FocusRoomCard({ room, currentUser, onJoin, onLeave, onClose, onDelete, onGenerateMeet }) {
   const status = STATUS_CONFIG[room.status] || STATUS_CONFIG.open;
   const isFull = (room.participant_count || 1) >= (room.max_participants || 6);
   const isHost = room.host_email === currentUser?.email;
@@ -111,6 +150,11 @@ export default function FocusRoomCard({ room, currentUser, onJoin, onLeave, onCl
           <Video className="w-4 h-4" />
           Join Google Meet
         </a>
+      )}
+
+      {/* Generate Meet link — host only, when no link exists */}
+      {!room.meet_link && isHost && room.status !== 'closed' && onGenerateMeet && (
+        <GenerateMeetButton room={room} onGenerate={onGenerateMeet} />
       )}
 
       {/* Action */}

@@ -4,7 +4,7 @@ import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import FocusRoomCard from '../components/focusrooms/FocusRoomCard';
 import CreateRoomModal from '../components/focusrooms/CreateRoomModal';
 import JoinRoomModal from '../components/focusrooms/JoinRoomModal';
-import { Plus, Users, RefreshCw } from 'lucide-react';
+import { Plus, Users, RefreshCw, Video, Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function FocusRooms() {
@@ -42,7 +42,7 @@ export default function FocusRooms() {
     return () => clearInterval(interval);
   }, [loadRooms]);
 
-  const handleCreateRoom = async (form) => {
+  const handleCreateRoom = async (form, onMeetStatus) => {
     // Generate a Google Meet link for the room
     let meetLink = null;
     try {
@@ -51,8 +51,10 @@ export default function FocusRooms() {
         durationMinutes: form.duration_minutes,
       });
       meetLink = res.data.meetLink || null;
+      if (!meetLink && onMeetStatus) onMeetStatus('failed');
     } catch {
       // Meet link is optional — room still works without it
+      if (onMeetStatus) onMeetStatus('failed');
     }
 
     const room = await base44.entities.FocusRoom.create({
@@ -69,6 +71,22 @@ export default function FocusRooms() {
     });
     setRooms(prev => [room, ...prev]);
     setShowCreate(false);
+  };
+
+  const handleGenerateMeet = async (room) => {
+    try {
+      const res = await base44.functions.invoke('createGoogleMeetRoom', {
+        roomName: room.name,
+        durationMinutes: room.duration_minutes || 25,
+      });
+      const meetLink = res.data.meetLink || null;
+      if (meetLink) {
+        const updated = await base44.entities.FocusRoom.update(room.id, { meet_link: meetLink });
+        setRooms(prev => prev.map(r => r.id === room.id ? updated : r));
+      }
+    } catch {
+      // ignore — user hasn't connected Google Calendar
+    }
   };
 
   const handleJoin = async (room, task) => {
@@ -186,6 +204,7 @@ export default function FocusRooms() {
                     onLeave={handleLeave}
                     onClose={handleCloseRoom}
                     onDelete={handleDeleteRoom}
+                    onGenerateMeet={handleGenerateMeet}
                   />
                 ))}
               </AnimatePresence>

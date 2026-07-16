@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Video, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DURATIONS = [15, 25, 45, 60, 90];
@@ -7,14 +7,19 @@ const DURATIONS = [15, 25, 45, 60, 90];
 export default function CreateRoomModal({ onSave, onClose }) {
   const [form, setForm] = useState({ name: '', focus_topic: '', duration_minutes: 25, max_participants: 6 });
   const [saving, setSaving] = useState(false);
+  const [meetStatus, setMeetStatus] = useState(null);
 
   const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
 
   const handleSave = async () => {
     if (!form.name.trim()) return;
     setSaving(true);
-    await onSave(form);
-    setSaving(false);
+    setMeetStatus('generating');
+    try {
+      await onSave(form, (status) => setMeetStatus(status));
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -96,6 +101,26 @@ export default function CreateRoomModal({ onSave, onClose }) {
               ))}
             </div>
           </div>
+
+          {/* Google Meet note */}
+          <div className="flex items-center gap-2.5 bg-green-50 border border-green-200 rounded-xl px-3 py-2.5">
+            <Video className="w-4 h-4 text-green-600 shrink-0" />
+            <p className="text-xs text-green-700 leading-relaxed">
+              A Google Meet video link will be automatically generated when the room is created. Connect Google Calendar in Integrations if you haven't already.
+            </p>
+          </div>
+
+          {/* Meet status during creation */}
+          {meetStatus === 'generating' && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating Google Meet link…
+            </div>
+          )}
+          {meetStatus === 'failed' && (
+            <div className="flex items-center gap-2 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+              Meet link could not be created — room will be created without video. You can generate one later.
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end gap-3 pt-1">
@@ -107,7 +132,7 @@ export default function CreateRoomModal({ onSave, onClose }) {
             disabled={!form.name.trim() || saving}
             className="px-5 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
           >
-            {saving ? 'Creating…' : 'Create Room'}
+            {saving ? 'Creating…' : 'Create Room & Generate Meet Link'}
           </button>
         </div>
       </motion.div>
