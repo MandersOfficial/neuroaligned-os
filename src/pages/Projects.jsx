@@ -4,6 +4,7 @@ import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import { Plus, ChevronDown, ChevronRight, Calendar, User, Mail, Trash2, Check, X, Edit2, Circle, CheckCircle2, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NotionTaskSyncPanel from '@/components/notion/NotionTaskSyncPanel';
+import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPanel';
 
 const STATUS_OPTIONS = ['active', 'paused', 'completed', 'archived'];
 const STATUS_STYLES = {
@@ -480,6 +481,9 @@ export default function Projects() {
 
           {/* Notion sync panel */}
           <NotionTaskSyncPanel />
+
+          {/* Google Sheets sync panel */}
+          <GoogleSheetsSyncPanel />
 
           {/* Project list */}
           {filtered.length === 0 ? (
