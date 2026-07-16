@@ -7,6 +7,7 @@ import NotionTaskSyncPanel from '@/components/notion/NotionTaskSyncPanel';
 import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPanel';
 import MeetingSummaryPanel from '@/components/integrations/MeetingSummaryPanel';
 import CalendarSchedulePanel from '@/components/integrations/CalendarSchedulePanel';
+import DeadlineCallPanel from '@/components/integrations/DeadlineCallPanel';
 
 const STATUS_OPTIONS = ['active', 'paused', 'completed', 'archived'];
 const STATUS_STYLES = {
@@ -492,6 +493,9 @@ export default function Projects() {
 
           {/* Calendar schedule panel */}
           <CalendarSchedulePanel projects={projects} />
+
+          {/* Deadline video call panel */}
+          <DeadlineCallPanel />
 
           {/* Project list */}
           {filtered.length === 0 ? (
