@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
-import { Plus, ChevronDown, ChevronRight, Calendar, User, Mail, Trash2, Check, X, Edit2, Circle, CheckCircle2, Clock } from 'lucide-react';
+import { Plus, ChevronDown, ChevronRight, Calendar, User, Mail, Trash2, Check, X, Edit2, Circle, CheckCircle2, Clock, Video, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NotionTaskSyncPanel from '@/components/notion/NotionTaskSyncPanel';
 import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPanel';
@@ -34,6 +34,18 @@ function ProjectCard({ project, onUpdate, onDelete }) {
   const [loadingTasks, setLoadingTasks] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [addingTask, setAddingTask] = useState(false);
+  const [joiningMeet, setJoiningMeet] = useState(false);
+
+  const handleJoinMeet = async () => {
+    setJoiningMeet(true);
+    try {
+      const res = await base44.functions.invoke('createProjectSyncMeet', { project_id: project.id });
+      if (res.data.meet_link) {
+        window.open(res.data.meet_link, '_blank');
+      }
+    } catch { /* ignore — user hasn't connected Google Calendar yet */ }
+    setJoiningMeet(false);
+  };
 
   const loadTasks = async () => {
     if (tasks.length > 0) return;
@@ -133,6 +145,14 @@ function ProjectCard({ project, onUpdate, onDelete }) {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleJoinMeet}
+            disabled={joiningMeet}
+            title="Join Google Meet"
+            className="p-1.5 rounded-lg hover:bg-emerald-50 text-muted-foreground hover:text-emerald-600 transition-colors disabled:opacity-50"
+          >
+            {joiningMeet ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Video className="w-3.5 h-3.5" />}
+          </button>
           <button onClick={() => setEditing(true)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground transition-colors">
             <Edit2 className="w-3.5 h-3.5" />
           </button>
