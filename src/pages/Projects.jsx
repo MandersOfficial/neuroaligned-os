@@ -9,6 +9,7 @@ import MeetingSummaryPanel from '@/components/integrations/MeetingSummaryPanel';
 import CalendarSchedulePanel from '@/components/integrations/CalendarSchedulePanel';
 import DeadlineCallPanel from '@/components/integrations/DeadlineCallPanel';
 import ProjectSyncPanel from '@/components/integrations/ProjectSyncPanel';
+import UpcomingMeetingsPanel from '@/components/integrations/UpcomingMeetingsPanel';
 
 const STATUS_OPTIONS = ['active', 'paused', 'completed', 'archived'];
 const STATUS_STYLES = {
@@ -500,6 +501,9 @@ export default function Projects() {
 
           {/* Project sync meet panel */}
           <ProjectSyncPanel projects={projects} />
+
+          {/* Upcoming meetings panel */}
+          <UpcomingMeetingsPanel />
 
           {/* Project list */}
           {filtered.length === 0 ? (
