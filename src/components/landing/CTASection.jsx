@@ -25,12 +25,12 @@ export default function CTASection() {
             <Brain className="w-8 h-8 text-primary" />
           </div>
 
-          <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-tight text-[hsl(var(--card-foreground))]">You're not lazy or broken.
+          <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-tight text-white">You're not lazy or broken.
 You just need the right tool.
 
           </h2>
 
-          <p className="text-lg max-w-2xl mx-auto leading-relaxed text-[hsl(var(--foreground))]">Thousands of ADHD, autistic, and neurodivergent business owners use NeuroAligned to get more done — without burning out or fighting their own brain.
+          <p className="text-lg max-w-2xl mx-auto leading-relaxed text-white">Thousands of ADHD, autistic, and neurodivergent business owners use NeuroAligned to get more done — without burning out or fighting their own brain.
 
           </p>
 
@@ -41,7 +41,7 @@ You just need the right tool.
             </Button>
           </div>
 
-          <p className="text-sm text-[hsl(var(--foreground))]">Free trial · No credit card · Cancel anytime
+          <p className="text-sm text-white">Free trial · No credit card · Cancel anytime
 
           </p>
         </motion.div>
