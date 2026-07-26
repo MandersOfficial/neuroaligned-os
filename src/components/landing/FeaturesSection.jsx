@@ -16,9 +16,9 @@ const features = [
   },
   {
     icon: HeartPulse,
-    title: 'Calm-down tools built right in',
-    description: 'Feeling overwhelmed? One tap opens breathing exercises and grounding tools. You don\'t have to leave the app or figure it out yourself.',
-    tag: 'Regulation',
+    title: 'Regulation-first framework',
+    description: 'Before you see a single task, NeuroAligned OS helps you regulate your nervous system with built-in breathing exercises, sensory grounding tools, and body-doubling rooms. The regulation-first framework means calm comes before productivity — every time.',
+    tag: 'Regulation-First',
   },
   {
     icon: Route,

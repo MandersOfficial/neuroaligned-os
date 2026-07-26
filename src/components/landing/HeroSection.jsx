@@ -43,14 +43,13 @@ export default function HeroSection({ heroImage }) {
 
             {/* Headline */}
             <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl xl:text-7xl tracking-tight leading-[1.1]">
-              <span className="text-foreground">A to-do app that </span>
-              <span className="text-primary">fits your brain,</span>
-              <span className="text-foreground"> not the other way around</span>
+              <span className="text-foreground">NeuroAligned OS</span>
+              <span className="block text-primary mt-2">The productivity OS for neurodivergent business owners</span>
             </h1>
 
             {/* Subheadline */}
             <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl">
-              NeuroAligned shows you the <strong className="text-foreground">right tasks at the right time</strong> — based on how much energy you have <em>right now</em>. No guilt. No overwhelm. Just work that actually gets done.
+              NeuroAligned OS is a work-management platform built for ADHD, autistic, dyslexic, and burnout-recovering entrepreneurs, freelancers, and small business owners. Our <strong className="text-foreground">regulation-first framework</strong> means you regulate your nervous system before you tackle your task list — matching tasks to your energy, protecting you from burnout, and helping you actually get things done.
             </p>
 
             {/* CTA Buttons */}
