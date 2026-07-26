@@ -65,6 +65,12 @@
     "read": {
       "$or": [
         {
+          "data.status": "waiting"
+        },
+        {
+          "data.status": "active"
+        },
+        {
           "created_by_id": "{{user.id}}"
         },
         {
@@ -82,6 +88,9 @@
     },
     "update": {
       "$or": [
+        {
+          "data.status": "waiting"
+        },
         {
           "created_by_id": "{{user.id}}"
         },
