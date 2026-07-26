@@ -4,6 +4,12 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
+    // Verify this is being called by an admin or the scheduler
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     // Get all users (service role)
     const users = await base44.asServiceRole.entities.User.list();
 
@@ -87,6 +93,16 @@ Deno.serve(async (req) => {
   }
 });
 
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '';
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -95,7 +111,7 @@ function formatDate(dateStr) {
 function priorityBadge(priority) {
   const map = { high: '#EF4444', medium: '#F59E0B', low: '#10B981' };
   const color = map[priority] || '#6B7280';
-  return priority ? `<span style="background:${color}20;color:${color};padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;">${priority}</span>` : '';
+  return priority ? `<span style="background:${color}20;color:${color};padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;">${escapeHtml(priority)}</span>` : '';
 }
 
 function buildEmailHtml({ firstName, weekOf, activeProjects, recentlyCompleted, upcomingDeadlines, projectsWithDeadlines }) {
@@ -109,10 +125,10 @@ function buildEmailHtml({ firstName, weekOf, activeProjects, recentlyCompleted, 
     <tr>
       <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:18px;">${p.emoji || '📁'}</span>
-          <div>
-            <div style="font-size:14px;font-weight:600;color:#1f2937;">${p.name}</div>
-            ${p.client_name ? `<div style="font-size:12px;color:#6b7280;">👤 ${p.client_name}</div>` : ''}
+          <span style="font-size:18px;">${escapeHtml(p.emoji) || '📁'}</span>
+           <div>
+             <div style="font-size:14px;font-weight:600;color:#1f2937;">${escapeHtml(p.name)}</div>
+             ${p.client_name ? `<div style="font-size:12px;color:#6b7280;">👤 ${escapeHtml(p.client_name)}</div>` : ''}
           </div>
         </div>
       </td>
@@ -127,7 +143,7 @@ function buildEmailHtml({ firstName, weekOf, activeProjects, recentlyCompleted, 
       <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="color:#8b5cf6;font-size:16px;">✓</span>
-          <span style="font-size:14px;color:#1f2937;">${t.title}</span>
+          <span style="font-size:14px;color:#1f2937;">${escapeHtml(t.title)}</span>
         </div>
       </td>
       <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:right;vertical-align:middle;">
@@ -139,9 +155,9 @@ function buildEmailHtml({ firstName, weekOf, activeProjects, recentlyCompleted, 
     <tr>
       <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:14px;">${item._type === 'project' ? (item.emoji || '📁') : '☐'}</span>
-          <div>
-            <div style="font-size:14px;color:#1f2937;">${item.name || item.title}</div>
+          <span style="font-size:14px;">${item._type === 'project' ? (escapeHtml(item.emoji) || '📁') : '☐'}</span>
+           <div>
+             <div style="font-size:14px;color:#1f2937;">${escapeHtml(item.name || item.title)}</div>
             <div style="font-size:11px;color:#6b7280;">${item._type === 'project' ? 'Project' : 'Task'}</div>
           </div>
         </div>
@@ -169,7 +185,7 @@ function buildEmailHtml({ firstName, weekOf, activeProjects, recentlyCompleted, 
         <!-- Body -->
         <tr><td style="background:#fff;padding:32px 36px;border-radius:0 0 16px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
 
-          <p style="font-size:15px;color:#374151;margin:0 0 4px;">Hey ${firstName} 👋</p>
+          <p style="font-size:15px;color:#374151;margin:0 0 4px;">Hey ${escapeHtml(firstName)} 👋</p>
           <p style="font-size:14px;color:#6b7280;margin:0 0 8px;line-height:1.6;">
             Here's a snapshot of your work from the past 7 days — what you've shipped, what's active, and what's coming up next.
           </p>
