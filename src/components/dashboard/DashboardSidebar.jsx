@@ -68,8 +68,8 @@ export default function DashboardSidebar({ user }) {
           'flex items-center gap-2.5 px-4 py-4 border-b border-border/40',
           collapsed && 'justify-center px-0'
         )}>
-          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shrink-0">
-            <Brain className="w-4 h-4 text-primary-foreground" />
+          <div className="w-8 h-8 rounded-xl overflow-hidden shrink-0">
+            <img src="https://media.base44.com/images/public/69d83404dff23f1198ddc883/8749fbb8f_image.png" alt="NeuroAligned OS" className="w-full h-full object-cover" />
           </div>
           {!collapsed && <span className="font-display font-bold text-sm text-foreground leading-tight">NeuroAligned OS</span>}
         </div>
