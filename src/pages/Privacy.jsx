@@ -65,7 +65,32 @@ Reminder: This data is self-reported and is not medical data. NeuroAligned does 
 We do not sell, rent, or broker your personal data.`,
   },
   {
-    title: '7. FTC Compliance & Endorsements',
+    title: '7. Google User Data & API Access',
+    content: `NeuroAligned integrates with certain Google APIs (including Google Calendar, Google Tasks, Google Drive, Google Docs, Google Sheets, Google Slides, Gmail, and Google Meet) to provide productivity features such as calendar syncing, meeting scheduling, deadline tracking, and document generation.
+
+How we access, use, store, and share Google user data:
+
+• Access: When you connect a Google service, NeuroAligned requests only the minimum OAuth scopes necessary to provide the requested feature (e.g. calendar event read/write access to sync your project deadlines). You will see the exact scopes requested before granting access.
+
+• Use: Google user data is used solely to provide or improve user-facing features visible in the NeuroAligned interface. For example, calendar event data is used to display your schedule, detect conflicts, and sync project deadlines. Gmail data (if applicable) is used only with your explicit consent for specific features you initiate.
+
+• Storage: Google user data is processed in real-time to provide the requested features. We do not store raw Google API data beyond what is necessary to provide the feature (e.g. synced calendar event references for project deadline tracking). Any cached data is encrypted at rest.
+
+• Limited Use: NeuroAligned complies with Google's Limited Use requirements. We do not transfer, sell, or use Google user data for advertising, retargeting, credit assessment, or any purpose other than providing the features you see in our interface. Google user data is not shared with third parties except as necessary to provide the feature you requested (e.g. our cloud hosting provider) or as required by law.
+
+• Human Access: NeuroAligned personnel do not read your Google user data, except when necessary for security purposes (e.g. investigating abuse), to comply with applicable law, or when you have given affirmative consent for support purposes.
+
+• Data Deletion: When you disconnect a Google service or delete your NeuroAligned account, we revoke our access tokens and delete any cached Google data within 30 days, except where retention is required by law.
+
+• Scope Justification: NeuroAligned requests only the narrowest scopes needed for each feature. For example:
+  - Google Calendar (calendar.events): Used to create focus session events, schedule project meetings, sync deadline reminders, and list upcoming meetings so users can manage their schedule within NeuroAligned.
+  - Google Tasks (task lists): Used to sync project deadlines to your Google Tasks so you can track them alongside other tasks.
+  - Google Drive/Docs/Sheets/Slides: Used to generate and store productivity documents (e.g. meeting summaries, pitch decks, project reports) that you explicitly create through NeuroAligned.
+
+You can disconnect any Google integration at any time from Settings → Integrations, which revokes our access immediately.`,
+  },
+  {
+    title: '8. FTC Compliance & Endorsements',
     content: `In compliance with the Federal Trade Commission (FTC) guidelines:
 
 • Any testimonials, reviews, or results shared on NeuroAligned's platform or marketing materials reflect individual experiences. Results are not guaranteed and may vary.
@@ -74,13 +99,13 @@ We do not sell, rent, or broker your personal data.`,
 • Any material connections between NeuroAligned and featured individuals (including Amanda White) are disclosed clearly.`,
   },
   {
-    title: '8. Data Retention',
+    title: '9. Data Retention',
     content: `We retain your account data for as long as your account is active. If you delete your account, we will delete or anonymise your personal data within 30 days, except where we are required by law to retain it longer (e.g. financial records, legal disputes).
 
 Journal entries, check-in data, and productivity logs are deleted within 30 days of account deletion.`,
   },
   {
-    title: '9. Your Rights',
+    title: '10. Your Rights',
     content: `Depending on your location, you may have rights including:
 
 • Access: request a copy of the personal data we hold about you.
@@ -95,7 +120,7 @@ California residents may have additional rights under the California Consumer Pr
 To exercise any of these rights, contact us at privacy@neuroaligned.com. We will respond within 30 days.`,
   },
   {
-    title: '10. Cookies & Tracking',
+    title: '11. Cookies & Tracking',
     content: `We use essential cookies to keep you logged in and remember your preferences. We do not use third-party advertising cookies or tracking pixels.
 
 We may use analytics tools (e.g. aggregated session data) to understand product usage. This data is anonymised and not linked to your personal identity.
@@ -103,7 +128,7 @@ We may use analytics tools (e.g. aggregated session data) to understand product 
 You may disable cookies in your browser settings, though this may affect platform functionality.`,
   },
   {
-    title: '11. Security',
+    title: '12. Security',
     content: `We use industry-standard encryption (TLS/SSL) for data in transit and encryption at rest for stored data. Access to personal data is restricted to authorised personnel only under strict access controls.
 
 We conduct periodic security reviews. However, no internet-based system is completely secure. We encourage you to use a strong, unique password and contact us immediately if you suspect unauthorised access to your account.
@@ -111,15 +136,15 @@ We conduct periodic security reviews. However, no internet-based system is compl
 In the event of a data breach that affects your personal data, we will notify you within 72 hours as required by applicable law.`,
   },
   {
-    title: '12. Children\'s Privacy',
+    title: '13. Children\'s Privacy',
     content: `NeuroAligned is intended for users aged 16 and older. We do not knowingly collect personal data from anyone under 16. If you are a parent or guardian and believe your child has provided personal data, contact us at privacy@neuroaligned.com and we will delete it promptly.`,
   },
   {
-    title: '13. Changes to This Policy',
+    title: '14. Changes to This Policy',
     content: `We may update this Privacy Policy from time to time. We will notify you of significant changes by email or prominent in-app notice at least 14 days before changes take effect. Continued use of NeuroAligned after the effective date constitutes acceptance of the updated policy.`,
   },
   {
-    title: '14. Contact & Data Requests',
+    title: '15. Contact & Data Requests',
     content: `For privacy questions, data access requests, or to exercise your rights:
 
 Email: privacy@neuroaligned.com
