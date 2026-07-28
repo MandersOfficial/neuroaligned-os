@@ -6,6 +6,11 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
+    // Restrict bulk sync to admins only
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden — admin only' }, { status: 403 });
+    }
+
     const { notion_database_id } = await req.json();
     if (!notion_database_id) {
       return Response.json({ error: 'Missing notion_database_id' }, { status: 400 });
@@ -14,7 +19,7 @@ Deno.serve(async (req) => {
     // Get the user's Notion OAuth access token
     const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection('6a1cfa4c8db502aafb000e1a');
 
-    // Fetch all user profiles (service role for reading all members)
+    // Fetch all user profiles (admin-only; service role needed for bulk read)
     const profiles = await base44.asServiceRole.entities.UserProfile.list();
 
     const results = [];
