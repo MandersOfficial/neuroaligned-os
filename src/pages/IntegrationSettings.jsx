@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
@@ -86,8 +86,7 @@ const CONNECTORS = [
   },
 ];
 
-function ConnectorCard({ connector }) {
-  const [connected, setConnected] = useState(false);
+function ConnectorCard({ connector, connected, onRecheck }) {
   const [loading, setLoading] = useState(false);
 
   const handleConnect = async () => {
@@ -98,8 +97,8 @@ function ConnectorCard({ connector }) {
       const timer = setInterval(() => {
         if (!popup || popup.closed) {
           clearInterval(timer);
-          setConnected(true);
           setLoading(false);
+          onRecheck();
         }
       }, 500);
     } catch {
@@ -114,8 +113,8 @@ function ConnectorCard({ connector }) {
     } catch {
       // ignore if no active connection
     }
-    setConnected(false);
     setLoading(false);
+    onRecheck();
   };
 
   const Icon = connector.icon;
@@ -203,10 +202,25 @@ function FeaturePanel({ icon: Icon, color, bg, title, description, children, def
 
 export default function IntegrationSettings() {
   const [user, setUser] = useState(null);
+  const [statuses, setStatuses] = useState({});
+
+  const fetchStatuses = useCallback(async () => {
+    try {
+      const res = await base44.functions.invoke('checkConnectorStatuses', {
+        connectorIds: CONNECTORS.map(c => c.id),
+      });
+      if (res.data.statuses) {
+        setStatuses(res.data.statuses);
+      }
+    } catch {
+      // ignore — statuses stay at default (not connected)
+    }
+  }, []);
 
   useEffect(() => {
     base44.auth.me().then(u => setUser(u));
-  }, []);
+    fetchStatuses();
+  }, [fetchStatuses]);
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -232,7 +246,12 @@ export default function IntegrationSettings() {
           {/* Connector grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {CONNECTORS.map(c => (
-              <ConnectorCard key={c.id} connector={c} />
+              <ConnectorCard
+                key={c.id}
+                connector={c}
+                connected={!!statuses[c.id]}
+                onRecheck={fetchStatuses}
+              />
             ))}
           </div>
 
