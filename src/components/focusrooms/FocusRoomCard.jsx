@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 
-const CALENDAR_CONNECTOR_ID = '69fd1ec20e0e670e38251275';
+const CALENDAR_CONNECTOR_ID = '6a68111b02df29e55f1a16d1';
 
 function GenerateMeetButton({ room, onGenerate }) {
   const [generating, setGenerating] = useState(false);

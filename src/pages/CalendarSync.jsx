@@ -4,7 +4,7 @@ import { StatusBadge, SyncResultBox } from '../components/notion/SyncResult';
 import { base44 } from '@/api/base44Client';
 import { Loader2, Calendar, RefreshCw, Link2, Link2Off, ArrowUp, CalendarDays } from 'lucide-react';
 
-const CONNECTOR_ID = '69fd1ec20e0e670e38251275';
+const CONNECTOR_ID = '6a68111b02df29e55f1a16d1';
 
 export default function CalendarSync() {
   const [connected, setConnected] = useState(false);

@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const CONNECTORS = [
   {
-    id: '69fd1ec20e0e670e38251275',
+    id: '6a68111b02df29e55f1a16d1',
     name: 'Google Calendar',
     description: 'Sync deadlines, schedule meetings, and track upcoming events.',
     icon: Calendar,

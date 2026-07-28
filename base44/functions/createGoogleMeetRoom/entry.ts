@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-const CALENDAR_CONNECTOR_ID = '69fd1ec20e0e670e38251275';
+const CALENDAR_CONNECTOR_ID = '6a68111b02df29e55f1a16d1';
 
 Deno.serve(async (req) => {
   try {
