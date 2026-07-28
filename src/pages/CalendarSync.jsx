@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import { StatusBadge, SyncResultBox } from '../components/notion/SyncResult';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Calendar, RefreshCw, Link2, Link2Off, ArrowUp, CalendarDays } from 'lucide-react';
+import { Loader2, Calendar, RefreshCw, Link2, Link2Off, ArrowUp, CalendarDays, Clock } from 'lucide-react';
 
 const CONNECTOR_ID = '6a68111b02df29e55f1a16d1';
 
@@ -15,6 +15,7 @@ export default function CalendarSync() {
   const [syncing, setSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState(null);
   const [syncResult, setSyncResult] = useState(null);
+  const [tasks, setTasks] = useState([]);
 
   const fetchPreview = useCallback(async () => {
     setChecking(true);
@@ -24,12 +25,14 @@ export default function CalendarSync() {
         setConnected(true);
         setProjects(res.data.projects || []);
         setExistingCount(res.data.existingCount || 0);
+        setTasks(res.data.tasks || []);
       } else {
         setConnected(false);
       }
     } catch {
       setConnected(false);
       setProjects([]);
+      setTasks([]);
     }
     setChecking(false);
   }, []);
@@ -54,6 +57,7 @@ export default function CalendarSync() {
     await base44.connectors.disconnectAppUser(CONNECTOR_ID);
     setConnected(false);
     setProjects([]);
+    setTasks([]);
     setExistingCount(0);
     setSyncStatus(null);
     setSyncResult(null);
@@ -71,6 +75,7 @@ export default function CalendarSync() {
       setSyncResult(res.data);
       if (res.data.success) {
         setExistingCount(res.data.synced);
+        await fetchPreview();
       }
     } catch (e) {
       setSyncStatus('error');
@@ -102,7 +107,7 @@ export default function CalendarSync() {
               </div>
               <div>
                 <h1 className="font-display font-bold text-xl text-foreground">Calendar Sync</h1>
-                <p className="text-xs text-muted-foreground">Push project deadlines to your Google Calendar</p>
+                <p className="text-xs text-muted-foreground">Sync deadlines and auto-block focus time for tasks</p>
               </div>
             </div>
             <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full font-medium border ${
@@ -120,7 +125,7 @@ export default function CalendarSync() {
               <div>
                 <p className="text-sm font-semibold text-foreground">Connect your Google Calendar</p>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed max-w-xs mx-auto">
-                  Authorize Google Calendar to sync your project deadlines as all-day events on your daily schedule.
+                  Authorize Google Calendar to sync project deadlines and auto-schedule focus blocks for your tasks.
                 </p>
               </div>
               <button
@@ -143,7 +148,7 @@ export default function CalendarSync() {
                     <div>
                       <p className="text-sm font-semibold text-foreground">Sync Deadlines</p>
                       <p className="text-xs text-muted-foreground">
-                        {projects.length} project{projects.length !== 1 ? 's' : ''} with due dates · {existingCount} already on calendar
+                        {projects.length} deadline{projects.length !== 1 ? 's' : ''} · {tasks.length} task{tasks.length !== 1 ? 's' : ''} to schedule · {existingCount} on calendar
                       </p>
                     </div>
                   </div>
@@ -157,7 +162,7 @@ export default function CalendarSync() {
                 </div>
 
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Creates an all-day event on each project's due date. Existing NeuroAligned events are updated, so re-syncing won't create duplicates.
+                  Creates an all-day event for each project deadline and finds an open 9 AM–6 PM slot on each task's due date to block out focus time. Re-syncing updates existing events without duplicates.
                 </p>
 
                 <div className="flex items-center gap-3">
@@ -195,6 +200,35 @@ export default function CalendarSync() {
                 <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-center">
                   <p className="text-sm font-medium text-amber-700">No projects with due dates</p>
                   <p className="text-xs text-amber-600 mt-1">Add due dates to your projects to sync them to your calendar.</p>
+                </div>
+              )}
+
+              {tasks.length > 0 && (
+                <div className="bg-card border border-border/60 rounded-2xl p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Clock className="w-4 h-4 text-violet-500" />
+                    <p className="text-sm font-semibold text-foreground">Task Focus Blocks</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3">Auto-scheduled in the first open 9 AM–6 PM slot on each task's due date.</p>
+                  <div className="space-y-1">
+                    {tasks.map(t => (
+                      <div key={t.id} className="flex items-center justify-between gap-3 py-2 border-b border-border/40 last:border-0">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{t.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Due {t.due_date} · {t.estimated_minutes}m · {t.energy_required || '—'} energy
+                          </p>
+                        </div>
+                        <span className={`shrink-0 text-[10px] px-2 py-0.5 rounded-full font-medium border ${
+                          t.onCalendar
+                            ? 'bg-green-50 text-green-700 border-green-200'
+                            : 'bg-secondary text-muted-foreground border-border'
+                        }`}>
+                          {t.onCalendar ? 'Scheduled' : 'Pending'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
