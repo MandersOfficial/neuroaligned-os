@@ -5,6 +5,7 @@ const TABS = [
   { id: 'analytics', label: 'Analytics' },
   { id: 'users', label: 'User Management' },
   { id: 'moderation', label: 'Content Moderation' },
+  { id: 'feedback', label: 'Feedback Sync' },
   { id: 'settings', label: 'Global Settings' },
 ];
 

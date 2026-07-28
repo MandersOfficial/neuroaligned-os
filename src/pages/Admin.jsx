@@ -6,6 +6,7 @@ import AnalyticsOverview from '../components/admin/AnalyticsOverview';
 import UserManagement from '../components/admin/UserManagement';
 import ContentModeration from '../components/admin/ContentModeration';
 import GlobalSettings from '../components/admin/GlobalSettings';
+import FeedbackSyncPanel from '@/components/integrations/FeedbackSyncPanel';
 
 export default function Admin() {
   const [tab, setTab] = useState('analytics');
@@ -35,6 +36,13 @@ export default function Admin() {
       {tab === 'analytics' && <AnalyticsOverview />}
       {tab === 'users' && <UserManagement />}
       {tab === 'moderation' && <ContentModeration />}
+      {tab === 'feedback' && (
+        <div className="bg-card border border-border/60 rounded-2xl p-6 max-w-2xl">
+          <h2 className="font-display font-semibold text-lg text-foreground mb-1">Customer Feedback Sync</h2>
+          <p className="text-sm text-muted-foreground mb-4">Pull Intercom conversations into your task queue.</p>
+          <FeedbackSyncPanel />
+        </div>
+      )}
       {tab === 'settings' && <GlobalSettings />}
     </AdminShell>
   );
