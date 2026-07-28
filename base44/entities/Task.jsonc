@@ -70,6 +70,10 @@
         "delegate",
         "eliminate"
       ]
+    },
+    "intercom_conversation_id": {
+      "type": "string",
+      "title": "Intercom Conversation ID"
     }
   },
   "required": [
