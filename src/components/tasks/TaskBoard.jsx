@@ -73,6 +73,19 @@ function TaskCard({ task, projects, recommended, onUpdate, onDelete }) {
                 </button>
               ))}
               <div className="border-t border-border/40 mt-1 pt-1">
+                <p className="px-3 py-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Energy</p>
+                {['low', 'medium', 'high'].map(e => {
+                  const cfg = ENERGY_CONFIG[e];
+                  const EIcon = cfg.icon;
+                  return (
+                    <button key={e} onClick={() => { onUpdate(task, { energy_required: e }); setMenuOpen(false); }}
+                      className={`w-full px-3 py-1.5 text-xs text-left transition-colors hover:bg-secondary flex items-center gap-1.5 ${task.energy_required === e ? 'font-semibold text-primary' : 'text-foreground'}`}>
+                      <EIcon className="w-3 h-3" />{cfg.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="border-t border-border/40 mt-1 pt-1">
                 <button onClick={() => { onDelete(task); setMenuOpen(false); }}
                   className="w-full px-3 py-1.5 text-xs text-left text-destructive hover:bg-destructive/5 flex items-center gap-1.5 transition-colors">
                   <Trash2 className="w-3 h-3" /> Delete

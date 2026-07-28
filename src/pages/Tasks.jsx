@@ -11,6 +11,7 @@ import EnergyScheduler from '../components/tasks/EnergyScheduler';
 import AIGuidancePanel from '../components/tasks/AIGuidancePanel';
 import RegulationWidget from '../components/regulation/RegulationWidget';
 import CreateProjectModal from '../components/tasks/CreateProjectModal';
+import EnergyFilter from '../components/tasks/EnergyFilter';
 
 export default function Tasks() {
   const [user, setUser] = useState(null);
@@ -25,6 +26,7 @@ export default function Tasks() {
   const [recommendedIds, setRecommendedIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateProject, setShowCreateProject] = useState(false);
+  const [energyFilter, setEnergyFilter] = useState('all');
 
   useEffect(() => {
     Promise.all([
@@ -53,6 +55,9 @@ export default function Tasks() {
   const visibleTasks = selectedProjectId
     ? baseTasks.filter(t => t.project_id === selectedProjectId)
     : baseTasks;
+  const energyFilteredTasks = energyFilter === 'all'
+    ? visibleTasks
+    : visibleTasks.filter(t => (t.energy_required || 'medium') === energyFilter);
 
   const selectedProject = projects.find(p => p.id === selectedProjectId);
 
@@ -76,12 +81,12 @@ export default function Tasks() {
               {selectedProject ? `${selectedProject.emoji} ${selectedProject.name}` : 'All Tasks'}
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {visibleTasks.filter(t => t.status !== 'done').length} tasks remaining
+              {energyFilteredTasks.filter(t => t.status !== 'done').length} tasks remaining
             </p>
           </div>
           <div className="flex items-center gap-3">
             <SmartSortButton
-              tasks={visibleTasks}
+              tasks={energyFilteredTasks}
               profile={profile}
               energy={energy}
               focusMinutes={25}
@@ -133,6 +138,9 @@ export default function Tasks() {
           </button>
         </div>
 
+        {/* Energy filter bar */}
+        <EnergyFilter value={energyFilter} onChange={setEnergyFilter} tasks={visibleTasks} />
+
         {/* Body */}
         <div className="flex flex-1 overflow-hidden">
           {/* Project sidebar */}
@@ -146,16 +154,16 @@ export default function Tasks() {
             <EnergyScheduler
               energy={energy}
               onEnergyChange={setEnergy}
-              tasks={visibleTasks}
+              tasks={energyFilteredTasks}
               onRecommend={setRecommendedIds}
             />
-            <AIGuidancePanel energy={energy} tasks={visibleTasks} />
+            <AIGuidancePanel energy={energy} tasks={energyFilteredTasks} />
           </div>
 
           {/* Task board */}
           <div className="flex-1 overflow-hidden flex flex-col">
             <TaskBoard
-              tasks={visibleTasks}
+              tasks={energyFilteredTasks}
               projects={projects}
               energy={energy}
               recommendedIds={recommendedIds}
