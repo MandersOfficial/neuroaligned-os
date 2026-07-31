@@ -7,6 +7,7 @@ import FeaturesSection from '../components/landing/FeaturesSection';
 import TestimonialsSection from '../components/landing/TestimonialsSection';
 import PricingSection from '../components/landing/PricingSection';
 import FAQSection from '../components/landing/FAQSection';
+import DataPrivacySection from '../components/landing/DataPrivacySection';
 import CTASection from '../components/landing/CTASection';
 import Footer from '../components/landing/Footer';
 
@@ -29,6 +30,7 @@ export default function Landing() {
       <TestimonialsSection images={TESTIMONIAL_IMAGES} />
       <PricingSection />
       <FAQSection />
+      <DataPrivacySection />
       <CTASection />
       <Footer />
     </div>
