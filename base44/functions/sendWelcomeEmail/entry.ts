@@ -5,9 +5,15 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const payload = await req.json();
 
-    // Called from entity automation on UserProfile create
-    const profileData = payload?.data;
-    if (!profileData?.user_email || !profileData?.onboarding_completed) {
+    // Only callable by platform entity automation on UserProfile create
+    const event = payload?.event;
+    if (!event || event.type !== 'create' || event.entity_name !== 'UserProfile' || !event.entity_id) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Fetch the real profile from DB — never trust request payload for email content
+    const profileData = await base44.asServiceRole.entities.UserProfile.get(event.entity_id);
+    if (!profileData?.user_email || !profileData.onboarding_completed) {
       return Response.json({ skipped: true, reason: 'No email or onboarding not complete' });
     }
 
@@ -51,8 +57,8 @@ Questions? Reply to this email anytime. We read every message.
       from_name: 'NeuroAligned',
     });
 
-    return Response.json({ sent: true, to: profileData.user_email });
+    return Response.json({ sent: true });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Internal error' }, { status: 500 });
   }
 });

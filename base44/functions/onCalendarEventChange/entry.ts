@@ -12,9 +12,13 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const base44 = createClientFromRequest(req);
 
+    // Validate this is a genuine Google Calendar push notification
+    const resourceState = body.data?._provider_meta?.['x-goog-resource-state'];
+    if (!resourceState) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     // Initial webhook handshake — ack only
-    const state = body.data?._provider_meta?.['x-goog-resource-state'];
-    if (state === 'sync') return Response.json({ status: 'sync_ack' });
+    if (resourceState === 'sync') return Response.json({ status: 'sync_ack' });
 
     // Shared connection (builder's calendar) — platform authenticates the call
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlecalendar');
@@ -39,7 +43,7 @@ Deno.serve(async (req) => {
       res = await fetch(url, { headers: authHeader });
     }
     if (!res.ok) {
-      return Response.json({ status: 'api_error', error: await res.text() });
+      return Response.json({ status: 'api_error' }, { status: 502 });
     }
 
     // Drain all pages — nextSyncToken only appears on the last page
@@ -77,10 +81,10 @@ Deno.serve(async (req) => {
 
         if (Object.keys(updates).length > 0) {
           await base44.asServiceRole.entities.Project.update(projectId, updates);
-          results.push({ id: projectId, name: project.name, status: updates.status, due_date: updates.due_date });
+          results.push({ updated: true });
         }
-      } catch (e) {
-        results.push({ id: projectId, error: e.message });
+      } catch {
+        results.push({ updated: false });
       }
     }
 
@@ -93,8 +97,8 @@ Deno.serve(async (req) => {
       }
     }
 
-    return Response.json({ status: 'processed', count: results.length, results });
+    return Response.json({ status: 'processed', count: results.length });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ status: 'error' }, { status: 500 });
   }
 });
