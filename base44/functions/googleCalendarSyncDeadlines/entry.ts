@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-const CONNECTOR_ID = '6a68111b02df29e55f1a16d1';
+const CONNECTOR_ID = '69fd1ec20e0e670e38251275';
 
 function nextDay(dueDate) {
   const [y, m, d] = dueDate.split('-').map(Number);
