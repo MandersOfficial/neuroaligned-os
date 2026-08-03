@@ -14,8 +14,11 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get('returnTo') || urlParams.get('from_url') || '/dashboard';
       await base44.auth.loginViaEmailPassword(email, password);
-      window.location.href = '/dashboard';
+      // The SDK may hard-redirect internally; fall back to the originating page if not.
+      window.location.href = returnTo;
     } catch (err) {
       setError(err.message || 'Invalid email or password. Please try again.');
     }
@@ -23,11 +26,15 @@ export default function Login() {
   };
 
   const handleGoogle = () => {
-    base44.auth.loginWithProvider('google', '/dashboard');
+    const urlParams = new URLSearchParams(window.location.search);
+    const returnTo = urlParams.get('returnTo') || urlParams.get('from_url') || '/dashboard';
+    base44.auth.loginWithProvider('google', returnTo);
   };
 
   const handleApple = () => {
-    base44.auth.loginWithProvider('apple', '/dashboard');
+    const urlParams = new URLSearchParams(window.location.search);
+    const returnTo = urlParams.get('returnTo') || urlParams.get('from_url') || '/dashboard';
+    base44.auth.loginWithProvider('apple', returnTo);
   };
 
   return (
