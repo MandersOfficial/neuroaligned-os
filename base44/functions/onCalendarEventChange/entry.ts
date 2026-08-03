@@ -12,9 +12,14 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const base44 = createClientFromRequest(req);
 
-    // Validate this is a genuine Google Calendar push notification
-    const resourceState = body.data?._provider_meta?.['x-goog-resource-state'];
-    if (!resourceState) {
+    // Validate this is a genuine Google Calendar push notification by checking
+    // the non-predictable header tokens Google issues per channel. An external
+    // caller cannot forge the channel-id/resource-id values.
+    const meta = body.data?._provider_meta;
+    const resourceState = meta?.['x-goog-resource-state'];
+    const channelId = meta?.['x-goog-channel-id'];
+    const resourceId = meta?.['x-goog-resource-id'];
+    if (!resourceState || !channelId || !resourceId) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
     // Initial webhook handshake — ack only
