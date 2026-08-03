@@ -166,17 +166,36 @@ export default function FocusRoomCard({ room, currentUser, onJoin, onLeave, onCl
       </div>
 
       {/* Google Meet link */}
-      {room.meet_link && room.status !== 'closed' && (
-        <a
-          href={room.meet_link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors"
-        >
-          <Video className="w-4 h-4" />
-          Join Google Meet
-        </a>
-      )}
+      {room.meet_link && room.status !== 'closed' && (() => {
+        // Only allow http(s) URLs — block javascript:, data:, etc. (XSS guard)
+        let safeUrl = null;
+        try {
+          const u = new URL(room.meet_link);
+          if (u.protocol === 'http:' || u.protocol === 'https:') safeUrl = room.meet_link;
+        } catch { /* invalid URL → not clickable */ }
+        if (safeUrl) {
+          return (
+            <a
+              href={safeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors"
+            >
+              <Video className="w-4 h-4" />
+              Join Google Meet
+            </a>
+          );
+        }
+        return (
+          <div
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-muted text-muted-foreground text-sm font-semibold cursor-not-allowed"
+            title="This meeting link is invalid and cannot be opened."
+          >
+            <Video className="w-4 h-4" />
+            Invalid meeting link
+          </div>
+        );
+      })()}
 
       {/* Generate Meet link — host only, when no link exists */}
       {!room.meet_link && isHost && room.status !== 'closed' && onGenerateMeet && (
