@@ -103,22 +103,6 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Community */}
-        <div className="bg-primary/5 border border-primary/15 rounded-2xl p-6 space-y-3">
-          <h3 className="font-display font-semibold text-base text-foreground">🏡 Join The Community</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            The Digital Front Porch is Amanda's Skool community — a space for neurodivergent and non-tech entrepreneurs to learn AI, build funnels, and support each other. 2,100+ members and growing.
-          </p>
-          <a
-            href="https://www.skool.com/thedigitalfrontporch/about?ref=a6d5625d6643443496d1da9265678cce"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-primary/90 transition-colors"
-          >
-            Join the Skool Community <ExternalLink className="w-3.5 h-3.5" />
-          </a>
-        </div>
-
         {/* Email contacts */}
         <div className="bg-card border border-border/60 rounded-2xl p-6 space-y-4">
           <h3 className="font-display font-semibold text-base text-foreground">Email Contacts</h3>
