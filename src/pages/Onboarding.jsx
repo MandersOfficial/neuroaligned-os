@@ -40,7 +40,8 @@ export default function Onboarding() {
       setUser(u);
       setData(prev => ({ ...prev, display_name: u.full_name?.split(' ')[0] || '' }));
       return base44.entities.UserProfile.filter({ user_email: u.email }).then(profiles => {
-        if (profiles.length > 0 && profiles[0].onboarding_completed) {
+        const preview = new URLSearchParams(window.location.search).get('preview') === '1';
+        if (profiles.length > 0 && profiles[0].onboarding_completed && !preview) {
           navigate('/dashboard');
         }
       });
@@ -63,6 +64,11 @@ export default function Onboarding() {
   const doFinish = async () => {
     if (!user) {
       base44.auth.redirectToLogin('/onboarding');
+      return;
+    }
+    const preview = new URLSearchParams(window.location.search).get('preview') === '1';
+    if (preview) {
+      navigate('/dashboard');
       return;
     }
     setLoading(true);
