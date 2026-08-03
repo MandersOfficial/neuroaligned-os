@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Analytics } from '@/lib/analytics';
 import { useNavigate } from 'react-router-dom';
+
+const TRUST_SIGNALS = [
+  '14-day free trial',
+  'No credit card required',
+  'Cancel anytime',
+];
 
 export default function HeroSection({ heroImage }) {
   const navigate = useNavigate();
@@ -14,9 +20,12 @@ export default function HeroSection({ heroImage }) {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
-      
+      {/* Hero gradient per Figma spec */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%)' }}
+      />
+
       {/* Floating orbs */}
       <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
@@ -35,38 +44,44 @@ export default function HeroSection({ heroImage }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-primary/20 backdrop-blur-sm"
             >
               <Sparkles className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-primary">For ADHD, Autistic & neurodivergent business owners</span>
             </motion.div>
 
-            {/* Headline */}
-            <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl xl:text-7xl tracking-tight leading-[1.1]">
-              <span className="text-foreground">NeuroAligned OS</span>
-              <span className="block text-primary mt-2">The productivity OS for neurodivergent business owners</span>
+            {/* Headline — benefit-focused, under 10 words */}
+            <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.2] text-foreground">
+              Regulate first. Get more done — without burnout.
             </h1>
 
-            {/* Subheadline */}
+            {/* Subheadline — specific benefits */}
             <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl">
-              NeuroAligned OS is a work-management platform built for ADHD, autistic, dyslexic, and burnout-recovering entrepreneurs, freelancers, and small business owners. Our <strong className="text-foreground">regulation-first framework</strong> means you regulate your nervous system before you tackle your task list — matching tasks to your energy, protecting you from burnout, and helping you actually get things done.
+              For businesses ready to scale. NeuroAligned OS shows you exactly what to optimize to increase conversions and grow revenue — matching tasks to your energy, protecting you from burnout, and helping you actually get things done.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button size="lg" onClick={handleGetStarted} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-6 text-base font-semibold group w-full sm:w-auto">
-                Try It Free for 14 Days
+              <Button size="lg" onClick={handleGetStarted} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-4 text-lg font-semibold group w-full sm:w-auto">
+                Start My Free Trial
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="rounded-full px-8 py-6 text-base border-border/60 hover:bg-secondary w-full sm:w-auto">
+              <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="rounded-full px-8 py-4 text-lg border-border/60 hover:bg-white/40 bg-white/30 backdrop-blur-sm w-full sm:w-auto">
                 See How It Works
               </Button>
             </div>
 
-            {/* Trust line */}
-            <p className="text-sm text-muted-foreground">
-              Free 14-day trial · No credit card · Cancel anytime
-            </p>
+            {/* Trust signals — green checkmarks per spec */}
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
+              {TRUST_SIGNALS.map(signal => (
+                <div key={signal} className="flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3 text-emerald-600" />
+                  </span>
+                  <span className="text-sm font-medium text-foreground/80">{signal}</span>
+                </div>
+              ))}
+            </div>
           </motion.div>
 
           {/* Right Visual */}
