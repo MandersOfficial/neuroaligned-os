@@ -3,6 +3,18 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Brain, Loader2 } from 'lucide-react';
 
+// Only allow safe, same-origin relative app paths for post-login redirect.
+// Rejects external URLs, protocol-relative URLs, and dangerous schemes
+// (e.g. "javascript:", "data:") to prevent open redirect and DOM XSS.
+function safeReturnTo(raw) {
+  if (!raw) return '/dashboard';
+  const value = raw.trim();
+  if (!value.startsWith('/')) return '/dashboard';
+  if (value.startsWith('//') || value.startsWith('/\\')) return '/dashboard';
+  if (value.includes(':')) return '/dashboard';
+  return value;
+}
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +27,7 @@ export default function Login() {
     setLoading(true);
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const returnTo = urlParams.get('returnTo') || urlParams.get('from_url') || '/dashboard';
+      const returnTo = safeReturnTo(urlParams.get('returnTo') || urlParams.get('from_url'));
       await base44.auth.loginViaEmailPassword(email, password);
       // The SDK may hard-redirect internally; fall back to the originating page if not.
       window.location.href = returnTo;
@@ -27,13 +39,13 @@ export default function Login() {
 
   const handleGoogle = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const returnTo = urlParams.get('returnTo') || urlParams.get('from_url') || '/dashboard';
+    const returnTo = safeReturnTo(urlParams.get('returnTo') || urlParams.get('from_url'));
     base44.auth.loginWithProvider('google', returnTo);
   };
 
   const handleApple = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const returnTo = urlParams.get('returnTo') || urlParams.get('from_url') || '/dashboard';
+    const returnTo = safeReturnTo(urlParams.get('returnTo') || urlParams.get('from_url'));
     base44.auth.loginWithProvider('apple', returnTo);
   };
 
