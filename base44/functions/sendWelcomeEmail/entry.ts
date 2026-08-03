@@ -17,6 +17,14 @@ Deno.serve(async (req) => {
       return Response.json({ skipped: true, reason: 'No email or onboarding not complete' });
     }
 
+    // Freshness check — only send for a profile created in the last 5 minutes.
+    // The entity automation fires within seconds of signup; an external caller
+    // replaying an old entity_id (the only unauthenticated vector) is rejected here.
+    const createdMs = profileData.created_date ? new Date(profileData.created_date).getTime() : NaN;
+    if (!Number.isFinite(createdMs) || Date.now() - createdMs > 5 * 60 * 1000) {
+      return Response.json({ skipped: true, reason: 'Profile not freshly created' });
+    }
+
     const name = profileData.display_name || profileData.user_email.split('@')[0];
     const neurotypes = profileData.neurotypes?.join(', ') || 'neurodivergent';
     const challenge = profileData.biggest_challenge || 'your biggest challenge';
