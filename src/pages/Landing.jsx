@@ -1,37 +1,33 @@
 import { useEffect } from 'react';
 import { Analytics } from '@/lib/analytics';
-import Navbar from '../components/landing/Navbar';
-import HeroSection from '../components/landing/HeroSection';
-import StatsSection from '../components/landing/StatsSection';
-import FeaturesSection from '../components/landing/FeaturesSection';
-import TestimonialsSection from '../components/landing/TestimonialsSection';
-import PricingSection from '../components/landing/PricingSection';
-import FAQSection from '../components/landing/FAQSection';
-import DataPrivacySection from '../components/landing/DataPrivacySection';
-import CTASection from '../components/landing/CTASection';
-import Footer from '../components/landing/Footer';
-
-const HERO_IMAGE = "https://media.base44.com/images/public/69d83404dff23f1198ddc883/2d0c19a74_generated_e8d44661.png";
-const TESTIMONIAL_IMAGES = [
-  "https://media.base44.com/images/public/69d83404dff23f1198ddc883/af210a5a3_generated_7d3e678b.png",
-  "https://media.base44.com/images/public/69d83404dff23f1198ddc883/b2a4bc80f_generated_87b5976e.png",
-  "https://media.base44.com/images/public/69d83404dff23f1198ddc883/263657275_generated_cf3b4cfc.png",
-];
+import '@/components/landing/v2/landing.css';
+import Navbar from '@/components/landing/v2/Navbar';
+import Hero from '@/components/landing/v2/Hero';
+import Empathy from '@/components/landing/v2/Empathy';
+import Statement from '@/components/landing/v2/Statement';
+import Features from '@/components/landing/v2/Features';
+import HowItWorks from '@/components/landing/v2/HowItWorks';
+import Testimonials from '@/components/landing/v2/Testimonials';
+import CTABanner from '@/components/landing/v2/CTABanner';
+import FAQ from '@/components/landing/v2/FAQ';
+import Footer from '@/components/landing/v2/Footer';
 
 export default function Landing() {
   useEffect(() => { Analytics.landingPageViewed(); }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="lp">
       <Navbar />
-      <HeroSection heroImage={HERO_IMAGE} />
-      <StatsSection />
-      <FeaturesSection />
-      <TestimonialsSection images={TESTIMONIAL_IMAGES} />
-      <PricingSection />
-      <FAQSection />
-      <DataPrivacySection />
-      <CTASection />
+      <main>
+        <Hero />
+        <Empathy />
+        <Statement />
+        <Features />
+        <HowItWorks />
+        <Testimonials />
+        <CTABanner />
+        <FAQ />
+      </main>
       <Footer />
     </div>
   );
