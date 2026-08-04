@@ -8,8 +8,8 @@ export default function Statement() {
         <cite>— The team behind NeuroAligned OS</cite>
         <div className="statement-img">
           <img
-            src="https://media.base44.com/images/public/69d83404dff23f1198ddc883/26d603f9c_generated_image.png"
-            alt="Abstract visualization of neural pathways as glowing warm-toned constellations, representing the beauty of a neurodivergent brain"
+            src="https://media.base44.com/images/public/69d83404dff23f1198ddc883/a4affa1fd_generated_image.png"
+            alt="Abstract visualization of neural pathways as glowing cyan, blue, and purple constellations, representing the beauty of a neurodivergent brain"
           />
         </div>
       </div>

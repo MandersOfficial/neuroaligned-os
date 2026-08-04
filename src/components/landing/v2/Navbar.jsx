@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
+import Logo from '@/components/landing/v2/Logo';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -8,8 +9,7 @@ export default function Navbar() {
     <header>
       <nav className="wrap">
         <a href="#" className="logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-          <span className="logo-mark" aria-hidden="true" />
-          NeuroAligned OS
+          <Logo size={42} />
         </a>
         <div className="nav-mid">
           <div className="nav-links">

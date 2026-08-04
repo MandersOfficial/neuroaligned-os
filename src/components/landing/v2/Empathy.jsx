@@ -12,8 +12,8 @@ export default function Empathy() {
         <h2>Every system you\u2019ve tried assumed a brain that isn\u2019t yours — and then blamed you when it broke.</h2>
         <div className="empathy-img">
           <img
-            src="https://media.base44.com/images/public/69d83404dff23f1198ddc883/9af499aec_generated_image.png"
-            alt="A neurodivergent entrepreneur working calmly at a sunlit desk in a warm, serene workspace"
+            src="https://media.base44.com/images/public/69d83404dff23f1198ddc883/0c3438541_generated_image.png"
+            alt="A serene workspace bathed in soft cyan and blue ambient light, representing calm focus"
           />
         </div>
         <div className="pain-grid">

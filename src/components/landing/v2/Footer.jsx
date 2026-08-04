@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import Logo from '@/components/landing/v2/Logo';
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -11,8 +12,7 @@ export default function Footer() {
         <div className="foot-grid">
           <div className="foot-brand">
             <a href="#" className="logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-              <span className="logo-mark" aria-hidden="true" />
-              NeuroAligned OS
+              <Logo size={48} />
             </a>
             <p>The operating system for neurodivergent entrepreneurs. Built with lived experience, backed by neuroscience.</p>
           </div>
