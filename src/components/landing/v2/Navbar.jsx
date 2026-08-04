@@ -9,7 +9,7 @@ export default function Navbar() {
       <nav className="wrap">
         <a href="#" className="logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
           <span className="logo-mark" aria-hidden="true" />
-          NeuroAligned
+          NeuroAligned OS
         </a>
         <div className="nav-mid">
           <div className="nav-links">

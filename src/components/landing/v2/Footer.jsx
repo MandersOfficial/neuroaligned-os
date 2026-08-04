@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="foot-brand">
             <a href="#" className="logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
               <span className="logo-mark" aria-hidden="true" />
-              NeuroAligned
+              NeuroAligned OS
             </a>
             <p>The operating system for neurodivergent entrepreneurs. Built with lived experience, backed by neuroscience.</p>
           </div>
@@ -35,7 +35,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="foot-bottom">
-          <span>© 2026 NeuroAligned. All rights reserved.</span>
+          <span>© 2026 NeuroAligned OS. All rights reserved.</span>
           <span>Made for brains that were never the problem.</span>
         </div>
       </div>

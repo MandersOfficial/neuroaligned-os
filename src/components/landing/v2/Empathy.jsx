@@ -10,6 +10,12 @@ export default function Empathy() {
       <div className="wrap">
         <span className="eyebrow">You\u2019ve tried the planners</span>
         <h2>Every system you\u2019ve tried assumed a brain that isn\u2019t yours — and then blamed you when it broke.</h2>
+        <div className="empathy-img">
+          <img
+            src="https://media.base44.com/images/public/69d83404dff23f1198ddc883/9af499aec_generated_image.png"
+            alt="A neurodivergent entrepreneur working calmly at a sunlit desk in a warm, serene workspace"
+          />
+        </div>
         <div className="pain-grid">
           {PAINS.map(([num, text]) => (
             <div key={num} className="pain-card">
