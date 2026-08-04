@@ -9,7 +9,7 @@ export default function Empathy() {
     <section className="empathy">
       <div className="wrap">
         <span className="eyebrow">You\u2019ve tried the planners</span>
-        <h2>Every system you\u2019ve tried assumed a brain that isn\u2019t yours — and then blamed you when it broke.
+        <h2>Every system you've tried assumed a brain that isn't yours — and then blamed you when it broke.
         </h2>
         <div className="empathy-img">
           <img src="https://media.base44.com/images/public/69d83404dff23f1198ddc883/0c3438541_generated_image.png"
