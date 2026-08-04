@@ -51,7 +51,7 @@ export default function Hero() {
         <div>
           <span className="eyebrow">Built by neurodivergent founders</span>
           <h1>Your brain was never<br />the problem. <em>Your systems<br />were.</em></h1>
-          <p className="lead">NeuroAligned  is the operating system for neurodivergent entrepreneurs. Get energy-based planning that works with your actual capacity, body doubling for instant momentum, and shame-free tracking that makes progress finally feel real — so you can build a business without burning out first.
+          <p className="lead">NeuroAligned OS is the operating system for neurodivergent entrepreneurs. Get energy-based planning that works with your actual capacity, body doubling for instant momentum, and shame-free tracking that makes progress finally feel real — so you can build a business without burning out first.
 
           </p>
           <div className="hero-ctas">
