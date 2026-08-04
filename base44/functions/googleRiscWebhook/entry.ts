@@ -64,7 +64,15 @@ async function verifyGoogleJwt(jwt) {
   const now = Math.floor(Date.now() / 1000);
   if (payload.iss !== EXPECTED_ISS) throw new Error('Unexpected iss');
   if (typeof payload.exp !== 'number' || payload.exp < now) throw new Error('Expired');
-  if (!payload.aud) throw new Error('Missing aud');
+
+  // Strict audience validation: the SET's aud must equal this app's configured
+  // Google OAuth Client ID. Prevents replay of tokens issued for other apps.
+  const expectedAud = Deno.env.get('GOOGLE_RISC_AUDIENCE');
+  if (!expectedAud) throw new Error('Audience not configured');
+  const aud = payload.aud;
+  const audOk =
+    aud === expectedAud || (Array.isArray(aud) && aud.includes(expectedAud));
+  if (!audOk) throw new Error('Unexpected aud');
 
   return payload;
 }
