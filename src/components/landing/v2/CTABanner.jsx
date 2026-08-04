@@ -7,10 +7,10 @@ export default function CTABanner() {
       <div className="wrap">
         <div className="cta-banner">
           <div className="cta-inner">
-            <h2>Start building a business your brain can actually sustain.</h2>
-            <p>Set up your OS in about ten minutes. No diagnosis required — just a brain that\u2019s done fighting itself.</p>
-            <button className="btn btn-primary" onClick={() => navigate('/onboarding')}>Start your free trial</button>
-            <div className="cta-fine">No credit card required · Cancel anytime</div>
+            <h2>Get your first brain-aligned workday in under 10 minutes.</h2>
+            <p>Join 1,000+ neurodivergent entrepreneurs who stopped fighting their brain and started building with it. Set up takes minutes — no diagnosis, no overwhelm.</p>
+            <button className="btn btn-primary" onClick={() => navigate('/onboarding')}>Start My Free Trial</button>
+            <div className="cta-fine">14-day free trial · No credit card required · Cancel anytime</div>
           </div>
         </div>
       </div>

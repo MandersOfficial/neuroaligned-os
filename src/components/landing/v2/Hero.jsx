@@ -52,15 +52,15 @@ export default function Hero() {
           <span className="eyebrow">Built by neurodivergent founders</span>
           <h1>Your brain was never<br />the problem. <em>Your systems<br />were.</em></h1>
           <p className="lead">
-            NeuroAligned OS is the operating system for neurodivergent entrepreneurs. It bends around hyperfocus, low-spoon days, and everything in between — so you can build a business without burning out first.
+            Stop losing hours to systems that weren't made for your brain. NeuroAligned OS plans your day around your actual energy — so ADHD, autistic, and neurodivergent entrepreneurs finish more, crash less, and finally feel in control of their business.
           </p>
           <div className="hero-ctas">
-            <button className="btn btn-primary" onClick={handleStart}>Start your free trial</button>
-            <a href="#demo" className="btn btn-ghost" onClick={(e) => { e.preventDefault(); document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); }}>See how it adapts</a>
+            <button className="btn btn-primary" onClick={handleStart}>Start Free Trial — No Card Needed</button>
+            <a href="#demo" className="btn btn-ghost" onClick={(e) => { e.preventDefault(); document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' }); }}>See how it works</a>
           </div>
           <div className="hero-note">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            No credit card required &nbsp;·&nbsp; Cancel anytime
+            14-day free trial &nbsp;·&nbsp; No credit card &nbsp;·&nbsp; Cancel anytime
           </div>
         </div>
 

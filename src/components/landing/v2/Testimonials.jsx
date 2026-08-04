@@ -8,8 +8,8 @@ export default function Testimonials() {
   return (
     <section className="testimonials" id="stories">
       <div className="wrap">
-        <span className="eyebrow">From people running their OS</span>
-        <h2>They stopped fighting their brains and started building.</h2>
+        <span className="eyebrow">1,000+ neurodivergent entrepreneurs</span>
+        <h2>Real results from people who run their business their way.</h2>
         <div className="t-grid">
           {TESTIMONIALS.map((t) => (
             <div key={t.name} className="t-card">
