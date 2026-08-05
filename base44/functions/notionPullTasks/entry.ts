@@ -1,29 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { readTitle, readRichText, readSelect, readDate, mapStatus } from '../../shared/notionProps.ts';
 
 const NOTION_CONNECTOR_ID = '6a1cfa4c8db502aafb000e1a';
-
-function readTitle(prop) {
-  if (!prop?.title?.length) return '';
-  return prop.title.map(t => t.plain_text || '').join('');
-}
-function readRichText(prop) {
-  if (!prop?.rich_text?.length) return '';
-  return prop.rich_text.map(t => t.plain_text || '').join('');
-}
-function readSelect(prop) {
-  return prop?.select?.name || prop?.status?.name || '';
-}
-function readDate(prop) {
-  return prop?.date?.start || '';
-}
-
-function mapStatus(notionStatus) {
-  const s = (notionStatus || '').toLowerCase();
-  if (s.includes('done') || s.includes('complete') || s.includes('finished')) return 'done';
-  if (s.includes('progress') || s.includes('doing') || s.includes('active')) return 'in_progress';
-  if (s.includes('defer') || s.includes('later') || s.includes('someday')) return 'deferred';
-  return 'todo';
-}
 
 Deno.serve(async (req) => {
   try {
