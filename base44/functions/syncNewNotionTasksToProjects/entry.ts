@@ -1,34 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { readTitle, readRichText, readSelect, readDate, mapStatus, createProjectMatcher } from '../../shared/notionProps.ts';
 
 const NOTION_CONNECTOR_ID = '6a1cfa4c8db502aafb000e1a';
-
-function readTitle(prop) {
-  if (!prop?.title?.length) return '';
-  return prop.title.map(t => t.plain_text || '').join('');
-}
-function readRichText(prop) {
-  if (!prop?.rich_text?.length) return '';
-  return prop.rich_text.map(t => t.plain_text || '').join('');
-}
-function readSelect(prop) {
-  return prop?.select?.name || prop?.status?.name || '';
-}
-function readDate(prop) {
-  return prop?.date?.start || '';
-}
-
-// Reads a "Project" property (relation / select / rich_text / title) into a name string.
-function readProjectRef(prop) {
-  if (!prop) return '';
-  if (prop.type === 'select') return prop.select?.name || '';
-  if (prop.type === 'rich_text' && prop.rich_text?.length) {
-    return prop.rich_text.map(t => t.plain_text || '').join('');
-  }
-  if (prop.type === 'title' && prop.title?.length) {
-    return prop.title.map(t => t.plain_text || '').join('');
-  }
-  return '';
-}
 
 export default async function (req) {
   try {
@@ -46,23 +19,7 @@ export default async function (req) {
     const allTasks = await base44.entities.Task.filter({});
     const taskById = new Map(allTasks.map(t => [t.id, t]));
     const projects = await base44.entities.Project.list('-created_date', 200);
-    const projectByName = new Map(projects.map(p => [p.name.trim().toLowerCase(), p]));
-
-    const relationTitleCache = new Map();
-    async function resolveRelationTitle(id) {
-      if (relationTitleCache.has(id)) return relationTitleCache.get(id);
-      let title = '';
-      try {
-        const r = await fetch(`https://api.notion.com/v1/pages/${id}`, {
-          headers: { 'Authorization': `Bearer ${accessToken}`, 'Notion-Version': '2022-06-28' },
-        });
-        const data = await r.json();
-        const titleProp = Object.values(data.properties || {}).find(p => p.type === 'title');
-        title = readTitle(titleProp);
-      } catch { /* ignore */ }
-      relationTitleCache.set(id, title);
-      return title;
-    }
+    const { match } = createProjectMatcher(projects, accessToken);
 
     const pulled = [];
     const matched = [];
@@ -107,7 +64,6 @@ export default async function (req) {
           if (description) update.description = description.slice(0, 2000);
 
           const existing = notionId ? taskById.get(notionId) : null;
-          let taskName = title;
           if (existing) {
             await base44.entities.Task.update(existing.id, update);
             pulled.push({ name: title, action: 'updated' });
@@ -129,22 +85,11 @@ export default async function (req) {
             pulled.push({ name: title, action: 'created' });
           }
 
-          // Match task → Project by the Notion "Project" property name
-          const projectProp = props['Project'] || props['project'];
-          let projectRefName = readProjectRef(projectProp);
-          if (projectProp?.type === 'relation' && projectProp.relation?.length) {
-            const titles = [];
-            for (const rel of projectProp.relation) {
-              const t = await resolveRelationTitle(rel.id);
-              if (t) titles.push(t);
-            }
-            projectRefName = titles.join(', ');
-          }
-          const project = projectRefName ? projectByName.get(projectRefName.trim().toLowerCase()) : null;
+          const { project, projectRefName } = await match(props);
           if (project) {
-            matched.push({ task: taskName, project: project.name });
+            matched.push({ task: title, project: project.name });
           } else if (projectRefName) {
-            unmatched.push({ task: taskName, projectRef: projectRefName });
+            unmatched.push({ task: title, projectRef: projectRefName });
           }
         } catch (e) {
           pulled.push({ name: '(unknown)', action: 'error', error: e.message });

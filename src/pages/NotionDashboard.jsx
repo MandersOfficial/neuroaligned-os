@@ -5,6 +5,7 @@ import { StatusBadge, SyncResultBox } from '../components/notion/SyncResult';
 import TaskPuller from '../components/notion/TaskPuller';
 import CreatePageForm from '../components/notion/CreatePageForm';
 import NotionContentViewer from '../components/notion/NotionContentViewer';
+import NotionAutoSyncPin from '../components/notion/NotionAutoSyncPin';
 import { base44 } from '@/api/base44Client';
 import {
   Loader2, Database, RefreshCw, ArrowUp, ArrowDown,
@@ -215,6 +216,9 @@ export default function NotionDashboard() {
                   </p>
                 )}
               </div>
+
+              {/* Automated sync pin (admin) */}
+              <NotionAutoSyncPin dbId={dbId} />
 
               {/* Tabs */}
               <div className="flex gap-1 border-b border-border/40 overflow-x-auto">
