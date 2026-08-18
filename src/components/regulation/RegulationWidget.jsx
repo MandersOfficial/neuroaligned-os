@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wind, Droplets, Footprints, X, Heart, ChevronUp, ChevronDown, Bell, BellOff } from 'lucide-react';
 import BreathingGuide from './BreathingGuide';
+import { Analytics } from '@/lib/analytics';
 
 const CUES = [
   {
@@ -84,9 +85,10 @@ export default function RegulationWidget() {
     return () => timers.forEach(clearInterval);
   }, [remindersOn, expanded]);
 
-  const dismissReminder = () => { setReminder(null); setDismissed(true); };
+  const dismissReminder = () => { if (reminder) Analytics.regulationReminderSkipped(reminder.id); setReminder(null); setDismissed(true); };
 
   const handleQuickTool = (id) => {
+    if (id !== activeView) Analytics.regulationToolOpened(id);
     setActiveView(id === activeView ? null : id);
   };
 
@@ -116,7 +118,7 @@ export default function RegulationWidget() {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={() => { setActiveView(reminder.id === 'hydrate' ? null : reminder.id); setExpanded(true); setReminder(null); }}
+                onClick={() => { Analytics.regulationReminderActed(reminder.id); setActiveView(reminder.id === 'hydrate' ? null : reminder.id); setExpanded(true); setReminder(null); }}
                 className="flex-1 py-1.5 bg-primary text-primary-foreground rounded-xl text-xs font-semibold hover:bg-primary/90 transition-colors"
               >
                 {reminder.action}
@@ -152,13 +154,13 @@ export default function RegulationWidget() {
               </div>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => setRemindersOn(!remindersOn)}
+                  onClick={() => { setRemindersOn(!remindersOn); Analytics.regulationReminderToggled(!remindersOn); }}
                   title={remindersOn ? 'Mute reminders' : 'Enable reminders'}
                   className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
                 >
                   {remindersOn ? <Bell className="w-3.5 h-3.5" /> : <BellOff className="w-3.5 h-3.5" />}
                 </button>
-                <button onClick={() => setExpanded(false)} className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                <button onClick={() => { setExpanded(false); Analytics.regulationWidgetClosed(); }} className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -216,7 +218,7 @@ export default function RegulationWidget() {
                       🎯 Goal: 8 glasses a day. Grab one right now!
                     </p>
                     <button
-                      onClick={() => setActiveView(null)}
+                      onClick={() => { setActiveView(null); Analytics.hydrationConfirmed(); }}
                       className="w-full py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-xl text-xs font-semibold hover:bg-blue-100 transition-colors"
                     >
                       ✓ Water acquired
@@ -247,7 +249,7 @@ export default function RegulationWidget() {
                         Another cue
                       </button>
                       <button
-                        onClick={() => setActiveView(null)}
+                        onClick={() => { setActiveView(null); Analytics.stretchCompleted(); }}
                         className="flex-1 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl text-xs font-semibold hover:bg-green-100 transition-colors"
                       >
                         ✓ Done
@@ -272,7 +274,13 @@ export default function RegulationWidget() {
 
       {/* Floating pill button */}
       <motion.button
-        onClick={() => { setExpanded(!expanded); setReminder(null); }}
+        onClick={() => {
+          const opening = !expanded;
+          setExpanded(opening);
+          setReminder(null);
+          if (opening) Analytics.regulationWidgetOpened();
+          else Analytics.regulationWidgetClosed();
+        }}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
         className={`flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg border transition-all ${

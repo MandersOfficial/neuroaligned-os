@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Analytics } from '@/lib/analytics';
 
 const PATTERNS = [
   { id: 'box', label: 'Box Breathing', desc: 'Calms nervous system', steps: ['Inhale', 'Hold', 'Exhale', 'Hold'], durations: [4, 4, 4, 4], colors: ['#8B5CF6', '#6D28D9', '#8B5CF6', '#6D28D9'] },
@@ -15,9 +16,10 @@ export default function BreathingGuide({ onClose }) {
   const [cycles, setCycles] = useState(0);
   const intervalRef = useRef(null);
 
-  const stop = () => { clearInterval(intervalRef.current); setRunning(false); setPhase(0); setCount(pattern.durations[0]); setCycles(0); };
+  const stop = () => { clearInterval(intervalRef.current); setRunning(false); setPhase(0); setCount(pattern.durations[0]); Analytics.breathingStopped(pattern.id, cycles); setCycles(0); };
 
   const start = () => {
+    Analytics.breathingStarted(pattern.id);
     setRunning(true);
     setPhase(0);
     setCount(pattern.durations[0]);

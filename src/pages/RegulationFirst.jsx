@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Brain, ArrowLeft, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Analytics } from '@/lib/analytics';
 
 const STAGES = [
   {
@@ -49,6 +51,8 @@ const MYTHS = [
 
 export default function RegulationFirst() {
   const navigate = useNavigate();
+
+  useEffect(() => { Analytics.regulationPageViewed(); }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -162,7 +166,7 @@ export default function RegulationFirst() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
-              onClick={() => navigate('/onboarding')}
+              onClick={() => { Analytics.regulationCTAClicked('try_free'); navigate('/onboarding'); }}
               className="bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold text-sm hover:bg-primary/90 transition-colors"
             >
               Try NeuroAligned Free
@@ -171,6 +175,7 @@ export default function RegulationFirst() {
               href="https://mandawhite.com"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => Analytics.regulationCTAClicked('amanda_link')}
               className="border border-border bg-card text-foreground px-6 py-3 rounded-full font-semibold text-sm hover:bg-secondary transition-colors inline-flex items-center justify-center gap-2"
             >
               Learn more from Amanda <ExternalLink className="w-3.5 h-3.5" />

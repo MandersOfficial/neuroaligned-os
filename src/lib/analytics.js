@@ -39,4 +39,18 @@ export const Analytics = {
 
   // Knowledge
   articleViewed: (title, category) => track('article_viewed', { title, category }),
+
+  // Regulation
+  regulationPageViewed: () => track('regulation_page_viewed'),
+  regulationCTAClicked: (cta) => track('regulation_cta_clicked', { cta }),
+  regulationWidgetOpened: () => track('regulation_widget_opened'),
+  regulationWidgetClosed: () => track('regulation_widget_closed'),
+  regulationReminderToggled: (enabled) => track('regulation_reminder_toggled', { enabled }),
+  regulationToolOpened: (tool) => track('regulation_tool_opened', { tool }),
+  regulationReminderActed: (cue) => track('regulation_reminder_acted', { cue }),
+  regulationReminderSkipped: (cue) => track('regulation_reminder_skipped', { cue }),
+  hydrationConfirmed: () => track('hydration_confirmed'),
+  stretchCompleted: () => track('stretch_completed'),
+  breathingStarted: (pattern) => track('breathing_started', { pattern }),
+  breathingStopped: (pattern, cycles) => track('breathing_stopped', { pattern, cycles }),
 };
