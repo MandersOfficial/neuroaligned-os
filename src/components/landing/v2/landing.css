@@ -389,3 +389,94 @@
 .lp .foot-bottom{ display:flex; justify-content:space-between; align-items:center; padding-top:28px; font-size:12.5px; color:#8A7E9C; flex-wrap:wrap; gap:12px; }
 
 .lp ::selection{ background:var(--gold); color:#050a1f; }
+
+/* ---------- MOBILE NAV ---------- */
+.lp .nav-toggle{
+  display:none;
+  width:42px; height:42px;
+  border-radius:12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--ink);
+  align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.lp .nav-menu{ display:none; }
+
+@media (max-width:880px){
+  .lp .nav-toggle{ display:inline-flex; }
+  .lp .nav-menu{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    padding:0 20px;
+    background:rgba(5,10,31,0.97);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid transparent;
+    transition:max-height .28s ease, opacity .2s ease, padding .28s ease, border-color .28s ease;
+  }
+  .lp .nav-menu.open{
+    max-height:440px;
+    opacity:1;
+    padding:8px 20px 18px;
+    border-bottom:1px solid var(--border);
+  }
+  .lp .nav-menu a{
+    font-size:16px; font-weight:600; color:var(--ink);
+    text-decoration:none; padding:13px 2px;
+    border-bottom:1px solid var(--border);
+  }
+  .lp .nav-menu a:hover{ color:var(--gold); }
+  .lp .nav-menu-login{
+    margin-top:12px;
+    padding:13px 18px;
+    border-radius:999px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--ink);
+    font-family:var(--sans); font-weight:700; font-size:15px;
+    cursor:pointer; text-align:center;
+  }
+}
+
+/* ---------- MOBILE REFINEMENTS ---------- */
+@media (max-width:940px){
+  .lp .hero-grid{ gap:40px; }
+}
+@media (max-width:640px){
+  .lp .hero{ padding:56px 0 32px; }
+  .lp .hero h1{ font-size:clamp(32px, 8.5vw, 40px); }
+  .lp .hero p.lead{ font-size:16px; margin-bottom:26px; }
+  .lp .hero-ctas{ gap:12px; }
+  .lp .hero-ctas .btn{ white-space:normal; padding:14px 22px; font-size:15px; }
+  .lp .state-toggle{ flex-wrap:wrap; }
+  .lp .state-btn{ padding:8px 12px; font-size:12px; }
+  .lp .empathy{ padding:64px 0; }
+  .lp .empathy h2{ margin-bottom:28px; }
+  .lp .features, .lp .how, .lp .testimonials{ padding:64px 0; }
+  .lp .faq{ padding:16px 0 72px; }
+  .lp .pain-card{ padding:22px 20px; }
+  .lp .feature-card{ padding:24px; }
+  .lp .t-card{ padding:22px; }
+  .lp .features-head{ margin-bottom:36px; }
+  .lp .how h2{ margin-bottom:40px; }
+  .lp .testimonials h2{ margin-bottom:40px; }
+  .lp .statement .wrap{ padding:88px 20px; }
+  .lp .statement-box{ padding:48px 24px; border-radius:18px; }
+  .lp .cta-banner{ padding:56px 24px; border-radius:20px; }
+}
+@media (max-width:480px){
+  .lp .foot-grid{ grid-template-columns:1fr; gap:28px; }
+  .lp .hero-ctas{ flex-direction:column; align-items:stretch; }
+  .lp .hero-ctas .btn{ width:100%; justify-content:center; }
+  .lp .nav-cta .btn-sm{ padding:9px 14px; font-size:13px; }
+  .lp .logo{ font-size:18px; }
+  .lp .demo-body{ min-height:200px; }
+  .lp .statement .wrap{ padding:64px 18px; }
+  .lp .statement-box{ padding:40px 22px; }
+  .lp .cta-banner{ padding:48px 22px; }
+  .lp .hero h1{ font-size:clamp(30px, 9vw, 38px); }
+}
