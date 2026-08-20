@@ -13,6 +13,7 @@ import { FOCUS_PRESETS } from '../components/onboarding/StepPersonalize';
 import StepComplete from '../components/onboarding/StepComplete';
 
 const TOTAL_STEPS = 7;
+const STASH_KEY = 'na_onboarding_data';
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -38,13 +39,34 @@ export default function Onboarding() {
     base44.auth.me().then(u => {
       if (!u) return; // allow unauthenticated users to browse onboarding
       setUser(u);
-      setData(prev => ({ ...prev, display_name: u.full_name?.split(' ')[0] || '' }));
-      return base44.entities.UserProfile.filter({ user_email: u.email }).then(profiles => {
-        const preview = new URLSearchParams(window.location.search).get('preview') === '1';
-        if (profiles.length > 0 && profiles[0].onboarding_completed && !preview) {
-          navigate('/dashboard');
+      const params = new URLSearchParams(window.location.search);
+      const preview = params.get('preview') === '1';
+      const complete = params.get('complete') === '1';
+
+      // Resume after a brand-new visitor registers mid-onboarding: their answers
+      // were stashed before sign-up, so finish saving + go straight to the dashboard.
+      if (complete) {
+        const stashRaw = sessionStorage.getItem(STASH_KEY);
+        if (stashRaw) {
+          const stashed = JSON.parse(stashRaw);
+          sessionStorage.removeItem(STASH_KEY);
+          setData(stashed);
+          setStep(7);
+          runCompletion(stashed, u);
+          return;
         }
-      });
+      }
+
+      // Fresh authenticated visit: clear any stale stash, then check for an existing profile.
+      sessionStorage.removeItem(STASH_KEY);
+      setData(prev => ({ ...prev, display_name: u.full_name?.split(' ')[0] || '' }));
+      if (!preview) {
+        return base44.entities.UserProfile.filter({ user_email: u.email }).then(profiles => {
+          if (profiles.length > 0 && profiles[0].onboarding_completed) {
+            navigate('/dashboard');
+          }
+        });
+      }
     }).catch(() => {});
   }, []);
 
@@ -61,46 +83,35 @@ export default function Onboarding() {
     setShowDisclaimer(true);
   };
 
-  const doFinish = async () => {
-    if (!user) {
-      base44.auth.redirectToLogin('/onboarding');
-      return;
-    }
-    const preview = new URLSearchParams(window.location.search).get('preview') === '1';
-    if (preview) {
-      navigate('/dashboard');
-      return;
-    }
+  const runCompletion = async (profile, userObj) => {
     setLoading(true);
-    // Wait for the build animation to complete (~3.7s total)
-    await new Promise(r => setTimeout(r, 3800));
 
-    // Update display name (only if authenticated)
-    if (data.display_name && user) {
+    // Update display name
+    if (profile.display_name) {
       try {
-        await base44.auth.updateMe({ full_name: data.display_name });
+        await base44.auth.updateMe({ full_name: profile.display_name });
       } catch (e) {
-        // ignore if not authenticated
+        // ignore
       }
     }
 
     // Save user profile
     await base44.entities.UserProfile.create({
-      user_email: user?.email || '',
-      display_name: data.display_name,
-      pronouns: data.pronouns,
-      neurotypes: data.neurotypes,
-      business_type: data.business_type,
-      biggest_challenge: data.biggest_challenge,
-      energy_peak: data.energy_peak,
-      work_style: data.work_style,
+      user_email: userObj?.email || '',
+      display_name: profile.display_name,
+      pronouns: profile.pronouns,
+      neurotypes: profile.neurotypes,
+      business_type: profile.business_type,
+      biggest_challenge: profile.biggest_challenge,
+      energy_peak: profile.energy_peak,
+      work_style: profile.work_style,
       onboarding_completed: true,
     });
 
     // Seed initial tasks from goals
-    if (data.initial_goals?.length > 0) {
+    if (profile.initial_goals?.length > 0) {
       await Promise.all(
-        data.initial_goals.map(title =>
+        profile.initial_goals.map(title =>
           base44.entities.Task.create({
             title,
             status: 'todo',
@@ -112,8 +123,8 @@ export default function Onboarding() {
     }
 
     // Seed selected focus mode
-    if (data.focus_preset) {
-      const preset = FOCUS_PRESETS.find(p => p.value === data.focus_preset);
+    if (profile.focus_preset) {
+      const preset = FOCUS_PRESETS.find(p => p.value === profile.focus_preset);
       if (preset) {
         await base44.entities.FocusMode.create({
           name: preset.label,
@@ -133,7 +144,7 @@ export default function Onboarding() {
     const trialEnd = new Date(now);
     trialEnd.setDate(trialEnd.getDate() + 14);
     await base44.entities.Subscription.create({
-      user_email: user?.email || '',
+      user_email: userObj?.email || '',
       plan: 'trial',
       status: 'trialing',
       trial_start_date: now.toISOString().split('T')[0],
@@ -141,6 +152,25 @@ export default function Onboarding() {
     });
 
     navigate('/dashboard');
+  };
+
+  const doFinish = async () => {
+    if (!user) {
+      // No anonymous users: send new visitors to create an account before their
+      // dashboard. Stash their answers so onboarding auto-completes after sign-up.
+      sessionStorage.setItem(STASH_KEY, JSON.stringify(data));
+      navigate(`/register?returnTo=${encodeURIComponent('/onboarding?complete=1')}`);
+      return;
+    }
+    const preview = new URLSearchParams(window.location.search).get('preview') === '1';
+    if (preview) {
+      navigate('/dashboard');
+      return;
+    }
+    setLoading(true);
+    // Wait for the build animation to complete (~3.7s total)
+    await new Promise(r => setTimeout(r, 3800));
+    await runCompletion(data, user);
   };
 
   return (
