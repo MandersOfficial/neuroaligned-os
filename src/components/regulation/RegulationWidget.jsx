@@ -93,7 +93,7 @@ export default function RegulationWidget() {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-2">
+    <div className="fixed bottom-20 right-5 md:bottom-5 z-50 flex flex-col items-end gap-2">
       {/* Reminder toast */}
       <AnimatePresence>
         {reminder && !expanded && (
