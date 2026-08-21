@@ -5,11 +5,12 @@ import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import AutoBreakScheduler from '@/components/integrations/AutoBreakScheduler';
 import ContextCapture from '@/components/integrations/ContextCapture';
 import FeedbackSyncPanel from '@/components/integrations/FeedbackSyncPanel';
+import CalendlySyncPanel from '@/components/integrations/CalendlySyncPanel';
 import {
   CheckCircle2, Link2, Loader2, RefreshCw, AlertCircle,
   Calendar, Video, Table, FileText, Presentation, Mail,
   ListTodo, FolderKanban, HardDrive, ChevronDown, ChevronUp,
-  Coffee, Brain, Zap, ArrowRight, ExternalLink, MessageSquare
+  Coffee, Brain, Zap, ArrowRight, ExternalLink, MessageSquare, CalendarClock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -83,6 +84,13 @@ const CONNECTORS = [
     description: 'Sync projects, tasks, and profiles with your Notion workspace.',
     icon: FileText,
     color: 'bg-slate-100 text-slate-600',
+  },
+  {
+    id: '6a88338fe746048ca65ac142',
+    name: 'Calendly',
+    description: 'Connect your own Calendly account to sync bookings into project deadlines.',
+    icon: CalendarClock,
+    color: 'bg-indigo-50 text-indigo-500',
   },
 ];
 
@@ -287,6 +295,17 @@ export default function IntegrationSettings() {
               description="Sync Intercom conversations into your task queue."
             >
               <FeedbackSyncPanel />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={CalendarClock}
+              color="text-indigo-500"
+              bg="bg-indigo-50"
+              title="Calendly Booking Sync"
+              description="Match new team meeting bookings to project deadlines (match or create)."
+              defaultOpen={false}
+            >
+              <CalendlySyncPanel />
             </FeaturePanel>
           </div>
 
