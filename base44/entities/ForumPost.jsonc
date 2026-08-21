@@ -42,6 +42,15 @@
       ],
       "default": "pending"
     },
+    "visibility": {
+      "type": "string",
+      "title": "Visibility",
+      "enum": [
+        "shared",
+        "private"
+      ],
+      "default": "shared"
+    },
     "flag_reason": {
       "type": "string",
       "title": "Flag Reason"
@@ -69,23 +78,32 @@
     "read": {
       "$or": [
         {
-          "data.status": "approved"
-        },
-        {
           "created_by_id": "{{user.id}}"
         },
         {
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "$and": [
+            {
+              "data.visibility": {
+                "$in": [
+                  "shared",
+                  null
+                ]
+              }
+            },
+            {
+              "data.status": "approved"
+            }
+          ]
         }
       ]
     },
     "update": {
       "$or": [
-        {
-          "data.status": "approved"
-        },
         {
           "created_by_id": "{{user.id}}"
         },
