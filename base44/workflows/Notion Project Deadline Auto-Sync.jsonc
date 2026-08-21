@@ -1,0 +1,45 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/30 * * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "name": "Notion Project Deadline Auto-Sync",
+  "description": "Every 30 minutes, pulls due dates from the pinned Notion projects database and updates matching project deadlines.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "notion_project_deadline_auto_sync",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync_project_deadlines": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "scheduledNotionProjectDeadlineSync",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Sync project deadlines",
+            "description": "Pull due dates from pinned Notion projects database"
+          }
+        }
+      }
+    ]
+  }
+}

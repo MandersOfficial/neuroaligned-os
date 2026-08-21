@@ -217,8 +217,20 @@ export default function NotionDashboard() {
                 )}
               </div>
 
-              {/* Automated sync pin (admin) */}
+              {/* Automated sync pin (admin) — tasks */}
               <NotionAutoSyncPin dbId={dbId} />
+
+              {/* Automated sync pin (admin) — project deadlines */}
+              <NotionAutoSyncPin
+                dbId={dbId}
+                settingKey="notion_projects_database_id"
+                title="Automated 30-min project deadline sync"
+                description="Pin the selected database as the source for scheduled project deadline syncing."
+                pinLabel="Pin for deadlines"
+                pinnedMsg="Pinned — project deadlines will sync every 30 minutes."
+                unpinnedMsg="Unpinned — project deadline sync paused."
+                settingLabel="Notion project database (deadline auto-sync)"
+              />
 
               {/* Tabs */}
               <div className="flex gap-1 border-b border-border/40 overflow-x-auto">
