@@ -29,6 +29,15 @@
       "title": "User Created",
       "default": false
     },
+    "visibility": {
+      "type": "string",
+      "title": "Visibility",
+      "enum": [
+        "private",
+        "shared"
+      ],
+      "default": "private"
+    },
     "work_block_minutes": {
       "type": "number",
       "title": "Work Block (minutes)",
@@ -110,6 +119,9 @@
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "data.visibility": "shared"
         }
       ]
     },
