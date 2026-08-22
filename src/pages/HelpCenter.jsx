@@ -336,7 +336,7 @@ export default function HelpCenter() {
             <p className="text-sm font-semibold text-foreground">Still need help?</p>
             <p className="text-xs text-muted-foreground mt-1">If you can't find an answer, reach out and we'll help you get set up.</p>
             <Link
-              to="/contact"
+              to="/support"
               className="inline-flex items-center gap-1.5 mt-3 px-4 py-2 bg-primary text-primary-foreground rounded-full text-xs font-semibold hover:bg-primary/90 transition-colors"
             >
               Contact Support
