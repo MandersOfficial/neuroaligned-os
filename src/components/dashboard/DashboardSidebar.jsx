@@ -3,7 +3,7 @@ import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
   BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, DoorOpen, FolderKanban, Database, Calendar,
-  HelpCircle, Shield
+  HelpCircle, Shield, LifeBuoy
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import { useState } from 'react';
@@ -38,6 +38,7 @@ const NAV_GROUPS = [
       { icon: Plug, label: 'Integrations', href: '/integration-settings' },
       { icon: Database, label: 'Notion Sync', href: '/notion-sync' },
       { icon: Calendar, label: 'Calendar Sync', href: '/calendar-sync' },
+      { icon: LifeBuoy, label: 'Support', href: '/support' },
       { icon: HelpCircle, label: 'Help Center', href: '/help-center' },
       { icon: Shield, label: 'Privacy Policy', href: '/privacy' },
     ],

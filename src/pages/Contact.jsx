@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Brain, ArrowLeft, ExternalLink, MessageCircle, Facebook, Music } from 'lucide-react';
+import FeedbackForm from '@/components/feedback/FeedbackForm';
 
 const CONTACT_CHANNELS = [
   {
@@ -119,6 +120,13 @@ export default function Contact() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Feedback form */}
+        <div className="space-y-4">
+          <h2 className="font-display font-semibold text-lg text-foreground">Send us a message</h2>
+          <p className="text-sm text-muted-foreground">Fill out the form below and it goes straight to our team — we'll reply by email.</p>
+          <FeedbackForm submittedFrom="contact" defaultCategory="general" showRating />
         </div>
       </main>
     </div>
