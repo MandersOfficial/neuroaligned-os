@@ -215,6 +215,17 @@
   color:var(--ink-faint);
 }
 
+/* ---------- TRUST BAR ---------- */
+.lp .trustbar{ padding:22px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:var(--surface); }
+.lp .trustbar .wrap{ display:flex; align-items:center; justify-content:center; gap:14px 40px; flex-wrap:wrap; }
+.lp .trust-item{ display:inline-flex; align-items:center; gap:10px; font-size:13.5px; font-weight:600; color:var(--ink-soft); }
+.lp .trust-item svg{ width:18px; height:18px; flex-shrink:0; }
+.lp .trust-item .ic-gold{ color:var(--gold-deep); }
+.lp .trust-item .ic-sage{ color:var(--sage-deep); }
+.lp .trust-item .ic-plum{ color:var(--plum-deep); }
+.lp .trust-item .ic-rose{ color:var(--rose-deep); }
+@media (max-width:640px){ .lp .trustbar .wrap{ gap:14px 20px; } .lp .trust-item{ font-size:12.5px; } }
+
 /* ---------- EMPATHY ---------- */
 .lp .empathy{ padding:96px 0; }
 .lp .empathy .eyebrow{ color:var(--rose-deep); margin-bottom:18px; }
