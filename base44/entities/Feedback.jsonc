@@ -85,6 +85,11 @@
       "title": "Admin Notes",
       "maxLength": 4000
     },
+    "admin_response": {
+      "type": "string",
+      "title": "Reply To User",
+      "maxLength": 2000
+    },
     "status": {
       "type": "string",
       "title": "Status",

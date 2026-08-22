@@ -36,6 +36,12 @@ function TicketRow({ ticket }) {
         <span className="text-xs text-muted-foreground shrink-0 flex items-center gap-1"><Clock className="w-3 h-3" /> {dateStr}</span>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{ticket.message}</p>
+      {ticket.admin_response && (
+        <div className="bg-primary/5 border border-primary/15 rounded-lg px-3 py-2">
+          <p className="text-[11px] font-semibold text-primary mb-0.5">Update from the team</p>
+          <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap">{ticket.admin_response}</p>
+        </div>
+      )}
       {ticket.rating != null && (
         <p className="text-xs text-amber-600">★ {ticket.rating}/5</p>
       )}

@@ -49,14 +49,14 @@ export default function SupportTicketsManager() {
   const toggle = (t) => {
     if (expanded === t.id) { setExpanded(null); return; }
     setExpanded(t.id);
-    setDrafts(d => ({ ...d, [t.id]: { status: t.status || 'new', admin_notes: t.admin_notes || '' } }));
+    setDrafts(d => ({ ...d, [t.id]: { status: t.status || 'new', admin_notes: t.admin_notes || '', admin_response: t.admin_response || '' } }));
   };
   const setDraft = (id, k, v) => setDrafts(d => ({ ...d, [id]: { ...d[id], [k]: v } }));
 
   const save = async (id) => {
     setSaving(id);
     try {
-      await base44.entities.Feedback.update(id, drafts[id]);
+      await base44.functions.invoke('updateSupportTicket', { id, ...drafts[id] });
       setExpanded(null);
       await load();
     } catch { /* ignore */ }
@@ -176,6 +176,16 @@ export default function SupportTicketsManager() {
                           {STATUSES.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
                         </select>
                       </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-foreground block mb-1.5">Reply to user <span className="text-muted-foreground font-normal">(they'll see this and get an email)</span></label>
+                      <textarea
+                        rows={3}
+                        value={draft.admin_response}
+                        onChange={e => setDraft(t.id, 'admin_response', e.target.value)}
+                        placeholder="Write a response to the user…"
+                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                      />
                     </div>
                     <div>
                       <label className="text-xs font-semibold text-foreground block mb-1.5">Admin notes <span className="text-muted-foreground font-normal">(internal)</span></label>
