@@ -3,10 +3,10 @@ import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
   BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, DoorOpen, FolderKanban, Database, Calendar,
-  HelpCircle, Shield, LifeBuoy
+  HelpCircle, Shield, LifeBuoy, ShieldCheck
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
 
@@ -61,7 +61,12 @@ const MOBILE_NAV = [
 export default function DashboardSidebar({ user }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { prefs, updatePref } = useSensory();
+
+  useEffect(() => {
+    base44.auth.me().then(u => setIsAdmin(u?.role === 'admin')).catch(() => {});
+  }, []);
 
   return (
     <>
@@ -132,6 +137,19 @@ export default function DashboardSidebar({ user }) {
 
         {/* Bottom controls */}
         <div className="border-t border-border/40 px-2 py-2 space-y-0.5">
+          {isAdmin && (
+            <Link
+              to="/admin"
+              title={collapsed ? 'Admin Console' : undefined}
+              className={cn(
+                'w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-all',
+                collapsed && 'justify-center px-0'
+              )}
+            >
+              <ShieldCheck className="w-4 h-4 shrink-0" />
+              {!collapsed && <span>Admin Console</span>}
+            </Link>
+          )}
           <button
             onClick={() => updatePref('darkMode', !prefs.darkMode)}
             title={prefs.darkMode ? 'Light mode' : 'Dark mode'}

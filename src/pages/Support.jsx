@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import FeedbackForm from '../components/feedback/FeedbackForm';
+import FeatureRequestSection from '../components/feedback/FeatureRequestSection';
 import { LifeBuoy, MessageSquare, Clock, CheckCircle2, Loader2, Paperclip } from 'lucide-react';
 
 const STATUS_META = {
@@ -108,6 +109,9 @@ export default function Support() {
               </div>
             )}
           </section>
+
+          {/* Feature requests */}
+          <FeatureRequestSection />
         </div>
       </main>
     </div>

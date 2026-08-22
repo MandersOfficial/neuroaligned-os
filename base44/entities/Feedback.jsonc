@@ -80,6 +80,11 @@
         "type": "string"
       }
     },
+    "admin_notes": {
+      "type": "string",
+      "title": "Admin Notes",
+      "maxLength": 4000
+    },
     "status": {
       "type": "string",
       "title": "Status",

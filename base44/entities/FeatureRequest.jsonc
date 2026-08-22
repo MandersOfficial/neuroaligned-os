@@ -1,0 +1,94 @@
+{
+  "name": "FeatureRequest",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 2000
+    },
+    "type": {
+      "type": "string",
+      "title": "Request Type",
+      "enum": [
+        "feature",
+        "integration",
+        "improvement",
+        "other"
+      ],
+      "default": "feature"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "submitted",
+        "reviewing",
+        "planned",
+        "in_progress",
+        "shipped",
+        "declined"
+      ],
+      "default": "submitted"
+    },
+    "priority": {
+      "type": "string",
+      "title": "Priority",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "submitter_email": {
+      "type": "string",
+      "title": "Submitter Email"
+    },
+    "submitter_name": {
+      "type": "string",
+      "title": "Submitter Name"
+    },
+    "admin_notes": {
+      "type": "string",
+      "title": "Admin Notes",
+      "maxLength": 4000
+    },
+    "admin_response": {
+      "type": "string",
+      "title": "Public Response",
+      "maxLength": 2000
+    }
+  },
+  "required": [
+    "title",
+    "description"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

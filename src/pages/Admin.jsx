@@ -7,6 +7,8 @@ import UserManagement from '../components/admin/UserManagement';
 import ContentModeration from '../components/admin/ContentModeration';
 import GlobalSettings from '../components/admin/GlobalSettings';
 import FeedbackSyncPanel from '@/components/integrations/FeedbackSyncPanel';
+import SupportTicketsManager from '../components/admin/SupportTicketsManager';
+import FeatureRequestsManager from '../components/admin/FeatureRequestsManager';
 
 export default function Admin() {
   const [tab, setTab] = useState('analytics');
@@ -43,6 +45,8 @@ export default function Admin() {
           <FeedbackSyncPanel />
         </div>
       )}
+      {tab === 'tickets' && <SupportTicketsManager />}
+      {tab === 'features' && <FeatureRequestsManager />}
       {tab === 'settings' && <GlobalSettings />}
     </AdminShell>
   );
