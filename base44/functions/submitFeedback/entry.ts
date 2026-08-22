@@ -32,6 +32,7 @@ export default async function(req) {
     const submittedFrom = str(body.submitted_from, 60);
     const ratingRaw = body.rating;
     const rating = ratingRaw != null && !isNaN(Number(ratingRaw)) ? Number(ratingRaw) : null;
+    const reviewConsent = !!body.review_consent;
 
     let attachments = [];
     if (Array.isArray(body.attachments)) {
@@ -60,6 +61,7 @@ export default async function(req) {
       intent_usage: intentUsage,
       willingness_to_pay: willingnessToPay,
       attachments,
+      review_consent: reviewConsent,
     });
 
     // Resolve the recipient (first admin = the app owner)
@@ -81,6 +83,7 @@ export default async function(req) {
         submittedFrom ? `Submitted from: ${submittedFrom}` : null,
         intentUsage ? `Would use it: ${intentUsage}` : null,
         willingnessToPay ? `Willingness to pay: ${WTP_LABELS[willingnessToPay]}` : null,
+        category === 'review' ? `Review consent: ${reviewConsent ? 'granted — may use publicly' : 'not granted'}` : null,
         '',
         'Message:',
         message,
