@@ -38,6 +38,48 @@
       "type": "number",
       "title": "Rating"
     },
+    "what_you_tried": {
+      "type": "string",
+      "title": "What You Were Trying To Do",
+      "maxLength": 2000
+    },
+    "what_went_wrong": {
+      "type": "string",
+      "title": "What Went Wrong / Expected",
+      "maxLength": 2000
+    },
+    "device_info": {
+      "type": "string",
+      "title": "Device / Browser"
+    },
+    "intent_usage": {
+      "type": "string",
+      "title": "How Often They'd Use It",
+      "enum": [
+        "Daily",
+        "A few times a week",
+        "Weekly",
+        "Rarely",
+        "No, not really"
+      ]
+    },
+    "willingness_to_pay": {
+      "type": "string",
+      "title": "Willingness To Pay",
+      "enum": [
+        "free",
+        "starter",
+        "pro",
+        "power"
+      ]
+    },
+    "attachments": {
+      "type": "array",
+      "title": "Attachments",
+      "items": {
+        "type": "string"
+      }
+    },
     "status": {
       "type": "string",
       "title": "Status",

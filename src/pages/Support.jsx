@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import FeedbackForm from '../components/feedback/FeedbackForm';
-import { LifeBuoy, MessageSquare, Clock, CheckCircle2, Loader2 } from 'lucide-react';
+import { LifeBuoy, MessageSquare, Clock, CheckCircle2, Loader2, Paperclip } from 'lucide-react';
 
 const STATUS_META = {
   new: { label: 'New', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
@@ -37,6 +37,11 @@ function TicketRow({ ticket }) {
       <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{ticket.message}</p>
       {ticket.rating != null && (
         <p className="text-xs text-amber-600">★ {ticket.rating}/5</p>
+      )}
+      {ticket.attachments?.length > 0 && (
+        <p className="text-xs text-muted-foreground flex items-center gap-1">
+          <Paperclip className="w-3 h-3" /> {ticket.attachments.length} attachment{ticket.attachments.length > 1 ? 's' : ''}
+        </p>
       )}
     </div>
   );

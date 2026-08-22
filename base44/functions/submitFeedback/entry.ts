@@ -1,6 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 
 const CATEGORIES = ['general', 'help', 'review', 'support', 'bug'];
+const WTP_LABELS = {
+  free: 'Free only ($0)',
+  starter: 'Starter ($10–20 / mo)',
+  pro: 'Pro ($30–50 / mo)',
+  power: 'Power ($75+ / mo)',
+};
 
 export default async function(req) {
   try {
@@ -11,14 +17,26 @@ export default async function(req) {
     try { user = await base44.auth.me(); } catch { user = null; }
 
     const body = await req.json();
-    const name = (body.name || '').toString().trim().slice(0, 120);
-    const email = (body.email || '').toString().trim().slice(0, 200);
+    const str = (v, max) => (v == null ? '' : String(v)).trim().slice(0, max || 2000);
+
+    const name = str(body.name, 120);
+    const email = str(body.email, 200);
     const category = CATEGORIES.includes(body.category) ? body.category : 'general';
-    const subject = (body.subject || '').toString().trim().slice(0, 200);
-    const message = (body.message || '').toString().trim().slice(0, 4000);
+    const subject = str(body.subject, 200);
+    const message = str(body.message, 4000);
+    const whatYouTried = str(body.what_you_tried, 2000);
+    const whatWentWrong = str(body.what_went_wrong, 2000);
+    const deviceInfo = str(body.device_info, 200);
+    const intentUsage = str(body.intent_usage, 60);
+    const willingnessToPay = WTP_LABELS[body.willingness_to_pay] ? body.willingness_to_pay : '';
+    const submittedFrom = str(body.submitted_from, 60);
     const ratingRaw = body.rating;
     const rating = ratingRaw != null && !isNaN(Number(ratingRaw)) ? Number(ratingRaw) : null;
-    const submittedFrom = (body.submitted_from || '').toString().slice(0, 60);
+
+    let attachments = [];
+    if (Array.isArray(body.attachments)) {
+      attachments = body.attachments.map(u => String(u).slice(0, 2000)).filter(Boolean).slice(0, 10);
+    }
 
     if (!message) {
       return Response.json({ error: 'Message is required' }, { status: 400 });
@@ -36,6 +54,12 @@ export default async function(req) {
       rating,
       status: 'new',
       submitted_from: submittedFrom,
+      what_you_tried: whatYouTried,
+      what_went_wrong: whatWentWrong,
+      device_info: deviceInfo,
+      intent_usage: intentUsage,
+      willingness_to_pay: willingnessToPay,
+      attachments,
     });
 
     // Resolve the recipient (first admin = the app owner)
@@ -43,12 +67,11 @@ export default async function(req) {
     try {
       const admins = await base44.asServiceRole.entities.User.filter({ role: 'admin' }, '-created_date', 10);
       if (admins && admins.length) recipientEmail = admins[0].email;
-    } catch { /* ignore — fall back below */ }
+    } catch { /* ignore */ }
 
     let emailSent = false;
     if (recipientEmail) {
-      const subjectLine = `[NeuroAligned] New ${category} feedback${subject ? ' — ' + subject : ''}`;
-      const bodyText = [
+      const lines = [
         'You received new feedback via NeuroAligned.',
         '',
         `Category: ${category}`,
@@ -56,12 +79,26 @@ export default async function(req) {
         rating != null ? `Rating: ${rating}/5` : null,
         `From: ${name || '(anonymous)'}${email ? ' <' + email + '>' : ''}${user ? ' (registered user: ' + user.email + ')' : ''}`,
         submittedFrom ? `Submitted from: ${submittedFrom}` : null,
+        intentUsage ? `Would use it: ${intentUsage}` : null,
+        willingnessToPay ? `Willingness to pay: ${WTP_LABELS[willingnessToPay]}` : null,
         '',
         'Message:',
         message,
-        '',
-        'Manage this in your Support dashboard.',
-      ].filter(Boolean).join('\n');
+      ];
+      if (whatYouTried || whatWentWrong || deviceInfo) {
+        lines.push('', '--- Issue details ---');
+        if (whatYouTried) lines.push('What they were trying to do:', whatYouTried);
+        if (whatWentWrong) lines.push('What went wrong / what they expected:', whatWentWrong);
+        if (deviceInfo) lines.push('Device / browser:', deviceInfo);
+      }
+      if (attachments.length) {
+        lines.push('', 'Attachments:');
+        attachments.forEach((u, i) => lines.push(`${i + 1}. ${u}`));
+      }
+      lines.push('', 'Manage this in your Support dashboard.');
+
+      const bodyText = lines.filter(l => l !== null).join('\n');
+      const subjectLine = `[NeuroAligned] New ${category} feedback${subject ? ' — ' + subject : ''}`;
 
       try {
         await base44.asServiceRole.integrations.Core.SendEmail({
