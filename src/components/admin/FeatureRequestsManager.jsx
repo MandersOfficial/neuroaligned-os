@@ -63,7 +63,7 @@ export default function FeatureRequestsManager() {
   const save = async (id) => {
     setSaving(id);
     try {
-      await base44.entities.FeatureRequest.update(id, drafts[id]);
+      await base44.functions.invoke('updateFeatureRequest', { id, ...drafts[id] });
       setExpanded(null);
       await load();
     } catch { /* ignore */ }
