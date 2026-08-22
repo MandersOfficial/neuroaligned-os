@@ -80,6 +80,16 @@
         "type": "string"
       }
     },
+    "review_consent": {
+      "type": "boolean",
+      "title": "Consent To Use Review",
+      "default": false
+    },
+    "user_reply": {
+      "type": "string",
+      "title": "User Reply",
+      "maxLength": 2000
+    },
     "admin_notes": {
       "type": "string",
       "title": "Admin Notes",
@@ -136,9 +146,19 @@
       }
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.submitter_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }
