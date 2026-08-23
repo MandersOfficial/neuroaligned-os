@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, CheckCircle2, Send, Paperclip, X, Upload, Lock, LifeBuoy } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const CATEGORIES = [
   { value: 'help', label: 'Help / how-to question' },
@@ -103,9 +104,13 @@ export default function HelpTicketForm({ onSubmitted }) {
 
       <div>
         <label className={labelCls}>What kind of help?</label>
-        <select value={form.category} onChange={e => set('category', e.target.value)} className={inputCls}>
-          {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-        </select>
+        <MobileSelect
+          value={form.category}
+          onChange={v => set('category', v)}
+          options={CATEGORIES}
+          label="What kind of help?"
+          className={inputCls}
+        />
       </div>
 
       <div>

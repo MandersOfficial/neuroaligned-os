@@ -50,17 +50,19 @@ function TaskCard({ task, projects, recommended, onUpdate, onDelete }) {
       <div className="flex items-start gap-2.5">
         <button
           onClick={() => onUpdate(task, { status: task.status === 'done' ? 'todo' : 'done' })}
-          className={`mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all ${
+          className={`relative mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all ${
             task.status === 'done' ? 'border-primary bg-primary' : 'border-border hover:border-primary'
           }`}
         >
+          <span className="absolute -inset-[12px]" aria-hidden="true" />
           {task.status === 'done' && <Check className="w-3 h-3 text-white" />}
         </button>
         <p className={`text-sm font-medium leading-snug flex-1 ${task.status === 'done' ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
           {task.title}
         </p>
         <div className="relative opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onClick={() => setMenuOpen(!menuOpen)} className="p-1 rounded-md hover:bg-secondary text-muted-foreground">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="relative p-1 rounded-md hover:bg-secondary text-muted-foreground">
+            <span className="absolute -inset-[12px]" aria-hidden="true" />
             <ChevronDown className="w-3.5 h-3.5" />
           </button>
           {menuOpen && (
@@ -142,13 +144,20 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
   };
 
   const handleUpdate = async (task, changes) => {
-    const updated = await base44.entities.Task.update(task.id, changes);
-    onTasksChange(tasks.map(t => t.id === task.id ? { ...t, ...updated } : t));
+    const optimistic = { ...task, ...changes };
+    // Optimistic: reflect the change instantly, then reconcile/revert after the call
+    onTasksChange(prev => prev.map(t => (t.id === task.id ? optimistic : t)));
+    try {
+      const updated = await base44.entities.Task.update(task.id, changes);
+      onTasksChange(prev => prev.map(t => (t.id === task.id ? { ...t, ...updated } : t)));
+    } catch {
+      onTasksChange(prev => prev.map(t => (t.id === task.id ? task : t)));
+    }
   };
 
   const handleDelete = async (task) => {
     await base44.entities.Task.delete(task.id);
-    onTasksChange(tasks.filter(t => t.id !== task.id));
+    onTasksChange(prev => prev.filter(t => t.id !== task.id));
   };
 
   return (

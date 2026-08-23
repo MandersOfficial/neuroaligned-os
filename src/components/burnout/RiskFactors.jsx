@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Minus, Plus } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const ENERGY_LABELS = { rising: '📈 Rising', stable: '➡️ Stable', declining: '📉 Declining', crashed: '💥 Crashed' };
 
@@ -69,13 +70,12 @@ export default function RiskFactors({ factors, totalScore }) {
             )}
 
             {f.interactive && f.type === 'select' && (
-              <select
+              <MobileSelect
                 value={f.value}
-                onChange={e => f.setter(e.target.value)}
+                onChange={v => f.setter(v)}
+                options={f.options.map(o => ({ value: o, label: ENERGY_LABELS[o] || o }))}
                 className="w-full text-xs px-2 py-1.5 rounded-lg border border-border bg-card focus:outline-none focus:ring-1 focus:ring-primary"
-              >
-                {f.options.map(o => <option key={o} value={o}>{ENERGY_LABELS[o] || o}</option>)}
-              </select>
+              />
             )}
 
             {!f.interactive && (

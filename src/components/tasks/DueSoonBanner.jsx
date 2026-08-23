@@ -79,8 +79,9 @@ export default function DueSoonBanner({ tasks, onUpdate }) {
                   >
                     <button
                       onClick={() => onUpdate(task, { status: 'done' })}
-                      className="w-5 h-5 rounded-full border-2 border-current shrink-0 flex items-center justify-center hover:bg-white/60 transition-colors"
+                      className="relative w-5 h-5 rounded-full border-2 border-current shrink-0 flex items-center justify-center hover:bg-white/60 transition-colors"
                     >
+                      <span className="absolute -inset-[12px]" aria-hidden="true" />
                       <Check className="w-3 h-3 opacity-0 hover:opacity-100 transition-opacity" />
                     </button>
                     <span className="text-sm font-medium text-foreground flex-1 truncate">{task.title}</span>

@@ -67,7 +67,7 @@ export default function SensorySettings() {
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
 
-      <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
+      <main className="flex-1 overflow-y-auto pb-16 md:pb-0 pt-[env(safe-area-inset-top)]">
         <div className="max-w-2xl mx-auto px-5 lg:px-8 py-8 space-y-8">
 
           {/* Header */}

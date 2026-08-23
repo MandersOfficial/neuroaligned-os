@@ -27,8 +27,9 @@ function TaskItem({ task, reason, onComplete }) {
     >
       <button
         onClick={() => onComplete(task)}
-        className={`mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all ${done ? 'border-primary bg-primary' : 'border-border hover:border-primary'}`}
+        className={`relative mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all ${done ? 'border-primary bg-primary' : 'border-border hover:border-primary'}`}
       >
+        <span className="absolute -inset-[12px]" aria-hidden="true" />
         {done && <Check className="w-3 h-3 text-white" />}
       </button>
 
@@ -74,13 +75,29 @@ export default function TodayTasks({ tasks, onTasksChange, energy, profile }) {
   const isSorted = sortedTasks !== null;
 
   const handleComplete = async (task) => {
-    const updated = await base44.entities.Task.update(task.id, {
-      status: task.status === 'done' ? 'todo' : 'done',
-      completed_at: task.status === 'done' ? null : new Date().toISOString(),
-    });
-    const patcher = t => t.id === task.id ? { ...t, ...updated } : t;
-    onTasksChange(tasks.map(patcher));
-    if (sortedTasks) setSortedTasks(sortedTasks.map(patcher));
+    const newStatus = task.status === 'done' ? 'todo' : 'done';
+    const optimistic = {
+      ...task,
+      status: newStatus,
+      completed_at: newStatus === 'done' ? new Date().toISOString() : null,
+    };
+    const patch = list => list.map(t => (t.id === task.id ? optimistic : t));
+    // Optimistic: update instantly, before the network resolves
+    onTasksChange(patch(tasks));
+    setSortedTasks(prev => (prev ? patch(prev) : prev));
+    try {
+      const updated = await base44.entities.Task.update(task.id, {
+        status: newStatus,
+        completed_at: optimistic.completed_at,
+      });
+      const reconcile = list => list.map(t => (t.id === task.id ? { ...t, ...updated } : t));
+      onTasksChange(reconcile(tasks));
+      setSortedTasks(prev => (prev ? reconcile(prev) : prev));
+    } catch {
+      const revert = list => list.map(t => (t.id === task.id ? task : t));
+      onTasksChange(revert(tasks));
+      setSortedTasks(prev => (prev ? revert(prev) : prev));
+    }
   };
 
   const handleAdd = async () => {
@@ -119,8 +136,9 @@ export default function TodayTasks({ tasks, onTasksChange, energy, profile }) {
           />
           <button
             onClick={() => setAdding(true)}
-            className="w-8 h-8 rounded-xl bg-primary/10 hover:bg-primary/15 flex items-center justify-center text-primary transition-colors"
+            className="relative w-8 h-8 rounded-xl bg-primary/10 hover:bg-primary/15 flex items-center justify-center text-primary transition-colors"
           >
+            <span className="absolute -inset-[6px]" aria-hidden="true" />
             <Plus className="w-4 h-4" />
           </button>
         </div>
