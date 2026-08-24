@@ -3,6 +3,16 @@ import { base44 } from '@/api/base44Client';
 import { Search, Shield, User, MoreHorizontal, ChevronDown, Trash2, Edit2, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { formatDistanceToNow } from 'date-fns';
+
+function lastLoginLabel(ts) {
+  if (!ts) return 'Never';
+  try {
+    const d = new Date(ts);
+    if (isNaN(d.getTime())) return 'Never';
+    return formatDistanceToNow(d, { addSuffix: true });
+  } catch { return 'Never'; }
+}
 
 const ROLE_CONFIG = {
   admin: { label: 'Admin', color: 'text-primary bg-primary/10' },
@@ -31,6 +41,9 @@ function UserRow({ user, onRoleChange, onDelete }) {
       </td>
       <td className="px-4 py-3 text-xs text-muted-foreground">
         {new Date(user.created_date).toLocaleDateString()}
+      </td>
+      <td className="px-4 py-3 text-xs text-muted-foreground">
+        {lastLoginLabel(user.last_login)}
       </td>
       <td className="px-4 py-3">
         <div className="relative">
@@ -125,12 +138,13 @@ export default function UserManagement() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">User</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Role</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Joined</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Last login</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={4} className="text-center py-12 text-muted-foreground text-sm">No users found</td></tr>
+                  <tr><td colSpan={5} className="text-center py-12 text-muted-foreground text-sm">No users found</td></tr>
                 ) : (
                   filtered.map(user => (
                     <UserRow key={user.id} user={user} onRoleChange={handleRoleChange} onDelete={handleDelete} />

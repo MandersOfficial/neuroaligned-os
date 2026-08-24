@@ -1,0 +1,40 @@
+{
+  "name": "Record User Login",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "record_user_login",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "stamp_login": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "recordUserLogin",
+            "args": {
+              "user_id": "${ .trigger.user_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Record last login",
+            "description": "Stamp user's last_login"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Stamps the signed-in user's last_login timestamp on every signup and login",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "app_user_auth",
+      "events": [
+        "signup",
+        "login"
+      ]
+    }
+  }
+}
