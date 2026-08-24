@@ -3,7 +3,7 @@ import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
   BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, DoorOpen, FolderKanban, Database, Calendar,
-  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors
+  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors, HeartHandshake
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import { useState, useEffect } from 'react';
@@ -29,6 +29,7 @@ const NAV_GROUPS = [
       { icon: ShieldAlert, label: 'Burnout Risk', href: '/burnout' },
       { icon: Users, label: 'Community', href: '/forum' },
       { icon: DoorOpen, label: 'Focus Rooms', href: '/focus-rooms' },
+      { icon: HeartHandshake, label: 'Find a Partner', href: '/body-doubling-match' },
       { icon: BookOpen, label: 'Knowledge Base', href: '/knowledge' },
     ],
   },

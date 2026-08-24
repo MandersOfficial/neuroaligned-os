@@ -41,6 +41,7 @@ import IntegrationSettings from './pages/IntegrationSettings';
 import HelpCenter from './pages/HelpCenter';
 import Support from './pages/Support';
 import TaskBreakdown from './pages/TaskBreakdown';
+import BodyDoublingMatch from './pages/BodyDoublingMatch';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -107,6 +108,7 @@ const AuthenticatedApp = () => {
       <Route path="/help-center" element={<HelpCenter />} />
       <Route path="/support" element={<Support />} />
       <Route path="/task-breakdown" element={<TaskBreakdown />} />
+      <Route path="/body-doubling-match" element={<BodyDoublingMatch />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
