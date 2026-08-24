@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const CATEGORIES = ['General', 'ADHD Support', 'Autism Support', 'Business Strategy', 'Burnout Recovery', 'Tools & Tips', 'Wins & Celebrations'];
 
@@ -42,13 +43,13 @@ export default function NewPostModal({ onSave, onClose }) {
           {/* Category */}
           <div>
             <label className="text-xs font-semibold text-foreground block mb-1.5">Category</label>
-            <select
+            <MobileSelect
               value={form.category}
-              onChange={e => setForm(p => ({ ...p, category: e.target.value }))}
-              className="w-full text-sm px-3 py-2 rounded-xl border border-border bg-card focus:outline-none focus:ring-1 focus:ring-primary"
-            >
-              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+              onChange={v => setForm(p => ({ ...p, category: v }))}
+              options={CATEGORIES.map(c => ({ value: c, label: c }))}
+              label="Category"
+              className="w-full text-sm px-3 py-2 rounded-xl border border-border bg-card h-9"
+            />
           </div>
 
           {/* Title */}

@@ -3,7 +3,7 @@ import { X, Calendar, Clock, Zap, FolderOpen, Flame, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import MobileSelect from '@/components/ui/MobileSelect';
 import { motion } from 'framer-motion';
 
 const ENERGY_OPTIONS = [
@@ -114,26 +114,25 @@ export default function TaskForm({ projects, onSave, onClose, initialProjectId =
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-sm font-medium flex items-center gap-1.5"><FolderOpen className="w-3.5 h-3.5" />Project</Label>
-              <Select value={form.project_id} onValueChange={v => set('project_id', v)}>
-                <SelectTrigger className="h-9 text-sm">
-                  <SelectValue placeholder="No project" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={null}>No project</SelectItem>
-                  {projects.map(p => <SelectItem key={p.id} value={p.id}>{p.emoji} {p.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <MobileSelect
+                value={form.project_id || ''}
+                onChange={v => set('project_id', v)}
+                options={[{ value: '', label: 'No project' }, ...projects.map(p => ({ value: p.id, label: `${p.emoji} ${p.name}` }))]}
+                placeholder="No project"
+                label="Project"
+                className="border border-border rounded-xl px-3 py-2 text-sm bg-card h-9 w-full"
+              />
             </div>
             <div className="space-y-1.5">
               <Label className="text-sm font-medium">Category</Label>
-              <Select value={form.category} onValueChange={v => set('category', v)}>
-                <SelectTrigger className="h-9 text-sm">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <MobileSelect
+                value={form.category}
+                onChange={v => set('category', v)}
+                options={CATEGORIES}
+                placeholder="Category"
+                label="Category"
+                className="border border-border rounded-xl px-3 py-2 text-sm bg-card h-9 w-full"
+              />
             </div>
           </div>
 

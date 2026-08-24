@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import AutoBreakScheduler from '@/components/integrations/AutoBreakScheduler';
@@ -10,7 +10,7 @@ import {
   CheckCircle2, Link2, Loader2, RefreshCw, AlertCircle,
   Calendar, Video, Table, FileText, Presentation, Mail,
   ListTodo, FolderKanban, HardDrive, ChevronDown, ChevronUp,
-  Coffee, Brain, Zap, ArrowRight, ExternalLink, MessageSquare, CalendarClock
+  Coffee, Brain, Zap, ArrowRight, ExternalLink, MessageSquare, CalendarClock, ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -211,6 +211,7 @@ function FeaturePanel({ icon: Icon, color, bg, title, description, children, def
 export default function IntegrationSettings() {
   const [user, setUser] = useState(null);
   const [statuses, setStatuses] = useState({});
+  const navigate = useNavigate();
 
   const fetchStatuses = useCallback(async () => {
     try {
@@ -236,6 +237,9 @@ export default function IntegrationSettings() {
       <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
         <div className="max-w-4xl mx-auto px-5 lg:px-8 py-7 space-y-6">
           <div>
+            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-3">
+              <ArrowLeft className="w-3.5 h-3.5" /> Back
+            </button>
             <h1 className="font-display font-bold text-2xl text-foreground">Integration Settings</h1>
             <p className="text-sm text-muted-foreground mt-1">Connect and manage your productivity tools in one place.</p>
           </div>

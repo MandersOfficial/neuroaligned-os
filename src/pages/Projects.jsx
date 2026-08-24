@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
-import { Plus, ChevronDown, ChevronRight, Calendar, User, Mail, Trash2, Check, X, Edit2, Circle, CheckCircle2, Clock, Video, Loader2 } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
+import { Plus, ChevronDown, ChevronRight, Calendar, User, Mail, Trash2, Check, X, Edit2, Circle, CheckCircle2, Clock, Video, Loader2, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NotionTaskSyncPanel from '@/components/notion/NotionTaskSyncPanel';
 import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPanel';
@@ -27,6 +29,13 @@ const PRIORITY_STYLES = {
   high: 'bg-red-50 text-red-600',
 };
 const EMOJIS = ['📁', '🚀', '💼', '🎨', '📊', '🧠', '🌱', '⚡', '🔥', '💡', '👤', '🏢'];
+const EMOJI_OPTIONS = EMOJIS.map(e => ({ value: e, label: e }));
+const STATUS_SELECT_OPTIONS = STATUS_OPTIONS.map(s => ({ value: s, label: s.charAt(0).toUpperCase() + s.slice(1) }));
+const PRIORITY_OPTIONS = [
+  { value: 'low', label: 'Low priority' },
+  { value: 'medium', label: 'Medium priority' },
+  { value: 'high', label: 'High priority' },
+];
 
 function ProjectCard({ project, onUpdate, onDelete }) {
   const [expanded, setExpanded] = useState(false);
@@ -275,13 +284,13 @@ function ProjectCard({ project, onUpdate, onDelete }) {
 
               <div className="space-y-3">
                 <div className="flex gap-2">
-                  <select
+                  <MobileSelect
                     value={form.emoji}
-                    onChange={e => setForm(f => ({ ...f, emoji: e.target.value }))}
-                    className="border border-border rounded-xl px-2 py-2 text-lg bg-card"
-                  >
-                    {EMOJIS.map(e => <option key={e} value={e}>{e}</option>)}
-                  </select>
+                    onChange={v => setForm(f => ({ ...f, emoji: v }))}
+                    options={EMOJI_OPTIONS}
+                    label="Icon"
+                    className="border border-border rounded-xl px-2 py-2 text-lg bg-card h-9 w-[60px] shrink-0"
+                  />
                   <input
                     className="flex-1 border border-border rounded-xl px-3 py-2 text-sm bg-card focus:outline-none focus:border-primary/40"
                     placeholder="Project name"
@@ -304,22 +313,20 @@ function ProjectCard({ project, onUpdate, onDelete }) {
                 />
 
                 <div className="grid grid-cols-2 gap-2">
-                  <select
+                  <MobileSelect
                     value={form.status}
-                    onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                    className="border border-border rounded-xl px-3 py-2 text-sm bg-card focus:outline-none"
-                  >
-                    {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  <select
+                    onChange={v => setForm(f => ({ ...f, status: v }))}
+                    options={STATUS_SELECT_OPTIONS}
+                    label="Status"
+                    className="border border-border rounded-xl px-3 py-2 text-sm bg-card h-9 w-full"
+                  />
+                  <MobileSelect
                     value={form.priority || 'medium'}
-                    onChange={e => setForm(f => ({ ...f, priority: e.target.value }))}
-                    className="border border-border rounded-xl px-3 py-2 text-sm bg-card focus:outline-none"
-                  >
-                    <option value="low">Low priority</option>
-                    <option value="medium">Medium priority</option>
-                    <option value="high">High priority</option>
-                  </select>
+                    onChange={v => setForm(f => ({ ...f, priority: v }))}
+                    options={PRIORITY_OPTIONS}
+                    label="Priority"
+                    className="border border-border rounded-xl px-3 py-2 text-sm bg-card h-9 w-full"
+                  />
                 </div>
 
                 <input
@@ -377,13 +384,13 @@ function NewProjectModal({ onCreated, onClose }) {
 
         <div className="space-y-3">
           <div className="flex gap-2">
-            <select
+            <MobileSelect
               value={form.emoji}
-              onChange={e => setForm(f => ({ ...f, emoji: e.target.value }))}
-              className="border border-border rounded-xl px-2 py-2 text-lg bg-card"
-            >
-              {EMOJIS.map(e => <option key={e} value={e}>{e}</option>)}
-            </select>
+              onChange={v => setForm(f => ({ ...f, emoji: v }))}
+              options={EMOJI_OPTIONS}
+              label="Icon"
+              className="border border-border rounded-xl px-2 py-2 text-lg bg-card h-9 w-[60px] shrink-0"
+            />
             <input
               autoFocus
               className="flex-1 border border-border rounded-xl px-3 py-2 text-sm bg-card focus:outline-none focus:border-primary/40"
@@ -406,15 +413,13 @@ function NewProjectModal({ onCreated, onClose }) {
             onChange={e => setForm(f => ({ ...f, client_email: e.target.value }))}
           />
           <div className="grid grid-cols-2 gap-2">
-            <select
+            <MobileSelect
               value={form.priority}
-              onChange={e => setForm(f => ({ ...f, priority: e.target.value }))}
-              className="border border-border rounded-xl px-3 py-2 text-sm bg-card focus:outline-none"
-            >
-              <option value="low">Low priority</option>
-              <option value="medium">Medium priority</option>
-              <option value="high">High priority</option>
-            </select>
+              onChange={v => setForm(f => ({ ...f, priority: v }))}
+              options={PRIORITY_OPTIONS}
+              label="Priority"
+              className="border border-border rounded-xl px-3 py-2 text-sm bg-card h-9 w-full"
+            />
             <input
               type="date"
               className="w-full border border-border rounded-xl px-3 py-2 text-sm bg-card focus:outline-none focus:border-primary/40"
@@ -449,6 +454,7 @@ export default function Projects() {
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);
   const [filter, setFilter] = useState('active');
+  const navigate = useNavigate();
 
   useEffect(() => {
     base44.auth.me().then(async u => {
@@ -480,7 +486,10 @@ export default function Projects() {
         <div className="max-w-3xl mx-auto px-5 lg:px-8 py-7 space-y-6">
 
           <div className="flex items-start justify-between gap-4">
-            <div>
+            <div className="min-w-0">
+              <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-3">
+                <ArrowLeft className="w-3.5 h-3.5" /> Back
+              </button>
               <h1 className="font-display font-bold text-2xl text-foreground">Projects</h1>
               <p className="text-sm text-muted-foreground mt-1">Manage your client work, track tasks, and keep notes in one place.</p>
             </div>

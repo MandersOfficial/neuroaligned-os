@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 
 const SensoryContext = createContext();
 
@@ -85,13 +85,23 @@ const defaultPrefs = {
   darkMode: false,              // dark mode
 };
 
+function systemPrefersDark() {
+  try {
+    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  } catch {
+    return false;
+  }
+}
+
 function loadPrefs() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? { ...defaultPrefs, ...JSON.parse(stored) } : defaultPrefs;
+    if (stored) return { ...defaultPrefs, ...JSON.parse(stored) };
   } catch {
-    return defaultPrefs;
+    // fall through
   }
+  // No cached preference yet — follow the system color-scheme on first run
+  return { ...defaultPrefs, darkMode: systemPrefersDark() };
 }
 
 function applyTheme(themeId, darkMode) {
@@ -144,6 +154,8 @@ function applyAccessibility(prefs) {
 export function SensoryProvider({ children }) {
   const [prefs, setPrefs] = useState(loadPrefs);
   const [activeThemeId, setActiveThemeId] = useState(prefs.manualTheme);
+  // True once a dark-mode choice has been cached — stops following the system
+  const manualDark = useRef((() => { try { return !!localStorage.getItem(STORAGE_KEY); } catch { return false; } })());
 
   // Apply on mount + whenever prefs change
   useEffect(() => {
@@ -152,7 +164,22 @@ export function SensoryProvider({ children }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
   }, [prefs, activeThemeId]);
 
+  // Keep dark mode in sync with the system until the user picks it manually
+  useEffect(() => {
+    let mql;
+    try { mql = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)'); } catch { /* ignore */ }
+    if (!mql) return;
+    const handler = (e) => { if (!manualDark.current) setPrefs(p => ({ ...p, darkMode: e.matches })); };
+    if (mql.addEventListener) mql.addEventListener('change', handler);
+    else mql.addListener(handler);
+    return () => {
+      if (mql.removeEventListener) mql.removeEventListener('change', handler);
+      else mql.removeListener(handler);
+    };
+  }, []);
+
   const updatePref = useCallback((key, value) => {
+    if (key === 'darkMode') manualDark.current = true;
     setPrefs(prev => {
       const next = { ...prev, [key]: value };
       if (key === 'manualTheme') setActiveThemeId(value);

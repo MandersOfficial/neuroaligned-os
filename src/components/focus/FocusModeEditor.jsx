@@ -3,7 +3,7 @@ import { X, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import MobileSelect from '@/components/ui/MobileSelect';
 import { motion } from 'framer-motion';
 
 const EMOJIS = ['🧠', '⚡', '🔭', '🌊', '🌿', '🔥', '🎯', '🌙', '☀️', '🦋'];
@@ -168,16 +168,16 @@ export default function FocusModeEditor({ initial, onSave, onClose }) {
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Environment</h4>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                   <Label className="text-xs mb-1.5 block">Ambient sound</Label>
-                   <Select value={form.ambient_sound} onValueChange={v => set('ambient_sound', v)}>
-                     <SelectTrigger className="h-9 text-sm">
-                       <SelectValue placeholder="Select sound" />
-                     </SelectTrigger>
-                     <SelectContent>
-                       {SOUNDS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-                     </SelectContent>
-                   </Select>
-                 </div>
+                  <Label className="text-xs mb-1.5 block">Ambient sound</Label>
+                  <MobileSelect
+                    value={form.ambient_sound}
+                    onChange={v => set('ambient_sound', v)}
+                    options={SOUNDS}
+                    placeholder="Select sound"
+                    label="Ambient sound"
+                    className="border border-border rounded-xl px-3 py-2 text-sm bg-card h-9 w-full"
+                  />
+                </div>
                 <div>
                   <Label className="text-xs mb-1.5 block">Regulation reminder (min)</Label>
                   <Input type="number" min={5} value={form.regulation_reminder_minutes} onChange={e => set('regulation_reminder_minutes', Number(e.target.value))} className="h-9 text-sm" />
