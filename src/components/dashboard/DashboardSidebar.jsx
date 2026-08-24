@@ -3,7 +3,7 @@ import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
   BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, DoorOpen, FolderKanban, Database, Calendar,
-  HelpCircle, Shield, LifeBuoy, ShieldCheck
+  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import { useState, useEffect } from 'react';
@@ -16,6 +16,7 @@ const NAV_GROUPS = [
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
       { icon: CheckSquare, label: 'Tasks', href: '/tasks' },
+      { icon: Scissors, label: 'Break It Down', href: '/task-breakdown' },
       { icon: FolderKanban, label: 'Projects', href: '/projects' },
       { icon: NotebookPen, label: 'Journal', href: '/journal' },
       { icon: Focus, label: 'Focus Modes', href: '/focus-modes' },
@@ -53,6 +54,7 @@ const NAV_GROUPS = [
 const MOBILE_NAV = [
   { icon: LayoutDashboard, label: 'Home', href: '/dashboard' },
   { icon: CheckSquare, label: 'Tasks', href: '/tasks' },
+  { icon: Scissors, label: 'Break Down', href: '/task-breakdown' },
   { icon: NotebookPen, label: 'Journal', href: '/journal' },
   { icon: Focus, label: 'Focus', href: '/focus-modes' },
   { icon: Users, label: 'Community', href: '/forum' },
