@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, Link2, ChevronDown, ChevronUp, ListChecks, RefreshCw, Upload, AlertCircle, CheckCircle2, ExternalLink } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const CLICKUP_CONNECTOR_ID = '6a58c092588cac2ae027fd72';
 
@@ -143,16 +144,14 @@ export default function ClickUpSyncPanel({ projects = [] }) {
                 </p>
               ) : (
                 <>
-                  <select
+                  <MobileSelect
                     value={selectedList}
-                    onChange={e => { setSelectedList(e.target.value); setResult(null); setError(null); }}
-                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
-                  >
-                    <option value="">Select a ClickUp list…</option>
-                    {lists.map(l => (
-                      <option key={l.id} value={l.id}>{l.name} · {l.team_name} / {l.space_name}</option>
-                    ))}
-                  </select>
+                    onChange={v => { setSelectedList(v); setResult(null); setError(null); }}
+                    options={[{ value: '', label: 'Select a ClickUp list…' }, ...lists.map(l => ({ value: l.id, label: `${l.name} · ${l.team_name} / ${l.space_name}` }))]}
+                    placeholder="Select a ClickUp list…"
+                    label="ClickUp list"
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground h-9"
+                  />
 
                   <button
                     onClick={handleSync}

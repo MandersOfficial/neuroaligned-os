@@ -7,9 +7,10 @@ import CreatePageForm from '../components/notion/CreatePageForm';
 import NotionContentViewer from '../components/notion/NotionContentViewer';
 import NotionAutoSyncPin from '../components/notion/NotionAutoSyncPin';
 import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
 import {
   Loader2, Database, RefreshCw, ArrowUp, ArrowDown,
-  Link2, Link2Off, FolderKanban, CheckSquare, FilePlus, Table2, Zap,
+  Link2, Link2Off, FolderKanban, CheckSquare, FilePlus, Table2, Zap, ArrowLeft,
 } from 'lucide-react';
 
 const CONNECTOR_ID = '6a1cfa4c8db502aafb000e1a';
@@ -22,6 +23,7 @@ const TABS = [
 ];
 
 export default function NotionDashboard() {
+  const navigate = useNavigate();
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -150,8 +152,13 @@ export default function NotionDashboard() {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar />
-      <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
+      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
         <div className="max-w-4xl mx-auto px-5 lg:px-8 py-7 space-y-6">
+
+          {/* Mobile back */}
+          <button onClick={() => navigate(-1)} className="flex md:hidden items-center gap-1 text-sm text-muted-foreground mb-4">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
 
           {/* Header */}
           <div className="flex items-center justify-between gap-3">

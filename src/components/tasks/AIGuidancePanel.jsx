@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Sparkles, ChevronDown, ChevronUp, Zap, Scissors, RotateCcw, Copy, Check } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const ENERGY_LABELS = {
@@ -175,16 +176,14 @@ Format as numbered steps. Be warm and non-judgmental in tone.`,
         {allPending.length > 0 && (
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground font-medium">Pick a task from your list</label>
-            <select
+            <MobileSelect
               value={selectedTaskId}
-              onChange={e => { setSelectedTaskId(e.target.value); setCustomTask(''); setResult(''); }}
-              className="w-full h-8 text-xs border border-input rounded-lg px-2.5 bg-background text-foreground focus:ring-1 focus:ring-primary outline-none"
-            >
-              <option value="">— choose a task —</option>
-              {allPending.map(t => (
-                <option key={t.id} value={t.id}>{t.title}</option>
-              ))}
-            </select>
+              onChange={v => { setSelectedTaskId(v); setCustomTask(''); setResult(''); }}
+              options={[{ value: '', label: '— choose a task —' }, ...allPending.map(t => ({ value: t.id, label: t.title }))]}
+              placeholder="— choose a task —"
+              label="Pick a task"
+              className="w-full text-xs border border-input rounded-lg px-2.5 py-2 bg-background text-foreground h-9"
+            />
           </div>
         )}
         <div className="space-y-1">

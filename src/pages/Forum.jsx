@@ -66,7 +66,7 @@ export default function Forum() {
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
 
-      <main className="flex-1 overflow-hidden pb-20 md:pb-0 flex flex-col">
+      <main className="flex-1 overflow-hidden pb-mobile-safe md:pb-0 flex flex-col">
       <PullToRefresh onRefresh={handleRefresh}>
         <div className="max-w-3xl mx-auto px-5 lg:px-8 py-7 space-y-5">
 

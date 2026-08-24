@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, Link2, ChevronDown, ChevronUp, Presentation, ExternalLink, AlertCircle, Info } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const SLIDES_CONNECTOR_ID = '6a58c008c3935ea2b4e8de42';
 
@@ -100,16 +101,14 @@ export default function PitchDeckPanel({ projects = [] }) {
                 <>
                   <div>
                     <label className="text-xs font-semibold text-muted-foreground mb-1 block">Select Project</label>
-                    <select
+                    <MobileSelect
                       value={selectedProject}
-                      onChange={e => { setSelectedProject(e.target.value); setResult(null); setError(null); }}
-                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
-                    >
-                      <option value="">Choose a project…</option>
-                      {projects.map(p => (
-                        <option key={p.id} value={p.id}>{p.emoji} {p.name}</option>
-                      ))}
-                    </select>
+                      onChange={v => { setSelectedProject(v); setResult(null); setError(null); }}
+                      options={[{ value: '', label: 'Choose a project…' }, ...projects.map(p => ({ value: p.id, label: `${p.emoji} ${p.name}` }))]}
+                      placeholder="Choose a project…"
+                      label="Select Project"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground h-9"
+                    />
                   </div>
 
                   <div>

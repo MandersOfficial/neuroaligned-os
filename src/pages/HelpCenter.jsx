@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import {
   HelpCircle, ChevronDown, ChevronUp, Search,
   Calendar, Video, Table, FileText, Presentation, Mail,
-  ListTodo, FolderKanban, Plug, BookOpen, ShieldCheck, Lightbulb
+  ListTodo, FolderKanban, Plug, BookOpen, ShieldCheck, Lightbulb, ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -256,6 +256,7 @@ function GuideCard({ guide }) {
 }
 
 export default function HelpCenter() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [search, setSearch] = useState('');
 
@@ -274,6 +275,10 @@ export default function HelpCenter() {
       <DashboardSidebar user={user} />
       <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
         <div className="max-w-3xl mx-auto px-5 lg:px-8 py-7 space-y-8">
+          {/* Mobile back */}
+          <button onClick={() => navigate(-1)} className="flex md:hidden items-center gap-1 text-sm text-muted-foreground mb-4">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
           <div>
             <h1 className="font-display font-bold text-2xl text-foreground">Help Center</h1>
             <p className="text-sm text-muted-foreground mt-1">Troubleshooting guides, setup tutorials, and FAQs for all your integrations.</p>

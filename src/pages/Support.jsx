@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import HelpTicketForm from '../components/support/HelpTicketForm';
 import HelpTicketHistory from '../components/support/HelpTicketHistory';
 import FeedbackReviewForm from '../components/support/FeedbackReviewForm';
 import FeatureRequestSection from '../components/feedback/FeatureRequestSection';
-import { LifeBuoy, Ticket, Star, Lightbulb } from 'lucide-react';
+import { LifeBuoy, Ticket, Star, Lightbulb, ArrowLeft } from 'lucide-react';
 
 const TABS = [
   { id: 'support', label: 'Support', icon: Ticket, desc: 'Get help — submit a ticket, then track it, edit it, or reply to us below.' },
@@ -14,6 +15,7 @@ const TABS = [
 ];
 
 export default function Support() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState('support');
   const [reloadKey, setReloadKey] = useState(0);
@@ -25,8 +27,13 @@ export default function Support() {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
-      <main className="flex-1 overflow-y-auto pb-16 md:pb-0 pt-[env(safe-area-inset-top)]">
+      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
         <div className="max-w-3xl mx-auto px-5 lg:px-8 py-7 space-y-6">
+
+          {/* Mobile back */}
+          <button onClick={() => navigate(-1)} className="flex md:hidden items-center gap-1 text-sm text-muted-foreground mb-4">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
 
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">

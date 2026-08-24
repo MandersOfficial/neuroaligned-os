@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import { StatusBadge, SyncResultBox } from '../components/notion/SyncResult';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Calendar, RefreshCw, Link2, Link2Off, ArrowUp, CalendarDays, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Loader2, Calendar, RefreshCw, Link2, Link2Off, ArrowUp, CalendarDays, Clock, ArrowLeft } from 'lucide-react';
 
 const CONNECTOR_ID = '6a68111b02df29e55f1a16d1';
 
 export default function CalendarSync() {
+  const navigate = useNavigate();
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -97,8 +99,13 @@ export default function CalendarSync() {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar />
-      <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
+      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
         <div className="max-w-4xl mx-auto px-5 lg:px-8 py-7 space-y-6">
+
+          {/* Mobile back */}
+          <button onClick={() => navigate(-1)} className="flex md:hidden items-center gap-1 text-sm text-muted-foreground mb-4">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
 
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
