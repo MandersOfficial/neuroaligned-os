@@ -157,11 +157,18 @@ export default function SupportTicketsManager() {
                     {t.attachments?.length > 0 && (
                       <div className="space-y-1.5">
                         <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Attachments</p>
-                        {t.attachments.map((url, i) => (
-                          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
-                            <ExternalLink className="w-3 h-3" /> Attachment {i + 1}
-                          </a>
-                        ))}
+                        {t.attachments.map((url, i) => {
+                          const safe = typeof url === 'string' && /^https?:\/\//i.test(url);
+                          return safe ? (
+                            <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline">
+                              <ExternalLink className="w-3 h-3" /> Attachment {i + 1}
+                            </a>
+                          ) : (
+                            <span key={i} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <ExternalLink className="w-3 h-3" /> Attachment {i + 1}
+                            </span>
+                          );
+                        })}
                       </div>
                     )}
 
