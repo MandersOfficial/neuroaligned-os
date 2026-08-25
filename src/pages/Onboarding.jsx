@@ -37,10 +37,17 @@ export default function Onboarding() {
 
   useEffect(() => {
     base44.auth.me().then(u => {
-      if (!u) return; // allow unauthenticated users to browse onboarding
-      setUser(u);
       const params = new URLSearchParams(window.location.search);
       const preview = params.get('preview') === '1';
+      if (!u) {
+        // Onboarding requires an account — send visitors to sign up first.
+        // (Preview mode is the only exception, for browsing the questions.)
+        if (!preview) {
+          navigate(`/register?returnTo=${encodeURIComponent('/onboarding')}`);
+        }
+        return;
+      }
+      setUser(u);
       const complete = params.get('complete') === '1';
 
       // Resume after a brand-new visitor registers mid-onboarding: their answers

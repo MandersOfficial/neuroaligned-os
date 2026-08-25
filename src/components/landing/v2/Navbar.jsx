@@ -27,7 +27,7 @@ export default function Navbar() {
           <a
             href="#start"
             className="btn btn-primary btn-sm"
-            onClick={(e) => { e.preventDefault(); navigate('/onboarding'); }}
+            onClick={(e) => { e.preventDefault(); navigate('/register?returnTo=/onboarding'); }}
           >
             Start free trial
           </a>

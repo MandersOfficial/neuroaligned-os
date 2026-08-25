@@ -2,6 +2,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Brain, Loader2 } from 'lucide-react';
+import { safeReturnTo } from '@/lib/authReturnTo';
+
+// New sign-ups continue to onboarding next. Honor ?returnTo= if present
+// (e.g. /onboarding or /onboarding?complete=1), defaulting to /onboarding.
+function nextAfterRegister() {
+  const dest = safeReturnTo();
+  return dest === '/' ? '/onboarding' : dest;
+}
 
 export default function Register() {
   const [step, setStep] = useState('register'); // 'register' | 'otp'
@@ -34,7 +42,7 @@ export default function Register() {
     try {
       const res = await base44.auth.verifyOtp({ email, otpCode: otp });
       base44.auth.setToken(res.access_token);
-      window.location.href = '/onboarding';
+      window.location.href = nextAfterRegister();
     } catch (err) {
       setError(err.message || 'Invalid code. Please try again.');
     }
@@ -51,11 +59,11 @@ export default function Register() {
   };
 
   const handleGoogle = () => {
-    base44.auth.loginWithProvider('google', '/onboarding');
+    base44.auth.loginWithProvider('google', nextAfterRegister());
   };
 
   const handleApple = () => {
-    base44.auth.loginWithProvider('apple', '/onboarding');
+    base44.auth.loginWithProvider('apple', nextAfterRegister());
   };
 
   return (
