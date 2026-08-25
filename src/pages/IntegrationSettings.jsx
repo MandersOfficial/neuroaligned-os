@@ -4,13 +4,12 @@ import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import AutoBreakScheduler from '@/components/integrations/AutoBreakScheduler';
 import ContextCapture from '@/components/integrations/ContextCapture';
-import FeedbackSyncPanel from '@/components/integrations/FeedbackSyncPanel';
 import CalendlySyncPanel from '@/components/integrations/CalendlySyncPanel';
 import {
   CheckCircle2, Link2, Loader2, RefreshCw, AlertCircle,
   Calendar, Video, Table, FileText, Presentation, Mail,
   ListTodo, FolderKanban, HardDrive, ChevronDown, ChevronUp,
-  Coffee, Brain, Zap, ArrowRight, ExternalLink, MessageSquare, CalendarClock, ArrowLeft
+  Coffee, Brain, Zap, ArrowRight, ExternalLink, CalendarClock, ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -289,16 +288,6 @@ export default function IntegrationSettings() {
               description="Extracts structured task context from emails, notes, and messages."
             >
               <ContextCapture />
-            </FeaturePanel>
-
-            <FeaturePanel
-              icon={MessageSquare}
-              color="text-blue-500"
-              bg="bg-blue-50"
-              title="Customer Feedback Sync"
-              description="Sync Intercom conversations into your task queue."
-            >
-              <FeedbackSyncPanel />
             </FeaturePanel>
 
             <FeaturePanel
