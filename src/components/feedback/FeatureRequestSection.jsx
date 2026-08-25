@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, Send, Lightbulb, CheckCircle2 } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const TYPES = [
   { value: 'feature', label: 'New feature' },
@@ -88,9 +89,13 @@ export default function FeatureRequestSection() {
         <div className="bg-card border border-border/60 rounded-2xl p-5 space-y-3">
           <div>
             <label className={labelCls}>What would you like?</label>
-            <select value={form.type} onChange={e => set('type', e.target.value)} className={inputCls}>
-              {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-            </select>
+            <MobileSelect
+              value={form.type}
+              onChange={v => set('type', v)}
+              options={TYPES}
+              label="What would you like?"
+              className={inputCls + ' min-h-[44px]'}
+            />
           </div>
           <div>
             <label className={labelCls}>Title *</label>

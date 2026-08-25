@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import BurnoutMeter from '../components/burnout/BurnoutMeter';
 import RiskFactors from '../components/burnout/RiskFactors';
 import RecoveryPlan from '../components/burnout/RecoveryPlan';
 import { motion } from 'framer-motion';
-import { ShieldAlert, RefreshCw } from 'lucide-react';
+import { ShieldAlert, RefreshCw, ArrowLeft } from 'lucide-react';
 
 function calcRisk({ stress, missedBreaks, overdueTasks, hoursWorked, energyPattern }) {
   let score = 0;
@@ -18,6 +19,7 @@ function calcRisk({ stress, missedBreaks, overdueTasks, hoursWorked, energyPatte
 }
 
 export default function BurnoutRisk() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -121,10 +123,13 @@ export default function BurnoutRisk() {
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
 
-      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0">
+      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
         <div className="max-w-4xl mx-auto px-5 lg:px-8 py-7 space-y-6">
 
           {/* Header */}
+          <button onClick={() => navigate('/dashboard')} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back
+          </button>
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">

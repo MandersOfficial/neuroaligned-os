@@ -3,6 +3,7 @@ import { CheckCircle, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const DEFAULT_SETTINGS = [
   {
@@ -109,13 +110,12 @@ export default function GlobalSettings() {
                       />
                     )}
                     {field.type === 'select' && (
-                      <select
+                      <MobileSelect
                         value={field.value}
-                        onChange={e => updateField(catIdx, fieldIdx, e.target.value)}
-                        className="h-8 text-sm border border-input rounded-md px-3 bg-background text-foreground focus:ring-1 focus:ring-primary outline-none"
-                      >
-                        {field.options.map(o => <option key={o} value={o}>{o}</option>)}
-                      </select>
+                        onChange={v => updateField(catIdx, fieldIdx, v)}
+                        options={field.options.map(o => ({ value: o, label: o }))}
+                        className="h-8 text-sm border border-input rounded-md px-3 bg-background text-foreground min-w-[140px]"
+                      />
                     )}
                   </div>
                 </div>

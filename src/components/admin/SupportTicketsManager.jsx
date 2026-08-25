@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, ChevronDown, ChevronUp, Save, ExternalLink, Search, Inbox } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const STATUSES = ['new', 'in_progress', 'resolved', 'closed'];
 const STATUS_CLS = {
@@ -183,13 +184,13 @@ export default function SupportTicketsManager() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div>
                         <label className="text-xs font-semibold text-foreground block mb-1.5">Status</label>
-                        <select
+                        <MobileSelect
                           value={draft.status}
-                          onChange={e => setDraft(t.id, 'status', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                        >
-                          {STATUSES.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
-                        </select>
+                          onChange={v => setDraft(t.id, 'status', v)}
+                          options={STATUSES.map(s => ({ value: s, label: s.replace('_', ' ') }))}
+                          label="Status"
+                          className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm min-h-[40px]"
+                        />
                       </div>
                     </div>
                     <div>

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import ProductivityTrends from '../components/dashboard/ProductivityTrends';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, ArrowLeft } from 'lucide-react';
 
 export default function Productivity() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +43,9 @@ export default function Productivity() {
         <div className="max-w-3xl mx-auto px-5 lg:px-8 py-7 space-y-6">
 
           {/* Header */}
+          <button onClick={() => navigate('/dashboard')} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back
+          </button>
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
               <TrendingUp className="w-5 h-5 text-primary" />

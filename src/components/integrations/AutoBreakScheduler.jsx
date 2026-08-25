@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, Coffee, Plus, Trash2, Calendar, Zap, Info } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const SAMPLE_MEETINGS = [
   { id: 1, title: 'Client Kickoff Call', start: '09:00', end: '09:45', color: 'bg-blue-400' },
@@ -117,13 +118,12 @@ export default function AutoBreakScheduler() {
             </h3>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Clock className="w-3 h-3" />
-              <select
+              <MobileSelect
                 value={breakDuration}
-                onChange={e => setBreakDuration(Number(e.target.value))}
-                className="text-xs bg-transparent focus:outline-none"
-              >
-                {[5, 10, 15, 20].map(n => <option key={n} value={n}>{n}m</option>)}
-              </select>
+                onChange={v => setBreakDuration(Number(v))}
+                options={[5, 10, 15, 20].map(n => ({ value: n, label: `${n}m` }))}
+                className="text-xs bg-transparent"
+              />
             </div>
           </div>
 
