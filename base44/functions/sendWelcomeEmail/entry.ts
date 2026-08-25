@@ -48,7 +48,7 @@ What to do next:
 3. Try a Focus Mode session matched to your work style
 
 Start your day →
-https://neuroa.app/dashboard
+https://neuroaligned.app
 
 You're not broken. You just needed the right tools. Welcome home.
 

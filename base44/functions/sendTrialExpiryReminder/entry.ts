@@ -47,7 +47,7 @@ Your 14-day free trial of NeuroAligned ends on ${reminderDateStr}.
 Don't lose your personalized setup — your focus modes, tasks, check-in history, and AI recommendations are all saved and waiting for you.
 
 Upgrade to keep going →
-https://neuroa.app/upgrade
+https://neuroaligned.app/upgrade
 
 Starter Plan — $30/mo (perfect for solo founders)
 Pro Plan — $50/mo (full AI + body doubling + priority support)

@@ -66,7 +66,7 @@ This week, try to:
 • Schedule one body doubling session for accountability
 
 Open your dashboard →
-https://neuroa.app/dashboard
+https://neuroaligned.app
 
 You're doing better than you think. See you next week.
 

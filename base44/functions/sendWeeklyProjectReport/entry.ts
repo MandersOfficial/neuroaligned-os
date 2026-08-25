@@ -202,7 +202,7 @@ function buildEmailHtml({ firstName, weekOf, activeProjects, recentlyCompleted, 
           <!-- CTA -->
           <div style="margin:32px 0 0;text-align:center;background:#f5f3ff;border-radius:12px;padding:20px;">
             <p style="margin:0 0 12px;font-size:13px;color:#4b5563;">Ready to plan your week? Open your workspace.</p>
-            <a href="https://app.base44.com/dashboard" style="display:inline-block;background:#7c3aed;color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">Open NeuroAligned →</a>
+            <a href="https://neuroaligned.app" style="display:inline-block;background:#7c3aed;color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none;">Open NeuroAligned →</a>
           </div>
 
         </td></tr>

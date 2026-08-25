@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
       return Response.json({ sent: 0, message: 'No users opted into daily check-in.' });
     }
 
-    const checkinUrl = `${req.headers.get('origin') || 'https://app.base44.com'}/check-in`;
+    const checkinUrl = `${req.headers.get('origin') || 'https://neuroaligned.app'}/check-in`;
 
     let sent = 0;
     const errors = [];
