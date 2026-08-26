@@ -124,8 +124,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
-    base44.auth.redirectToLogin(window.location.href);
+    // Redirect to the platform login carrying a clean same-origin return path
+    // (not the full URL) so the post-login redirect stays inside the app.
+    // From auth pages or the public home, default to /dashboard — otherwise a
+    // session refresh triggered on "/" would bounce the user back to the
+    // marketing page after re-authenticating, looking like a login loop.
+    const { pathname, search } = window.location;
+    const authPages = ['/login', '/register', '/forgot-password', '/reset-password'];
+    const nextUrl = authPages.includes(pathname) || pathname === '/'
+      ? '/dashboard'
+      : pathname + search;
+    base44.auth.redirectToLogin(nextUrl);
   };
 
   return (
