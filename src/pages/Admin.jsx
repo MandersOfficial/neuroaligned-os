@@ -7,6 +7,7 @@ import UserManagement from '../components/admin/UserManagement';
 import ContentModeration from '../components/admin/ContentModeration';
 import GlobalSettings from '../components/admin/GlobalSettings';
 import SupportTicketsManager from '../components/admin/SupportTicketsManager';
+import ReviewsManager from '../components/admin/ReviewsManager';
 import FeatureRequestsManager from '../components/admin/FeatureRequestsManager';
 
 export default function Admin() {
@@ -38,6 +39,7 @@ export default function Admin() {
       {tab === 'users' && <UserManagement />}
       {tab === 'moderation' && <ContentModeration />}
       {tab === 'tickets' && <SupportTicketsManager />}
+      {tab === 'reviews' && <ReviewsManager />}
       {tab === 'features' && <FeatureRequestsManager />}
       {tab === 'settings' && <GlobalSettings />}
     </AdminShell>
