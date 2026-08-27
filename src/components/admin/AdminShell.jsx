@@ -8,6 +8,7 @@ const TABS = [
   { id: 'tickets', label: 'Support Tickets' },
   { id: 'reviews', label: 'Reviews' },
   { id: 'features', label: 'Feature Requests' },
+  { id: 'email', label: 'Mass Email' },
   { id: 'settings', label: 'Global Settings' },
 ];
 
