@@ -1,6 +1,32 @@
 import { useEffect, useRef } from 'react';
 
 /**
+ * Shows a web notification via the active ServiceWorkerRegistration's
+ * showNotification() (the spec-preferred path). Falls back to the direct
+ * Notification constructor only when no service worker is available/ready,
+ * so notifications never silently fail. A 2s guard prevents waiting forever
+ * when no service worker ever registers.
+ */
+async function showDeadlineNotification(title, body) {
+  const options = { body, icon: '/favicon.ico' };
+  if ('serviceWorker' in navigator && 'showNotification' in ServiceWorkerRegistration.prototype) {
+    try {
+      const reg = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('sw-timeout')), 2000)),
+      ]);
+      await reg.showNotification(title, options);
+      return;
+    } catch {
+      // No active service worker — fall through to the constructor fallback.
+    }
+  }
+  if ('Notification' in window) {
+    try { new Notification(title, options); } catch { /* permission denied or unsupported */ }
+  }
+}
+
+/**
  * Fires browser notifications for tasks approaching their deadline.
  * Checks every 5 minutes and notifies once per task per session.
  */
@@ -40,10 +66,7 @@ export default function useDeadlineNotifications(tasks) {
         }
 
         if (message) {
-          new Notification('NeuroAligned — Task Deadline', {
-            body: message,
-            icon: '/favicon.ico',
-          });
+          showDeadlineNotification('NeuroAligned — Task Deadline', message);
           notifiedIds.current.add(task.id);
         }
       });

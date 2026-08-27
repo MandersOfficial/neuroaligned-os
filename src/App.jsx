@@ -8,6 +8,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { SensoryProvider, useSensory } from '@/lib/SensoryContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 
 // Lazily-loaded pages — keeps the initial bundle small for faster first paint on mobile
 const Login = lazy(() => import('./pages/Login'));
@@ -149,6 +150,7 @@ function App() {
       <SensoryProvider>
         <QueryClientProvider client={queryClientInstance}>
           <Router>
+            <GlobalErrorHandler />
             <AuthenticatedApp />
           </Router>
           <Toaster />
