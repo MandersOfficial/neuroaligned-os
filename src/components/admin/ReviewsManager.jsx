@@ -34,7 +34,9 @@ export default function ReviewsManager() {
   const load = async () => {
     setLoading(true);
     try {
-      const all = await base44.entities.Feedback.filter({ category: 'review' }, '-created_date', 200);
+      const res = await base44.functions.invoke('listAllFeedback');
+      const body = res?.data ?? res;
+      const all = (body?.feedback || []).filter(r => r.category === 'review');
       setReviews(all);
     } catch { /* ignore */ }
     setLoading(false);

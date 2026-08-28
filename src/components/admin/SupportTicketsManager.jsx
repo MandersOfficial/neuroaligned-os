@@ -30,8 +30,9 @@ export default function SupportTicketsManager() {
   const load = async () => {
     setLoading(true);
     try {
-      const all = await base44.entities.Feedback.list('-created_date', 200);
-      setTickets(all);
+      const res = await base44.functions.invoke('listAllFeedback');
+      const body = res?.data ?? res;
+      setTickets(body?.feedback || []);
     } catch { /* ignore */ }
     setLoading(false);
   };

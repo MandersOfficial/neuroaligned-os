@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, Square } from 'lucide-react';
 import { useDictation } from '@/hooks/useDictation';
@@ -20,20 +20,26 @@ function isEditableTarget(el) {
 
 /**
  * App-wide floating microphone that turns spoken words into text in whatever
- * field has focus. Works across every form in the app with no per-form wiring.
- * Hidden when speech recognition isn't supported (e.g. Firefox) and on public
- * pages (only mounts for authenticated users).
+ * field has focus. It only appears when a text field is focused (or while
+ * actively listening) so it stays out of the way otherwise. Sits to the right
+ * of the persistent "Read aloud" button. Hidden when speech recognition isn't
+ * supported (e.g. Firefox) and on public pages.
  */
 export default function VoiceDictationFab() {
   const { isAuthenticated } = useAuth();
   const { supported, listening, interim, error, start, stop } = useDictation();
-  const lastEditableRef = useRef(null);
+  const [target, setTarget] = useState(null);
+  const targetRef = useRef(null);
 
-  // Remember the last text field that had focus so the mic can target it even
-  // when tapping the button blurs the field (common on touch devices, where
-  // mousedown preventDefault isn't enough to hold focus).
+  // Show the mic only while a text field is focused (or while listening).
   useEffect(() => {
-    const onFocusIn = (e) => { if (isEditableTarget(e.target)) lastEditableRef.current = e.target; };
+    const apply = (el) => {
+      if (isEditableTarget(el)) { setTarget(el); targetRef.current = el; }
+      else { setTarget(null); }
+    };
+    // Capture a field already focused before mount, then track all changes.
+    apply(document.activeElement);
+    const onFocusIn = (e) => apply(e.target);
     document.addEventListener('focusin', onFocusIn);
     return () => document.removeEventListener('focusin', onFocusIn);
   }, []);
@@ -46,22 +52,25 @@ export default function VoiceDictationFab() {
 
   if (!isAuthenticated || !supported) return null;
 
+  const visible = target || listening;
+  if (!visible) return null;
+
   const handleToggle = () => {
     if (listening) { stop(); return; }
-    const target = isEditableTarget(document.activeElement) ? document.activeElement : lastEditableRef.current;
-    if (!isEditableTarget(target)) {
+    const el = isEditableTarget(document.activeElement) ? document.activeElement : (target || targetRef.current);
+    if (!isEditableTarget(el)) {
       toast({
         title: 'Tap a text field first',
         description: 'Focus any text box, then tap the mic to dictate into it.',
       });
       return;
     }
-    target.focus?.();
-    start(target);
+    el.focus?.();
+    start(el);
   };
 
   return (
-    <div className="fixed bottom-20 left-5 md:bottom-6 z-50 flex flex-col items-start gap-2">
+    <div className="fixed bottom-20 left-[7.5rem] md:bottom-6 md:left-32 z-50 flex flex-col items-start gap-2">
       <AnimatePresence>
         {listening && (
           <motion.div

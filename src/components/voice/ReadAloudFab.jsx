@@ -68,7 +68,7 @@ export default function ReadAloudFab() {
   if (!isAuthenticated || !supported) return null;
 
   return (
-    <div className="fixed bottom-20 left-[7.5rem] md:bottom-6 md:left-32 z-50 flex flex-col items-start gap-2">
+    <div className="fixed bottom-20 left-5 md:bottom-6 z-50 flex flex-col items-start gap-2">
       <AnimatePresence>
         {speaking && (
           <motion.div

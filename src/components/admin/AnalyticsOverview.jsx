@@ -3,26 +3,6 @@ import { base44 } from '@/api/base44Client';
 import { Users, CheckSquare, FileText, Activity } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from 'recharts';
 
-function buildWeek() {
-  const days = [];
-  const today = new Date();
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    days.push({
-      date: d.toISOString().split('T')[0],
-      label: d.toLocaleDateString('en-US', { weekday: 'short' }),
-      tasks: 0,
-      users: 0,
-    });
-  }
-  return days;
-}
-
-function dayKey(ts) {
-  if (!ts) return null;
-  return String(ts).slice(0, 10);
-}
 
 function StatCard({ icon: Icon, label, value, sub, color, bg }) {
   return (
@@ -43,70 +23,11 @@ export default function AnalyticsOverview() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      base44.entities.User.list('-created_date', 1000),
-      base44.entities.Task.list('-created_date', 1000),
-      base44.entities.ForumPost.list('-created_date', 1000),
-      base44.entities.UserProfile.list('-created_date', 1000),
-      base44.entities.Subscription.list('-created_date', 1000),
-    ]).then(([users, tasks, posts, profiles, subscriptions]) => {
-      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-      // Daily activity (last 7 days)
-      const weekly = buildWeek();
-      const dayMap = Object.fromEntries(weekly.map(d => [d.date, d]));
-      for (const t of tasks) {
-        const k = dayKey(t.created_date);
-        if (dayMap[k]) dayMap[k].tasks++;
-      }
-      for (const u of users) {
-        const k = dayKey(u.created_date);
-        if (dayMap[k]) dayMap[k].users++;
-      }
-
-      const tasksThisWeek = tasks.filter(t => dayKey(t.created_date) && dayKey(t.created_date) >= weekAgo).length;
-      const usersThisWeek = users.filter(u => dayKey(u.created_date) && dayKey(u.created_date) >= weekAgo).length;
-
-      // Neurotype breakdown from real profiles
-      const nt = {};
-      for (const p of profiles) {
-        for (const n of (p.neurotypes || [])) {
-          nt[n] = (nt[n] || 0) + 1;
-        }
-      }
-      const neurotypeData = Object.entries(nt)
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count);
-
-      // Subscription breakdown from real subscriptions
-      const planCounts = { trial: 0, starter: 0, pro: 0, cancelled: 0 };
-      for (const s of subscriptions) {
-        const plan = s.plan || 'trial';
-        if (planCounts[plan] !== undefined) planCounts[plan]++;
-        else planCounts.trial++;
-      }
-      const totalSubs = subscriptions.length || 1;
-      const subBreakdown = [
-        { label: 'Free Trial', count: planCounts.trial, pct: Math.round((planCounts.trial / totalSubs) * 100), color: 'bg-amber-400' },
-        { label: 'Starter ($30)', count: planCounts.starter, pct: Math.round((planCounts.starter / totalSubs) * 100), color: 'bg-primary' },
-        { label: 'Pro ($50)', count: planCounts.pro, pct: Math.round((planCounts.pro / totalSubs) * 100), color: 'bg-accent' },
-      ];
-
-      const checkins = profiles.reduce((sum, p) => sum + (p.session_count || 0), 0);
-
-      setData({
-        users: users.length,
-        tasks: tasks.length,
-        posts: posts.length,
-        checkins,
-        tasksThisWeek,
-        usersThisWeek,
-        weekly,
-        neurotypeData,
-        subBreakdown,
-        hasSubs: subscriptions.length > 0,
-      });
-    }).catch(() => setData(null));
+    // Personal entities are owner-only at the RLS level, so platform-wide
+    // numbers come from the service-role admin analytics function.
+    base44.functions.invoke('getAdminAnalytics')
+      .then(res => { setData(res?.data ?? res); })
+      .catch(() => setData(null));
   }, []);
 
   const loading = !data;
