@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, Square } from 'lucide-react';
 import { useDictation } from '@/hooks/useDictation';
@@ -25,21 +26,38 @@ function isEditableTarget(el) {
  */
 export default function VoiceDictationFab() {
   const { isAuthenticated } = useAuth();
-  const { supported, listening, interim, start, stop } = useDictation();
+  const { supported, listening, interim, error, start, stop } = useDictation();
+  const lastEditableRef = useRef(null);
+
+  // Remember the last text field that had focus so the mic can target it even
+  // when tapping the button blurs the field (common on touch devices, where
+  // mousedown preventDefault isn't enough to hold focus).
+  useEffect(() => {
+    const onFocusIn = (e) => { if (isEditableTarget(e.target)) lastEditableRef.current = e.target; };
+    document.addEventListener('focusin', onFocusIn);
+    return () => document.removeEventListener('focusin', onFocusIn);
+  }, []);
+
+  // Surface recognition errors instead of failing silently — a blocked mic in
+  // the in-builder preview, for example, otherwise looks like "nothing happens".
+  useEffect(() => {
+    if (error) toast({ title: 'Voice to text', description: error, variant: 'destructive' });
+  }, [error]);
 
   if (!isAuthenticated || !supported) return null;
 
   const handleToggle = () => {
     if (listening) { stop(); return; }
-    const el = document.activeElement;
-    if (!isEditableTarget(el)) {
+    const target = isEditableTarget(document.activeElement) ? document.activeElement : lastEditableRef.current;
+    if (!isEditableTarget(target)) {
       toast({
         title: 'Tap a text field first',
         description: 'Focus any text box, then tap the mic to dictate into it.',
       });
       return;
     }
-    start(el);
+    target.focus?.();
+    start(target);
   };
 
   return (

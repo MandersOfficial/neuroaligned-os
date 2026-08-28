@@ -88,7 +88,9 @@ export function useDictation() {
     r.onerror = (e) => {
       if (['not-allowed', 'service-not-allowed', 'audio-capture'].includes(e.error)) {
         stoppedRef.current = true;
-        setError(e.error === 'not-allowed' ? 'Microphone permission denied.' : 'Microphone unavailable.');
+        setError(e.error === 'not-allowed'
+          ? 'Microphone access was blocked. Allow mic permission in your browser — and note the in-builder preview may block the mic, so try it on the live app.'
+          : 'No microphone found or it is unavailable.');
         setListening(false);
         setInterim('');
       }
@@ -108,7 +110,7 @@ export function useDictation() {
       setListening(true);
     } catch {
       setListening(false);
-      setError('Could not start dictation.');
+      setError('Could not start dictation. Try reloading the page.');
     }
   }, []);
 
