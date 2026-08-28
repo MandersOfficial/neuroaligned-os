@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { SensoryProvider, useSensory } from '@/lib/SensoryContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
+import VoiceDictationFab from '@/components/voice/VoiceDictationFab';
 
 // Lazily-loaded pages — keeps the initial bundle small for faster first paint on mobile
 const Login = lazy(() => import('./pages/Login'));
@@ -138,6 +139,7 @@ const AuthenticatedApp = () => {
           </Suspense>
         </motion.div>
       </AnimatePresence>
+      <VoiceDictationFab />
     </MotionConfig>
   );
 };
