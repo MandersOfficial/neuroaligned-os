@@ -70,7 +70,7 @@ export default function VoiceDictationFab() {
   };
 
   return (
-    <div className="fixed bottom-20 left-[7.5rem] md:bottom-6 md:left-32 z-50 flex flex-col items-start gap-2">
+    <div className="fixed bottom-20 left-[7.5rem] md:bottom-6 md:left-[19rem] z-50 flex flex-col items-start gap-2">
       <AnimatePresence>
         {listening && (
           <motion.div
