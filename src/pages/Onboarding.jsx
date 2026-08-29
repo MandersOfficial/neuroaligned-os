@@ -39,20 +39,11 @@ export default function Onboarding() {
     base44.auth.me().then(u => {
       const params = new URLSearchParams(window.location.search);
       const preview = params.get('preview') === '1';
-      if (!u) {
-        // Onboarding requires an account — send visitors to sign up first.
-        // (Preview mode is the only exception, for browsing the questions.)
-        if (!preview) {
-          navigate(`/register?returnTo=${encodeURIComponent('/onboarding')}`);
-        }
-        return;
-      }
-      setUser(u);
       const complete = params.get('complete') === '1';
 
       // Resume after a brand-new visitor registers mid-onboarding: their answers
       // were stashed before sign-up, so finish saving + go straight to the dashboard.
-      if (complete) {
+      if (complete && u) {
         const stashRaw = sessionStorage.getItem(STASH_KEY);
         if (stashRaw) {
           const stashed = JSON.parse(stashRaw);
@@ -64,16 +55,22 @@ export default function Onboarding() {
         }
       }
 
-      // Fresh authenticated visit: clear any stale stash, then check for an existing profile.
+      // Fresh visit: clear any stale stash.
       sessionStorage.removeItem(STASH_KEY);
-      setData(prev => ({ ...prev, display_name: u.full_name?.split(' ')[0] || '' }));
-      if (!preview) {
-        return base44.entities.UserProfile.filter({ user_email: u.email }).then(profiles => {
-          if (profiles.length > 0 && profiles[0].onboarding_completed) {
-            navigate('/dashboard');
-          }
-        });
+
+      if (u) {
+        setUser(u);
+        setData(prev => ({ ...prev, display_name: u.full_name?.split(' ')[0] || '' }));
+        if (!preview) {
+          return base44.entities.UserProfile.filter({ user_email: u.email }).then(profiles => {
+            if (profiles.length > 0 && profiles[0].onboarding_completed) {
+              navigate('/dashboard');
+            }
+          });
+        }
       }
+      // Anonymous visitors proceed through the questions; their answers are
+      // stashed at the end and saved once they create an account.
     }).catch(() => {});
   }, []);
 
