@@ -5,6 +5,7 @@ import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import RegulationWidget from '../components/regulation/RegulationWidget';
 import TrialBanner from '../components/subscription/TrialBanner';
 import GoogleConnectWidget from '../components/dashboard/GoogleConnectWidget';
+import GettingStartedFlow, { DONE_KEY } from '@/components/getting-started/GettingStartedFlow';
 import { CheckCircle2, Circle, ArrowRight, Zap, Clock, Brain, Calendar, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -101,6 +102,7 @@ export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [trialDaysLeft, setTrialDaysLeft] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showGettingStarted, setShowGettingStarted] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,6 +127,10 @@ export default function Dashboard() {
       if (sub?.trial_end_date) {
         const days = Math.max(0, Math.ceil((new Date(sub.trial_end_date) - new Date()) / (1000 * 60 * 60 * 24)));
         setTrialDaysLeft(days);
+      }
+      // First post-login visit: launch the guided "how to use the app" flow.
+      if (!localStorage.getItem(DONE_KEY)) {
+        setShowGettingStarted(true);
       }
       setLoading(false);
     };
@@ -156,6 +162,9 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
+      {showGettingStarted && (
+        <GettingStartedFlow user={user} onComplete={() => setShowGettingStarted(false)} />
+      )}
       <DashboardSidebar user={user} />
 
       <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
@@ -349,9 +358,17 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
-              <Link to="/integrations" className="text-xs text-primary font-semibold hover:underline flex items-center gap-1">
-                <Zap className="w-3 h-3" /> Manage integrations
-              </Link>
+              <div className="flex items-center justify-between pt-1">
+                <button
+                  onClick={() => setShowGettingStarted(true)}
+                  className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
+                >
+                  <Brain className="w-3 h-3" /> Take the tour
+                </button>
+                <Link to="/integrations" className="text-xs text-primary font-semibold hover:underline flex items-center gap-1">
+                  <Zap className="w-3 h-3" /> Integrations
+                </Link>
+              </div>
             </div>
           </div>
 
