@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import AdminShell from '../components/admin/AdminShell';
 import AnalyticsOverview from '../components/admin/AnalyticsOverview';
 import UserManagement from '../components/admin/UserManagement';
-import ContentModeration from '../components/admin/ContentModeration';
 import GlobalSettings from '../components/admin/GlobalSettings';
 import SupportTicketsManager from '../components/admin/SupportTicketsManager';
 import ReviewsManager from '../components/admin/ReviewsManager';
@@ -38,7 +37,6 @@ export default function Admin() {
     <AdminShell activeTab={tab} onTabChange={setTab}>
       {tab === 'analytics' && <AnalyticsOverview />}
       {tab === 'users' && <UserManagement />}
-      {tab === 'moderation' && <ContentModeration />}
       {tab === 'tickets' && <SupportTicketsManager />}
       {tab === 'reviews' && <ReviewsManager />}
       {tab === 'email' && <MassEmailManager />}

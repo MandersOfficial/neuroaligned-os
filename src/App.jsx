@@ -28,7 +28,6 @@ const KnowledgeBase = lazy(() => import('./pages/KnowledgeBase'));
 const Upgrade = lazy(() => import('./pages/Upgrade'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
-const Forum = lazy(() => import('./pages/Forum'));
 const CheckIn = lazy(() => import('./pages/CheckIn'));
 const BodyDoubling = lazy(() => import('./pages/BodyDoubling'));
 const SensorySettings = lazy(() => import('./pages/SensorySettings'));
@@ -116,7 +115,6 @@ const AuthenticatedApp = () => {
               <Route path="/upgrade" element={<Upgrade />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
-              <Route path="/forum" element={<Forum />} />
               <Route path="/check-in" element={<CheckIn />} />
               <Route path="/body-doubling" element={<BodyDoubling />} />
               <Route path="/sensory" element={<SensorySettings />} />

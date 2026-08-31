@@ -4,7 +4,6 @@ import { Brain, LayoutDashboard, ArrowLeft } from 'lucide-react';
 const TABS = [
   { id: 'analytics', label: 'Analytics' },
   { id: 'users', label: 'User Management' },
-  { id: 'moderation', label: 'Content Moderation' },
   { id: 'tickets', label: 'Support Tickets' },
   { id: 'reviews', label: 'Reviews' },
   { id: 'features', label: 'Feature Requests' },

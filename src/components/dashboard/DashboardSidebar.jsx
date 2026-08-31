@@ -27,7 +27,6 @@ const NAV_GROUPS = [
     label: 'Wellbeing',
     items: [
       { icon: ShieldAlert, label: 'Burnout Risk', href: '/burnout' },
-      { icon: Users, label: 'Community', href: '/forum' },
       { icon: DoorOpen, label: 'Focus Rooms', href: '/focus-rooms' },
       { icon: HeartHandshake, label: 'Find a Partner', href: '/body-doubling-match' },
       { icon: BookOpen, label: 'Knowledge Base', href: '/knowledge' },
@@ -58,7 +57,6 @@ const MOBILE_NAV = [
   { icon: Scissors, label: 'Break Down', href: '/task-breakdown' },
   { icon: NotebookPen, label: 'Journal', href: '/journal' },
   { icon: Focus, label: 'Focus', href: '/focus-modes' },
-  { icon: Users, label: 'Community', href: '/forum' },
 ];
 
 export default function DashboardSidebar({ user }) {
