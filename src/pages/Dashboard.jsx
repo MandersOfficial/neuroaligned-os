@@ -6,6 +6,7 @@ import RegulationWidget from '../components/regulation/RegulationWidget';
 import TrialBanner from '../components/subscription/TrialBanner';
 import GoogleConnectWidget from '../components/dashboard/GoogleConnectWidget';
 import GettingStartedFlow, { DONE_KEY } from '@/components/getting-started/GettingStartedFlow';
+import { useAppRefresh } from '@/hooks/useAppRefresh';
 import { CheckCircle2, Circle, ArrowRight, Zap, Clock, Brain, Calendar, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -105,37 +106,37 @@ export default function Dashboard() {
   const [showGettingStarted, setShowGettingStarted] = useState(false);
   const navigate = useNavigate();
 
+  const load = async () => {
+    const u = await base44.auth.me();
+    if (!u) { base44.auth.redirectToLogin('/dashboard'); return; }
+    setUser(u);
+    const [t, subs, profiles, proj] = await Promise.all([
+      base44.entities.Task.filter({ is_today: true }),
+      base44.entities.Subscription.filter({ created_by: u.email }, '-created_date', 1),
+      base44.entities.UserProfile.filter({ user_email: u.email }),
+      base44.entities.Project.filter({ status: 'active' }, '-created_date', 5),
+    ]);
+    setTasks(t);
+    setProjects(proj);
+    if (profiles.length > 0) {
+      const p = profiles[0];
+      setProfile(p);
+      if (p.last_brain_state) setEnergy(p.last_brain_state);
+    }
+    const sub = subs[0];
+    if (sub?.trial_end_date) {
+      const days = Math.max(0, Math.ceil((new Date(sub.trial_end_date) - new Date()) / (1000 * 60 * 60 * 24)));
+      setTrialDaysLeft(days);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+  // First post-login visit: launch the guided "how to use the app" flow.
   useEffect(() => {
-    const load = async () => {
-      const u = await base44.auth.me();
-      if (!u) { base44.auth.redirectToLogin('/dashboard'); return; }
-      setUser(u);
-      const [t, subs, profiles, proj] = await Promise.all([
-        base44.entities.Task.filter({ is_today: true }),
-        base44.entities.Subscription.filter({ created_by: u.email }, '-created_date', 1),
-        base44.entities.UserProfile.filter({ user_email: u.email }),
-        base44.entities.Project.filter({ status: 'active' }, '-created_date', 5),
-      ]);
-      setTasks(t);
-      setProjects(proj);
-      if (profiles.length > 0) {
-        const p = profiles[0];
-        setProfile(p);
-        if (p.last_brain_state) setEnergy(p.last_brain_state);
-      }
-      const sub = subs[0];
-      if (sub?.trial_end_date) {
-        const days = Math.max(0, Math.ceil((new Date(sub.trial_end_date) - new Date()) / (1000 * 60 * 60 * 24)));
-        setTrialDaysLeft(days);
-      }
-      // First post-login visit: launch the guided "how to use the app" flow.
-      if (!localStorage.getItem(DONE_KEY)) {
-        setShowGettingStarted(true);
-      }
-      setLoading(false);
-    };
-    load();
+    if (!localStorage.getItem(DONE_KEY)) setShowGettingStarted(true);
   }, []);
+  useAppRefresh(load);
 
   const handleToggleTask = async (task) => {
     const newStatus = task.status === 'done' ? 'todo' : 'done';

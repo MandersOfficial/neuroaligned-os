@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAppRefresh } from '@/hooks/useAppRefresh';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import FocusRoomCard from '../components/focusrooms/FocusRoomCard';
 import CreateRoomModal from '../components/focusrooms/CreateRoomModal';
@@ -41,6 +42,8 @@ export default function FocusRooms() {
     const interval = setInterval(() => loadRooms(null), 15000);
     return () => clearInterval(interval);
   }, [loadRooms]);
+
+  useAppRefresh(() => loadRooms(user));
 
   const handleCreateRoom = async (form, onMeetStatus) => {
     // Generate a Google Meet link for the room

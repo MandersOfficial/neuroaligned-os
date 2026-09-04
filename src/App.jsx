@@ -11,6 +11,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import VoiceDictationFab from '@/components/voice/VoiceDictationFab';
 import ReadAloudFab from '@/components/voice/ReadAloudFab';
+import GlobalPullToRefresh from '@/components/GlobalPullToRefresh';
 
 // Lazily-loaded pages — keeps the initial bundle small for faster first paint on mobile
 const Login = lazy(() => import('./pages/Login'));
@@ -138,6 +139,7 @@ const AuthenticatedApp = () => {
           </Suspense>
         </motion.div>
       </AnimatePresence>
+      <GlobalPullToRefresh />
       <VoiceDictationFab />
       <ReadAloudFab />
     </MotionConfig>

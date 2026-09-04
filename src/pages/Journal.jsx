@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAppRefresh } from '@/hooks/useAppRefresh';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import JournalEditor from '../components/journal/JournalEditor';
 import JournalEntryCard from '../components/journal/JournalEntryCard';
@@ -13,15 +14,19 @@ export default function Journal() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
-  useEffect(() => {
-    Promise.all([base44.auth.me(), base44.entities.JournalEntry.list('-created_date', 30)])
-      .then(([u, e]) => {
-        if (!u) { base44.auth.redirectToLogin('/journal'); return; }
-        setUser(u);
-        setEntries(e);
-        setLoading(false);
-      });
-  }, []);
+  const load = async () => {
+    const [u, e] = await Promise.all([
+      base44.auth.me(),
+      base44.entities.JournalEntry.list('-created_date', 30),
+    ]);
+    if (!u) { base44.auth.redirectToLogin('/journal'); return; }
+    setUser(u);
+    setEntries(e);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+  useAppRefresh(load);
 
   const handleSaved = useCallback((entry) => {
     setEntries(prev => [entry, ...prev]);

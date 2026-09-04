@@ -63,11 +63,36 @@ export default function DashboardSidebar({ user }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  // Bottom-tab selection that survives navigation to interior pages and reloads
+  const [lastTab, setLastTab] = useState(() => localStorage.getItem('na_last_tab') || '/dashboard');
   const { prefs, updatePref } = useSensory();
 
   useEffect(() => {
     base44.auth.me().then(u => setIsAdmin(u?.role === 'admin')).catch(() => {});
   }, []);
+
+  // A tab stays selected on interior pages (like native apps): match the
+  // current route exactly or by prefix, otherwise fall back to the last tab
+  // the user tapped so the selection never resets to nothing.
+  const activeTab = (() => {
+    const path = location.pathname;
+    const exact = MOBILE_NAV.find(t => t.href === path);
+    if (exact) return exact.href;
+    const partial = MOBILE_NAV.find(t => path.startsWith(t.href + '/'));
+    if (partial) return partial.href;
+    return MOBILE_NAV.some(t => t.href === lastTab) ? lastTab : '/dashboard';
+  })();
+
+  const handleTabTap = (e, href) => {
+    localStorage.setItem('na_last_tab', href);
+    setLastTab(href);
+    // Re-tapping the tab you're already on resets the view back to the top
+    if (activeTab === href && location.pathname === href) {
+      e.preventDefault();
+      const main = document.querySelector('main');
+      if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <>
@@ -192,11 +217,12 @@ export default function DashboardSidebar({ user }) {
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         {MOBILE_NAV.map(({ icon: Icon, label, href }) => {
-          const active = location.pathname === href;
+          const active = activeTab === href;
           return (
             <Link
               key={href}
               to={href}
+              onClick={(e) => handleTabTap(e, href)}
               className={cn(
                 'flex-1 flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-medium transition-colors min-w-0',
                 active ? 'text-primary' : 'text-muted-foreground'

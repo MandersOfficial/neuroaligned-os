@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAppRefresh } from '@/hooks/useAppRefresh';
 import { Plus, List, LayoutGrid } from 'lucide-react';
 import SmartSortButton from '../components/tasks/SmartSortButton';
 import { AnimatePresence } from 'framer-motion';
@@ -28,20 +29,24 @@ export default function Tasks() {
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [energyFilter, setEnergyFilter] = useState('all');
 
-  useEffect(() => {
-    Promise.all([
+  const load = async () => {
+    const [u, t, p] = await Promise.all([
       base44.auth.me(),
       base44.entities.Task.list('-created_date', 100),
       base44.entities.Project.list('-created_date', 50),
-    ]).then(async ([u, t, p]) => {
-      setUser(u);
-      setTasks(t);
-      setProjects(p);
-      const profiles = await base44.entities.UserProfile.filter({ user_email: u.email });
-      if (profiles.length > 0) setProfile(profiles[0]);
-      setLoading(false);
-    });
-  }, []);
+    ]);
+    setUser(u);
+    setTasks(t);
+    setSortedTasks(null);
+    setSortReasons({});
+    setProjects(p);
+    const profiles = await base44.entities.UserProfile.filter({ user_email: u.email });
+    if (profiles.length > 0) setProfile(profiles[0]);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+  useAppRefresh(load);
 
   const handleCreateTask = async (formData) => {
     const task = await base44.entities.Task.create(formData);

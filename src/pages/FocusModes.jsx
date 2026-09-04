@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAppRefresh } from '@/hooks/useAppRefresh';
 import { Plus, Sparkles } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
@@ -102,13 +103,18 @@ export default function FocusModes() {
   const [showEditor, setShowEditor] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
 
-  useEffect(() => {
-    base44.auth.me().then(u => setUser(u));
-    base44.entities.FocusMode.list('-created_date', 50).then(saved => {
-      setModes(saved);
-      setLoading(false);
-    });
-  }, []);
+  const load = async () => {
+    const [u, saved] = await Promise.all([
+      base44.auth.me(),
+      base44.entities.FocusMode.list('-created_date', 50),
+    ]);
+    setUser(u);
+    setModes(saved);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+  useAppRefresh(load);
 
   const activeMode = modes.find(m => m.is_active);
 

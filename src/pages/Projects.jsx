@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useAppRefresh } from '@/hooks/useAppRefresh';
 import { useNavigate } from 'react-router-dom';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import MobileSelect from '@/components/ui/MobileSelect';
@@ -456,14 +457,16 @@ export default function Projects() {
   const [filter, setFilter] = useState('active');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    base44.auth.me().then(async u => {
-      setUser(u);
-      const p = await base44.entities.Project.list('-created_date', 100);
-      setProjects(p);
-      setLoading(false);
-    });
-  }, []);
+  const load = async () => {
+    const u = await base44.auth.me();
+    setUser(u);
+    const p = await base44.entities.Project.list('-created_date', 100);
+    setProjects(p);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+  useAppRefresh(load);
 
   const handleUpdate = (updated) => setProjects(prev => prev.map(p => p.id === updated.id ? updated : p));
   const handleDelete = async (project) => {
