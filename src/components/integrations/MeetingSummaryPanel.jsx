@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, Link2, ChevronDown, ChevronUp, FileText, Sparkles, ExternalLink, AlertCircle } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const DOCS_CONNECTOR_ID = '6a58bb594a5a09e519c6c4a1';
 
@@ -89,16 +90,14 @@ export default function MeetingSummaryPanel({ projects = [] }) {
                 <p className="text-xs text-muted-foreground py-2">No projects available. Create a project with notes first.</p>
               ) : (
                 <>
-                  <select
+                  <MobileSelect
                     value={selectedProject}
-                    onChange={e => { setSelectedProject(e.target.value); setResult(null); setError(null); }}
-                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
-                  >
-                    <option value="">Select a project…</option>
-                    {projects.map(p => (
-                      <option key={p.id} value={p.id}>{p.emoji} {p.name}</option>
-                    ))}
-                  </select>
+                    onChange={v => { setSelectedProject(v); setResult(null); setError(null); }}
+                    options={projects.map(p => ({ value: p.id, label: `${p.emoji} ${p.name}` }))}
+                    placeholder="Select a project…"
+                    label="Project"
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground"
+                  />
 
                   <button
                     onClick={handleGenerate}

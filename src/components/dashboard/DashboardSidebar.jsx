@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
@@ -59,13 +59,20 @@ const MOBILE_NAV = [
   { icon: Focus, label: 'Focus', href: '/focus-modes' },
 ];
 
+const TAB_PATHS_KEY = 'na_tab_paths';
+
 export default function DashboardSidebar({ user }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   // Bottom-tab selection that survives navigation to interior pages and reloads
   const [lastTab, setLastTab] = useState(() => localStorage.getItem('na_last_tab') || '/dashboard');
+  // Navigation state memory: the last sub-page viewed while each tab was active
+  const [tabPaths, setTabPaths] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(TAB_PATHS_KEY) || '{}') || {}; } catch { return {}; }
+  });
   const { prefs, updatePref } = useSensory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     base44.auth.me().then(u => setIsAdmin(u?.role === 'admin')).catch(() => {});
@@ -83,14 +90,29 @@ export default function DashboardSidebar({ user }) {
     return MOBILE_NAV.some(t => t.href === lastTab) ? lastTab : '/dashboard';
   })();
 
+  // Remember which sub-page was last viewed under each tab, so switching
+  // back to a tab restores it instead of always starting at its root.
+  useEffect(() => {
+    setTabPaths(prev => {
+      if (prev[activeTab] === location.pathname) return prev;
+      const next = { ...prev, [activeTab]: location.pathname };
+      localStorage.setItem(TAB_PATHS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, [location.pathname, activeTab]);
+
   const handleTabTap = (e, href) => {
     localStorage.setItem('na_last_tab', href);
     setLastTab(href);
-    // Re-tapping the tab you're already on resets the view back to the top
-    if (activeTab === href && location.pathname === href) {
-      e.preventDefault();
+    e.preventDefault();
+    // Restore the tab's remembered sub-page, falling back to its root
+    const remembered = tabPaths[href] || href;
+    if (location.pathname === remembered) {
+      // Re-tapping the view you're already on resets the view back to the top
       const main = document.querySelector('main');
       if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate(remembered);
     }
   };
 

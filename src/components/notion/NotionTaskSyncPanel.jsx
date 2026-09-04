@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, RefreshCw, ArrowDown, Link2, CheckCircle2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const NOTION_CONNECTOR_ID = '6a1cfa4c8db502aafb000e1a';
 
@@ -126,16 +127,14 @@ export default function NotionTaskSyncPanel({ onSynced }) {
                 </p>
               ) : (
                 <>
-                  <select
+                  <MobileSelect
                     value={dbId}
-                    onChange={e => { setDbId(e.target.value); setResult(null); setError(null); }}
-                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
-                  >
-                    <option value="">Select a database…</option>
-                    {databases.map(db => (
-                      <option key={db.id} value={db.id}>{db.name}</option>
-                    ))}
-                  </select>
+                    onChange={v => { setDbId(v); setResult(null); setError(null); }}
+                    options={databases.map(db => ({ value: db.id, label: db.name }))}
+                    placeholder="Select a database…"
+                    label="Notion database"
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground"
+                  />
 
                   <button
                     onClick={handlePull}

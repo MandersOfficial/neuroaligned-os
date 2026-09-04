@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, Link2, ChevronDown, ChevronUp, Video, Copy, Check, ExternalLink, AlertCircle } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const CALENDAR_CONNECTOR_ID = '69fd1ec20e0e670e38251275';
 
@@ -99,16 +100,14 @@ export default function ProjectSyncPanel({ projects = [] }) {
                 <p className="text-xs text-muted-foreground py-2">No projects available. Create a project first.</p>
               ) : (
                 <>
-                  <select
+                  <MobileSelect
                     value={selectedProject}
-                    onChange={e => { setSelectedProject(e.target.value); setResult(null); setError(null); }}
-                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
-                  >
-                    <option value="">Select a project…</option>
-                    {projects.map(p => (
-                      <option key={p.id} value={p.id}>{p.emoji} {p.name}</option>
-                    ))}
-                  </select>
+                    onChange={v => { setSelectedProject(v); setResult(null); setError(null); }}
+                    options={projects.map(p => ({ value: p.id, label: `${p.emoji} ${p.name}` }))}
+                    placeholder="Select a project…"
+                    label="Project"
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground"
+                  />
 
                   <button
                     onClick={handleCreate}

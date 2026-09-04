@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, ChevronDown, ChevronUp, Save, Search, Lightbulb } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const STATUSES = ['submitted', 'reviewing', 'planned', 'in_progress', 'shipped', 'declined'];
 const STATUS_CLS = {
@@ -12,6 +13,8 @@ const STATUS_CLS = {
   declined: 'bg-secondary text-muted-foreground border-border',
 };
 const PRIORITIES = ['low', 'medium', 'high'];
+const STATUS_OPTIONS = STATUSES.map(s => ({ value: s, label: s.replace('_', ' ') }));
+const PRIORITY_OPTIONS = PRIORITIES.map(p => ({ value: p, label: p }));
 const PRIORITY_CLS = {
   low: 'bg-secondary text-muted-foreground',
   medium: 'bg-blue-50 text-blue-700',
@@ -141,15 +144,11 @@ export default function FeatureRequestsManager() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div>
                         <label className="text-xs font-semibold text-foreground block mb-1.5">Status</label>
-                        <select value={draft.status} onChange={e => setDraft(r.id, 'status', e.target.value)} className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary">
-                          {STATUSES.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
-                        </select>
+                        <MobileSelect value={draft.status} onChange={v => setDraft(r.id, 'status', v)} options={STATUS_OPTIONS} label="Status" className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm" />
                       </div>
                       <div>
                         <label className="text-xs font-semibold text-foreground block mb-1.5">Priority</label>
-                        <select value={draft.priority} onChange={e => setDraft(r.id, 'priority', e.target.value)} className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary">
-                          {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
-                        </select>
+                        <MobileSelect value={draft.priority} onChange={v => setDraft(r.id, 'priority', v)} options={PRIORITY_OPTIONS} label="Priority" className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm" />
                       </div>
                     </div>
                     <div>

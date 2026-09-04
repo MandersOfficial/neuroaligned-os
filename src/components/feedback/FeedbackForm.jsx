@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, CheckCircle2, Send, Star, Paperclip, X, Upload, Lock } from 'lucide-react';
+import MobileSelect from '@/components/ui/MobileSelect';
 
 const CATEGORIES = [
   { value: 'general', label: 'General feedback' },
@@ -173,9 +174,7 @@ export default function FeedbackForm({
       {showCategory && (
         <div>
           <label className={labelCls}>What's this about?</label>
-          <select value={form.category} onChange={e => set('category', e.target.value)} className={inputCls}>
-            {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-          </select>
+          <MobileSelect value={form.category} onChange={v => set('category', v)} options={CATEGORIES} label="What's this about?" className={inputCls} />
         </div>
       )}
 

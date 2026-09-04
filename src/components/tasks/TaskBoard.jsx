@@ -4,6 +4,8 @@ import { Check, Clock, Flame, Zap, Leaf, Calendar, ChevronDown, Sparkles, Trash2
 import { motion, AnimatePresence } from 'framer-motion';
 import { ENERGY_STATES } from '@/components/dashboard/EnergyCheckIn';
 import PullToRefresh from '@/components/ui/PullToRefresh';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 import DueSoonBanner from './DueSoonBanner';
 import useDeadlineNotifications from '@/hooks/useDeadlineNotifications';
 
@@ -129,6 +131,8 @@ function TaskCard({ task, projects, recommended, onUpdate, onDelete }) {
 export default function TaskBoard({ tasks, projects, energy, recommendedIds, onTasksChange }) {
   const energyState = ENERGY_STATES.find(s => s.value === energy) || ENERGY_STATES[1];
   const isFiltering = energyState.allowedEnergy.length < 3;
+  const isMobile = useIsMobile();
+  const [mobileCol, setMobileCol] = useState('todo');
 
   useDeadlineNotifications(tasks);
 
@@ -184,8 +188,26 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
         </motion.div>
       )}
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(3, minmax(260px, 1fr))' }}>
-      {STATUS_COLS.map(col => {
+      {/* Mobile: switch columns with a tab strip instead of horizontal scroll */}
+      {isMobile && (
+        <div className="flex gap-1 bg-secondary rounded-xl p-1">
+          {STATUS_COLS.map(col => (
+            <button
+              key={col.id}
+              onClick={() => setMobileCol(col.id)}
+              className={cn(
+                'flex-1 py-2 rounded-lg text-xs font-semibold transition-colors',
+                mobileCol === col.id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
+              )}
+            >
+              {col.label} <span className="opacity-60">{tasks.filter(t => t.status === col.id).length}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="grid gap-4" style={isMobile ? { gridTemplateColumns: '1fr' } : { gridTemplateColumns: 'repeat(3, minmax(260px, 1fr))' }}>
+      {(isMobile ? STATUS_COLS.filter(c => c.id === mobileCol) : STATUS_COLS).map(col => {
         const colTasks = tasks.filter(t => t.status === col.id);
         const matchingTasks = col.id === 'done' ? colTasks : filteredByEnergy(colTasks);
         const dimmedCount = col.id !== 'done' ? colTasks.length - matchingTasks.length : 0;
