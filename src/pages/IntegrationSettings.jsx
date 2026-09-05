@@ -81,7 +81,7 @@ const CONNECTORS = [
   {
     id: '6a9c83fae18c151ef517de3b',
     name: 'Notion',
-    description: 'Push your projects and task list into a Notion database you choose.',
+    description: 'Two-way sync your projects and task list with a Notion database you choose.',
     icon: NotebookPen,
     color: 'bg-stone-100 text-stone-600',
   },
@@ -300,7 +300,7 @@ export default function IntegrationSettings() {
               color="text-stone-600"
               bg="bg-stone-100"
               title="Notion Project & Task Sync"
-              description="Push your projects and current task list into a Notion database on demand."
+              description="Two-way sync your projects and tasks with Notion — manually or automatically on sign-in."
               defaultOpen={false}
             >
               <NotionSyncPanel connected={!!statuses['6a9c83fae18c151ef517de3b']} />

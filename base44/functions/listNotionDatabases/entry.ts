@@ -1,10 +1,11 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.46';
 
 const CONNECTOR_ID = '6a9c83fae18c151ef517de3b';
-const NOTION_VERSION = '2022-06-28';
+const NOTION_VERSION = '2025-09-03';
 
-// Lists the Notion databases the connected user has shared with the app,
-// so they can pick a push target in the Notion sync panel.
+// Lists the Notion data sources the connected user has shared with the app,
+// so they can pick a sync target in the Notion sync panel. Uses the
+// 2025-09-03 API: search for data sources, not databases.
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -20,7 +21,7 @@ export default async function(req) {
         'Notion-Version': NOTION_VERSION,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ filter: { property: 'object', value: 'database' }, page_size: 100 }),
+      body: JSON.stringify({ filter: { property: 'object', value: 'data_source' }, page_size: 100 }),
     });
 
     const data = await res.json();
@@ -29,13 +30,13 @@ export default async function(req) {
       return Response.json({ error: data.message || 'Could not list Notion databases' }, { status: 400 });
     }
 
-    const databases = (data.results || []).map(d => ({
-      id: d.id,
-      title: (d.title || []).map(t => t.plain_text).join('').trim() || 'Untitled database',
-      url: d.url,
+    const sources = (data.results || []).map(s => ({
+      id: s.id,
+      title: (s.name || '').trim() || 'Untitled database',
+      url: s.url || '',
     }));
 
-    return Response.json({ databases });
+    return Response.json({ databases: sources });
   } catch (error) {
     console.error('listNotionDatabases error:', error?.message);
     return Response.json({ error: error?.message || 'Internal error' }, { status: 500 });
