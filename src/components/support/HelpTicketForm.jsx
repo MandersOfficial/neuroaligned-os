@@ -127,7 +127,7 @@ export default function HelpTicketForm({ onSubmitted }) {
         <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">More about the issue (optional)</p>
         <div>
           <label className={labelCls}>What were you trying to do?</label>
-          <textarea rows={2} value={form.whatYouTried} onChange={e => set('whatYouTried', e.target.value)} placeholder="e.g. I was trying to sync my Notion tasks" className={inputCls + ' resize-none'} />
+          <textarea rows={2} value={form.whatYouTried} onChange={e => set('whatYouTried', e.target.value)} placeholder="e.g. I was trying to sync my tasks" className={inputCls + ' resize-none'} />
         </div>
         <div>
           <label className={labelCls}>What went wrong (or what did you expect)?</label>

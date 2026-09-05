@@ -5,13 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   X, ArrowRight, ArrowLeft, Check, Loader2, ExternalLink,
   Brain, Battery, ListTodo, Timer, HeartHandshake,
-  Calendar, FileText, Sparkles,
+  Calendar, Sparkles,
 } from 'lucide-react';
 
 const DONE_KEY = 'na_getting_started_v1';
 
 const GOOGLE_CALENDAR_ID = '69fd1ec20e0e670e38251275';
-const NOTION_ID = '6a1cfa4c8db502aafb000e1a';
 
 const DAILY_LOOP = [
   { icon: Battery, title: 'Check your energy', desc: 'Start on the dashboard by picking how your brain feels. Tasks filter to match your capacity.', color: 'text-violet-500', bg: 'bg-violet-50' },
@@ -23,8 +22,7 @@ const DAILY_LOOP = [
 const TIPS = [
   { icon: Brain, title: 'Check in before you check off', desc: 'Rate your state in the Brain Check-In to get a plan tuned to your energy — not a generic to-do list.' },
   { icon: Sparkles, title: 'Break tasks down with AI', desc: 'Stuck on a big task? Open Task Breakdown and let AI split it into small, doable steps.' },
-  { icon: Calendar, title: 'Let deadlines sync themselves', desc: 'Connect Google Calendar and project deadlines push to your calendar automatically — no manual entry.' },
-  { icon: FileText, title: 'Use Notion as your source of truth', desc: 'Connect Notion and your tasks & projects stay in two-way sync — edit here or there.' },
+  { icon: Calendar, title: 'Put scheduling on autopilot', desc: 'Connect Google Calendar to create Meet links, schedule project syncs, and see upcoming events.' },
 ];
 
 function ConnectorButton({ connectorId, name, connected, onRecheck }) {
@@ -75,12 +73,12 @@ export default function GettingStartedFlow({ user, onComplete }) {
   const [step, setStep] = useState(0);
   const [statuses, setStatuses] = useState({});
 
-  const TOTAL = 5; // welcome, loop, calendar, notion, tips+done
+  const TOTAL = 4; // welcome, loop, calendar, tips+done
 
   const fetchStatuses = useCallback(async () => {
     try {
       const res = await base44.functions.invoke('checkConnectorStatuses', {
-        connectorIds: [GOOGLE_CALENDAR_ID, NOTION_ID],
+        connectorIds: [GOOGLE_CALENDAR_ID],
       });
       if (res?.data?.statuses) setStatuses(res.data.statuses);
     } catch {
@@ -187,12 +185,12 @@ export default function GettingStartedFlow({ user, onComplete }) {
                   <div>
                     <h2 className="font-display font-bold text-xl text-foreground">Connect Google Calendar</h2>
                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                      This unlocks the biggest wins: project deadlines push to your calendar, you can schedule
-                      focus meetings, and upcoming events show on your dashboard.
+                      This unlocks the biggest wins: schedule project sync meetings and deadline calls,
+                      and upcoming events show on your dashboard.
                     </p>
                   </div>
                   <ul className="space-y-2 text-sm text-foreground">
-                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Deadlines sync automatically</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Create instant Meet links from projects</li>
                     <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Schedule project syncs & deadline calls</li>
                     <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Auto-break scheduler protects your energy</li>
                   </ul>
@@ -207,33 +205,6 @@ export default function GettingStartedFlow({ user, onComplete }) {
               )}
 
               {step === 3 && (
-                <StepShell>
-                  <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-slate-600" />
-                  </div>
-                  <div>
-                    <h2 className="font-display font-bold text-xl text-foreground">Connect Notion</h2>
-                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                      Use Notion as your source of truth. Tasks and projects sync both ways — edit in Notion
-                      and it shows up here, or plan here and it lands in Notion.
-                    </p>
-                  </div>
-                  <ul className="space-y-2 text-sm text-foreground">
-                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Pull tasks from a Notion database</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Sync projects & status back to Notion</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Draft SOPs straight to your workspace</li>
-                  </ul>
-                  <ConnectorButton
-                    connectorId={NOTION_ID}
-                    name="Notion"
-                    connected={!!statuses[NOTION_ID]}
-                    onRecheck={fetchStatuses}
-                  />
-                  <p className="text-xs text-muted-foreground">You can skip this and connect any time under Integrations.</p>
-                </StepShell>
-              )}
-
-              {step === 4 && (
                 <StepShell>
                   <div>
                     <h2 className="font-display font-bold text-xl text-foreground">Best practices</h2>

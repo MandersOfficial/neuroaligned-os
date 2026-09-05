@@ -221,7 +221,7 @@ export default function FeedbackForm({
               rows={3}
               value={form.whatYouTried}
               onChange={e => set('whatYouTried', e.target.value)}
-              placeholder="e.g. I was trying to sync my Notion tasks to a project"
+              placeholder="e.g. I was trying to sync my tasks to a project"
               className={inputCls + ' resize-none'}
             />
           </div>

@@ -33,8 +33,6 @@ const SensorySettings = lazy(() => import('./pages/SensorySettings'));
 const Journal = lazy(() => import('./pages/Journal'));
 const Productivity = lazy(() => import('./pages/Productivity'));
 const Projects = lazy(() => import('./pages/Projects'));
-const NotionDashboard = lazy(() => import('./pages/NotionDashboard'));
-const CalendarSync = lazy(() => import('./pages/CalendarSync'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const RegulationFirst = lazy(() => import('./pages/RegulationFirst'));
@@ -120,8 +118,6 @@ const AuthenticatedApp = () => {
               <Route path="/check-in" element={<CheckIn />} />
               <Route path="/sensory" element={<SensorySettings />} />
               <Route path="/productivity" element={<Productivity />} />
-              <Route path="/notion-sync" element={<NotionDashboard />} />
-              <Route path="/calendar-sync" element={<CalendarSync />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/regulation-first" element={<RegulationFirst />} />

@@ -4,7 +4,7 @@ import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import {
   HelpCircle, ChevronDown, ChevronUp, Search,
   Calendar, Video, Table, FileText, Presentation, Mail,
-  ListTodo, FolderKanban, Plug, BookOpen, ShieldCheck, Lightbulb, ArrowLeft
+  ListTodo, FolderKanban, Plug, ShieldCheck, Lightbulb, ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -15,7 +15,7 @@ const FAQS = [
   },
   {
     q: "How do I connect my Google Calendar?",
-    a: "Go to Integration Settings (or the Projects page), find Google Calendar, and click 'Connect'. You'll be redirected to Google to authorize access. Once approved, you can sync deadlines, schedule meetings, and view upcoming events. The calendar.events.readonly and email scopes are requested.",
+    a: "Go to Integration Settings (or the Projects page), find Google Calendar, and click 'Connect'. You'll be redirected to Google to authorize access. Once approved, you can schedule meetings, create Meet links, and view upcoming events. The calendar.events.readonly and email scopes are requested.",
   },
   {
     q: "Can I sync project deadlines to ClickUp?",
@@ -35,7 +35,7 @@ const FAQS = [
   },
   {
     q: "What does 'Google Meet' integration do?",
-    a: "Connecting Google Meet allows you to create instant video meeting links directly from Focus Rooms and Projects. Click the video icon on any project or room to generate a Meet link.",
+    a: "Connecting Google Meet allows you to create instant video meeting links directly from Projects. Click the video icon on any project to generate a Meet link.",
   },
   {
     q: "Can I sync data to Google Sheets?",
@@ -80,12 +80,12 @@ const GUIDES = [
   },
   {
     title: 'Setting Up Google Meet',
-    description: 'Create instant video meeting links from focus rooms and projects.',
+    description: 'Create instant video meeting links from projects.',
     icon: Video,
     color: 'bg-green-50 text-green-500',
     steps: [
       'Connect Google Calendar first — Meet links are created via Calendar.',
-      'Go to any Focus Room or Project.',
+      'Go to any Project.',
       'Click the video icon to generate an instant Meet link.',
       'The link opens in a new tab and is saved to the room/project.',
     ],
@@ -132,21 +132,6 @@ const GUIDES = [
       'Click "Create Pitch Deck" — a new presentation is generated with project data.',
     ],
     troubleshooting: [],
-  },
-  {
-    title: 'Setting Up Notion',
-    description: 'Sync projects, tasks, and profiles with your Notion workspace.',
-    icon: BookOpen,
-    color: 'bg-slate-100 text-slate-600',
-    steps: [
-      'Connect Notion from Integration Settings.',
-      'Go to the Notion Sync page (sidebar → Notion Sync).',
-      'Select a Notion database to sync with.',
-      'Use "Push Projects" to send data to Notion or "Pull Tasks" to import.',
-    ],
-    troubleshooting: [
-      { problem: 'No databases appear', solution: 'Make sure your Notion integration has access to at least one database. In Notion, click "Share" → "Invite" on the database.' },
-    ],
   },
   {
     title: 'Setting Up Google Tasks',

@@ -6,7 +6,6 @@ import { Plus, ArrowLeft } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import ProjectCard from '@/components/projects/ProjectCard';
 import NewProjectModal from '@/components/projects/NewProjectModal';
-import NotionTaskSyncPanel from '@/components/notion/NotionTaskSyncPanel';
 import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPanel';
 import MeetingSummaryPanel from '@/components/integrations/MeetingSummaryPanel';
 import CalendarSchedulePanel from '@/components/integrations/CalendarSchedulePanel';
@@ -85,7 +84,6 @@ export default function Projects() {
           </div>
 
           {/* Integration panels */}
-          <NotionTaskSyncPanel />
           <GoogleSheetsSyncPanel />
           <MeetingSummaryPanel projects={projects} />
           <CalendarSchedulePanel projects={projects} />

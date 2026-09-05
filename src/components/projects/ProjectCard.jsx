@@ -49,7 +49,6 @@ export default function ProjectCard({ project, onUpdate, onDelete }) {
     const updated = await base44.entities.Project.update(project.id, form);
     onUpdate({ ...project, ...updated });
     setEditing(false);
-    base44.functions.invoke('notionSyncProjectStatus', { project_id: project.id }).catch(() => {});
   };
 
   const handleToggleTask = async (task) => {
@@ -93,7 +92,6 @@ export default function ProjectCard({ project, onUpdate, onDelete }) {
             const newStatus = project.status === 'completed' ? 'active' : 'completed';
             const updated = await base44.entities.Project.update(project.id, { status: newStatus });
             onUpdate({ ...project, ...updated });
-            base44.functions.invoke('notionSyncProjectStatus', { project_id: project.id }).catch(() => {});
           }}
         >
           {project.status === 'completed'

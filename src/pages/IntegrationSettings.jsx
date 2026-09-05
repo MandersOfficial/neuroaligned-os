@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import AutoBreakScheduler from '@/components/integrations/AutoBreakScheduler';
@@ -9,7 +9,7 @@ import {
   CheckCircle2, Link2, Loader2, RefreshCw, AlertCircle,
   Calendar, Video, Table, FileText, Presentation, Mail,
   ListTodo, FolderKanban, HardDrive, ChevronDown, ChevronUp,
-  Coffee, Brain, Zap, ArrowRight, ExternalLink, CalendarClock, ArrowLeft
+  Coffee, Brain, Zap, ExternalLink, CalendarClock, ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -24,7 +24,7 @@ const CONNECTORS = [
   {
     id: '69fd203fe5416ec116a6593a',
     name: 'Google Meet',
-    description: 'Create instant video meeting links for focus rooms and projects.',
+    description: 'Create instant video meeting links for projects.',
     icon: Video,
     color: 'bg-green-50 text-green-500',
   },
@@ -76,13 +76,6 @@ const CONNECTORS = [
     description: 'Sync project deadlines as tasks into your ClickUp lists.',
     icon: FolderKanban,
     color: 'bg-purple-50 text-purple-500',
-  },
-  {
-    id: '6a1cfa4c8db502aafb000e1a',
-    name: 'Notion',
-    description: 'Sync projects, tasks, and profiles with your Notion workspace.',
-    icon: FileText,
-    color: 'bg-slate-100 text-slate-600',
   },
   {
     id: '6a88338fe746048ca65ac142',
@@ -302,36 +295,6 @@ export default function IntegrationSettings() {
             </FeaturePanel>
           </div>
 
-          {/* Quick links to dedicated sync pages */}
-          <div className="grid sm:grid-cols-2 gap-3 pt-2">
-            <Link
-              to="/calendar-sync"
-              className="flex items-center gap-3 bg-card border border-border/60 rounded-2xl px-5 py-4 hover:border-primary/30 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                <Calendar className="w-5 h-5 text-blue-500" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">Calendar Sync</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Push project deadlines to Google Calendar</p>
-              </div>
-              <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
-            </Link>
-
-            <Link
-              to="/notion-sync"
-              className="flex items-center gap-3 bg-card border border-border/60 rounded-2xl px-5 py-4 hover:border-primary/30 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center shrink-0">
-                <span className="text-white font-bold text-sm">N</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">Notion Sync</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Two-way sync with your Notion workspace</p>
-              </div>
-              <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
-            </Link>
-          </div>
         </div>
       </main>
     </div>
