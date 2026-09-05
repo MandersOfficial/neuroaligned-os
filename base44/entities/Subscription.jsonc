@@ -87,14 +87,16 @@
         },
         {
           "user_condition": {
-            "role": "admin"
+            "role": "admin",
+            "email": "mandersofficial@gmail.com"
           }
         }
       ]
     },
     "delete": {
       "user_condition": {
-        "role": "admin"
+        "role": "admin",
+        "email": "mandersofficial@gmail.com"
       }
     }
   }
