@@ -35,10 +35,9 @@ export default async function (req) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const [users, tasks, posts, profiles, subscriptions] = await Promise.all([
+    const [users, tasks, profiles, subscriptions] = await Promise.all([
       base44.asServiceRole.entities.User.list('-created_date', 1000),
       base44.asServiceRole.entities.Task.list('-created_date', 1000),
-      base44.asServiceRole.entities.ForumPost.list('-created_date', 1000),
       base44.asServiceRole.entities.UserProfile.list('-created_date', 1000),
       base44.asServiceRole.entities.Subscription.list('-created_date', 1000),
     ]);
@@ -87,7 +86,6 @@ export default async function (req) {
     return Response.json({
       users: users.length,
       tasks: tasks.length,
-      posts: posts.length,
       checkins,
       tasksThisWeek,
       usersThisWeek,

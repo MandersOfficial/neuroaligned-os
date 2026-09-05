@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Users, CheckSquare, FileText, Activity } from 'lucide-react';
+import { Users, CheckSquare, Activity } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from 'recharts';
 
 
@@ -43,7 +43,6 @@ export default function AnalyticsOverview() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Users} label="Total Users" value={loading ? '—' : data.users} sub={loading ? '' : `${data.usersThisWeek} new this week`} color="text-primary" bg="bg-primary/10" />
         <StatCard icon={CheckSquare} label="Tasks Created" value={loading ? '—' : data.tasks} sub={loading ? '' : `${data.tasksThisWeek} this week`} color="text-green-500" bg="bg-green-50" />
-        <StatCard icon={FileText} label="Forum Posts" value={loading ? '—' : data.posts} sub={loading ? '' : 'All time'} color="text-blue-500" bg="bg-blue-50" />
         <StatCard icon={Activity} label="Check-ins" value={loading ? '—' : data.checkins} sub={loading ? '' : 'Total sessions'} color="text-amber-500" bg="bg-amber-50" />
       </div>
 
