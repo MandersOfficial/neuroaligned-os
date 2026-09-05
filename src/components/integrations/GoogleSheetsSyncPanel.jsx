@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import MobileSelect from '@/components/ui/MobileSelect';
 import { Loader2, RefreshCw, Upload, Link2, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, Table } from 'lucide-react';
 
 const SHEETS_CONNECTOR_ID = '6a58b955a3acbfb32bf0271c';
@@ -126,16 +127,14 @@ export default function GoogleSheetsSyncPanel({ onSynced }) {
                 </p>
               ) : (
                 <>
-                  <select
+                  <MobileSelect
                     value={sheetId}
-                    onChange={e => { setSheetId(e.target.value); setResult(null); setError(null); }}
-                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
-                  >
-                    <option value="">Select a spreadsheet…</option>
-                    {spreadsheets.map(s => (
-                      <option key={s.id} value={s.id}>{s.name}</option>
-                    ))}
-                  </select>
+                    onChange={v => { setSheetId(v); setResult(null); setError(null); }}
+                    options={spreadsheets.map(s => ({ value: s.id, label: s.name }))}
+                    placeholder="Select a spreadsheet…"
+                    label="Spreadsheet"
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground"
+                  />
 
                   <button
                     onClick={handleSync}

@@ -152,7 +152,7 @@ NeuroAligned — In partnership with Amanda White (mandawhite.com)
 export default function Terms() {
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-10">
+      <header className="border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-10 pt-[calc(1rem+env(safe-area-inset-top))]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-4">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shrink-0">

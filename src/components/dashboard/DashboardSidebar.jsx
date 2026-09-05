@@ -109,7 +109,9 @@ export default function DashboardSidebar({ user }) {
       const main = document.querySelector('main');
       if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      navigate(remembered);
+      // Replace instead of push: tab switching shouldn't pile up history entries
+      // (keeps the native WebView back gesture returning to the previous screen).
+      navigate(remembered, { replace: true });
     }
   };
 
