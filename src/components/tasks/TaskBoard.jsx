@@ -7,7 +7,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAppRefresh } from '@/hooks/useAppRefresh';
 import { cn } from '@/lib/utils';
 import DueSoonBanner from './DueSoonBanner';
-import useDeadlineNotifications from '@/hooks/useDeadlineNotifications';
 
 const ENERGY_CONFIG = {
   low: { icon: Leaf, color: 'text-green-600', bg: 'bg-green-50', label: 'Low' },
@@ -133,8 +132,6 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
   const isFiltering = energyState.allowedEnergy.length < 3;
   const isMobile = useIsMobile();
   const [mobileCol, setMobileCol] = useState('todo');
-
-  useDeadlineNotifications(tasks);
 
   const handleRefresh = useCallback(async () => {
     const refreshed = await base44.entities.Task.list('-created_date', 100);

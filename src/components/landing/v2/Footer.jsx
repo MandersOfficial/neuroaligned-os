@@ -30,6 +30,7 @@ export default function Footer() {
           </div>
           <div className="foot-col">
             <h4>Legal</h4>
+            <a href="#" onClick={go('/disclaimer')}>Health &amp; Medical Disclaimer</a>
             <a href="#" onClick={go('/privacy')}>Privacy</a>
             <a href="#" onClick={go('/terms')}>Terms</a>
           </div>

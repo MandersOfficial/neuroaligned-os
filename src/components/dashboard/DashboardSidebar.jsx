@@ -9,6 +9,7 @@ import { useSensory } from '@/lib/SensoryContext';
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
+import { isNativeApp } from '@/lib/isNativeApp';
 
 const NAV_GROUPS = [
   {
@@ -165,8 +166,8 @@ export default function DashboardSidebar({ user }) {
           ))}
         </nav>
 
-        {/* Upgrade nudge */}
-        {!collapsed && (
+        {/* Upgrade nudge — hidden in the native app shell (checkout is web-only) */}
+        {!collapsed && !isNativeApp() && (
           <Link
             to="/upgrade"
             className="mx-3 mb-2 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-colors"

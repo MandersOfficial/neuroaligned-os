@@ -214,6 +214,19 @@ export default function Register() {
             </p>
           </form>
         )}
+
+        {/* Health disclaimer + legal links */}
+        <div className="pt-2 border-t border-border/60 space-y-2">
+          <p className="text-[11px] text-muted-foreground leading-relaxed text-center">
+            NeuroAligned is a productivity platform — not a medical device and not a substitute for professional healthcare.{' '}
+            <Link to="/disclaimer" className="underline hover:text-foreground">Read our Health Disclaimer</Link>.
+          </p>
+          <div className="flex items-center justify-center gap-3 text-[11px] text-muted-foreground">
+            <Link to="/privacy" className="underline hover:text-foreground">Privacy Policy</Link>
+            <span aria-hidden="true">·</span>
+            <Link to="/terms" className="underline hover:text-foreground">Terms of Service</Link>
+          </div>
+        </div>
       </div>
     </div>
   );

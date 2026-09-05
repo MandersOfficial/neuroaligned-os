@@ -66,7 +66,7 @@ We do not sell, rent, or broker your personal data.`,
   },
   {
     title: '7. Google User Data & API Access',
-    content: `NeuroAligned integrates with certain Google APIs (including Google Calendar, Google Tasks, Google Drive, Google Docs, Google Sheets, Google Slides, Gmail, and Google Meet) to provide productivity features such as calendar syncing, meeting scheduling, deadline tracking, and document generation.
+    content: `NeuroAligned integrates with certain Google APIs (including Google Calendar, Google Tasks, Google Docs, Google Sheets, Google Slides, Gmail, and Google Meet) to provide productivity features such as calendar syncing, meeting scheduling, deadline tracking, and document generation.
 
 How we access, use, store, and share Google user data:
 
@@ -85,7 +85,7 @@ How we access, use, store, and share Google user data:
 • Scope Justification: NeuroAligned requests only the narrowest scopes needed for each feature. For example:
   - Google Calendar (calendar.events): Used to create focus session events, schedule project meetings, sync deadline reminders, and list upcoming meetings so users can manage their schedule within NeuroAligned.
   - Google Tasks (task lists): Used to sync project deadlines to your Google Tasks so you can track them alongside other tasks.
-  - Google Drive/Docs/Sheets/Slides: Used to generate and store productivity documents (e.g. meeting summaries, pitch decks, project reports) that you explicitly create through NeuroAligned.
+  - Google Docs/Sheets/Slides: Used to generate and store productivity documents (e.g. meeting summaries, pitch decks, project reports) that you explicitly create through NeuroAligned.
 
 You can disconnect any Google integration at any time from Settings → Integrations, which revokes our access immediately.`,
   },
@@ -212,7 +212,7 @@ export default function Privacy() {
               </p>
 
               <p className="text-sm text-muted-foreground leading-relaxed">
-                When you connect a Google service (Google Calendar, Google Tasks, Google Drive, Google Docs, Google Sheets, Google Slides, Gmail, or Google Meet), NeuroAligned requests only the minimum permission scopes needed to provide the feature you chose. You will always see the exact scopes requested before granting access.
+                When you connect a Google service (Google Calendar, Google Tasks, Google Docs, Google Sheets, Google Slides, Gmail, or Google Meet), NeuroAligned requests only the minimum permission scopes needed to provide the feature you chose. You will always see the exact scopes requested before granting access.
               </p>
 
               <div className="grid sm:grid-cols-2 gap-3">

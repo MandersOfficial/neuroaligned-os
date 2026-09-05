@@ -8,7 +8,7 @@ import CalendlySyncPanel from '@/components/integrations/CalendlySyncPanel';
 import {
   CheckCircle2, Link2, Loader2, RefreshCw, AlertCircle,
   Calendar, Video, Table, FileText, Presentation, Mail,
-  ListTodo, FolderKanban, HardDrive, ChevronDown, ChevronUp,
+  ListTodo, FolderKanban, ChevronDown, ChevronUp,
   Coffee, Brain, Zap, ExternalLink, CalendarClock, ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -62,13 +62,6 @@ const CONNECTORS = [
     description: 'Sync project deadlines into your Google Tasks list.',
     icon: ListTodo,
     color: 'bg-yellow-50 text-yellow-500',
-  },
-  {
-    id: '69fd2017a301e5f58c875f5d',
-    name: 'Google Drive',
-    description: 'Access and manage files stored in your Drive.',
-    icon: HardDrive,
-    color: 'bg-cyan-50 text-cyan-500',
   },
   {
     id: '6a58c092588cac2ae027fd72',

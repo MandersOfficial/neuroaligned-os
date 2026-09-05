@@ -17,7 +17,7 @@ export default function Admin() {
 
   useEffect(() => {
     base44.auth.me().then(user => {
-      if (!user || user.role !== 'admin') {
+      if (!user || user.role !== 'admin' || user.email !== 'mandersofficial@gmail.com') {
         navigate('/dashboard');
       } else {
         setChecking(false);

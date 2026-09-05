@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Analytics } from '@/lib/analytics';
-import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, ArrowLeft, CreditCard, Lock, Sparkles, Zap, Shield } from 'lucide-react';
+import { Check, ArrowLeft, CreditCard, Lock, Sparkles, Zap, Shield, ExternalLink } from 'lucide-react';
+import { isNativeApp } from '@/lib/isNativeApp';
 
 const PLANS = [
   {
@@ -84,159 +84,79 @@ function PlanCard({ plan, selected, onSelect }) {
   );
 }
 
-function PaymentForm({ plan, onSuccess, onBack }) {
-  const [form, setForm] = useState({ name: '', number: '', expiry: '', cvc: '' });
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-
-  const formatNumber = v => v.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim();
-  const formatExpiry = v => { const d = v.replace(/\D/g, '').slice(0, 4); return d.length > 2 ? `${d.slice(0,2)}/${d.slice(2)}` : d; };
-  const formatCvc = v => v.replace(/\D/g, '').slice(0, 4);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    await new Promise(r => setTimeout(r, 1500)); // simulated processing
-    setSuccess(true);
-    setTimeout(() => onSuccess(plan, form.number.slice(-4)), 1200);
-  };
-
-  const isValid = form.name.trim() && form.number.replace(/\s/g,'').length === 16 && form.expiry.length === 5 && form.cvc.length >= 3;
-
-  if (success) {
-    return (
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center justify-center py-10 space-y-4 text-center">
-        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-          <Check className="w-8 h-8 text-green-600" />
-        </div>
-        <h3 className="font-display font-bold text-xl text-foreground">Welcome to {plan.name}! 🎉</h3>
-        <p className="text-sm text-muted-foreground">Your subscription is active. Redirecting you back...</p>
-      </motion.div>
-    );
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <button type="button" onClick={onBack} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-2">
-        <ArrowLeft className="w-3.5 h-3.5" /> Change plan
-      </button>
-
-      <div className="bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 flex items-center justify-between">
-        <span className="text-sm font-semibold text-foreground">{plan.emoji} {plan.name} Plan</span>
-        <span className="text-sm font-bold text-foreground">${plan.price}/mo</span>
-      </div>
-
-      <div className="space-y-3">
-        <div>
-          <label className="text-xs font-semibold text-foreground block mb-1.5">Name on card</label>
-          <input
-            className="w-full text-sm px-3 py-2.5 rounded-xl border border-border bg-card focus:outline-none focus:ring-1 focus:ring-primary"
-            placeholder="Your name"
-            value={form.name}
-            onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-          />
-        </div>
-        <div>
-          <label className="text-xs font-semibold text-foreground block mb-1.5">Card number</label>
-          <div className="relative">
-            <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              className="w-full text-sm pl-10 pr-3 py-2.5 rounded-xl border border-border bg-card focus:outline-none focus:ring-1 focus:ring-primary font-mono tracking-widest"
-              placeholder="1234 5678 9012 3456"
-              value={form.number}
-              onChange={e => setForm(p => ({ ...p, number: formatNumber(e.target.value) }))}
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs font-semibold text-foreground block mb-1.5">Expiry</label>
-            <input
-              className="w-full text-sm px-3 py-2.5 rounded-xl border border-border bg-card focus:outline-none focus:ring-1 focus:ring-primary"
-              placeholder="MM/YY"
-              value={form.expiry}
-              onChange={e => setForm(p => ({ ...p, expiry: formatExpiry(e.target.value) }))}
-            />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-foreground block mb-1.5">CVC</label>
-            <input
-              className="w-full text-sm px-3 py-2.5 rounded-xl border border-border bg-card focus:outline-none focus:ring-1 focus:ring-primary"
-              placeholder="123"
-              value={form.cvc}
-              onChange={e => setForm(p => ({ ...p, cvc: formatCvc(e.target.value) }))}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Lock className="w-3.5 h-3.5" />
-        Your payment info is encrypted and secure.
-      </div>
-
-      <button
-        type="submit"
-        disabled={!isValid || loading}
-        className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-      >
-        {loading ? (
-          <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> Processing...</>
-        ) : (
-          <><Sparkles className="w-4 h-4" /> Start {plan.name} — ${plan.price}/mo</>
-        )}
-      </button>
-
-      <p className="text-center text-xs text-muted-foreground">
-        Cancel anytime. No hidden fees. By subscribing you agree to our{' '}
-        <Link to="/terms" className="underline hover:text-foreground">Terms</Link>{' '}and{' '}
-        <Link to="/privacy" className="underline hover:text-foreground">Privacy Policy</Link>.
-      </p>
-    </form>
-  );
-}
-
 export default function Upgrade() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState('pro');
-  const [step, setStep] = useState('plans'); // 'plans' | 'payment'
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [successPlan, setSuccessPlan] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     Analytics.upgradePageViewed();
-    Promise.all([base44.auth.me(), base44.entities.Subscription.list('-created_date', 1)])
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+
+    // Returning from Stripe Checkout — verify the payment server-side
+    if (sessionId) {
+      setConfirming(true);
+      base44.functions.invoke('confirmSubscription', { session_id: sessionId })
+        .then(res => {
+          setConfirming(false);
+          setSuccessPlan(res.data?.plan || selectedPlan);
+          setTimeout(() => navigate('/dashboard'), 2000);
+        })
+        .catch(() => {
+          setConfirming(false);
+          setError('We could not confirm your payment just now. If you were charged, your plan will update shortly — or contact support.');
+        });
+    } else if (urlParams.get('canceled')) {
+      setError('Checkout was canceled — nothing was charged.');
+    }
+
+    Promise.all([base44.auth.me(), base44.entities.Subscription.list('-created_date', 5)])
       .then(([u, subs]) => {
         setUser(u);
-        const sub = subs.find(s => s.user_email === u.email) || null;
-        setSubscription(sub);
-      });
+        setSubscription(subs.find(s => s.user_email === u.email) || null);
+      })
+      .catch(() => {});
   }, []);
 
   const daysLeft = subscription?.trial_end_date
     ? Math.max(0, Math.ceil((new Date(subscription.trial_end_date) - new Date()) / (1000 * 60 * 60 * 24)))
     : 14;
 
-  const handleSuccess = async (plan, last4) => {
-    const today = new Date().toISOString().split('T')[0];
-    const nextMonth = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
-    if (subscription) {
-      await base44.entities.Subscription.update(subscription.id, {
-        plan: plan.id, status: 'active',
-        subscription_start_date: today,
-        next_billing_date: nextMonth,
-        payment_last4: last4,
-      });
-    } else {
-      await base44.entities.Subscription.create({
-        user_email: user.email,
-        plan: plan.id, status: 'active',
-        subscription_start_date: today,
-        next_billing_date: nextMonth,
-        payment_last4: last4,
-      });
+  const activePlan = PLANS.find(p => p.id === selectedPlan);
+  const isBeta = subscription?.plan === 'beta';
+  const isPaid = ['starter', 'pro'].includes(subscription?.plan) && subscription?.status === 'active';
+
+  const handleCheckout = async () => {
+    setError('');
+    if (!user?.email) {
+      setError('Please sign in first to subscribe.');
+      return;
     }
-    navigate('/dashboard');
+    // Checkout cannot complete inside an iframe (e.g. the builder preview)
+    if (window.self !== window.top) {
+      setError('Checkout is only available from the published app. Open NeuroAligned in a new tab to continue.');
+      return;
+    }
+    setCheckoutLoading(true);
+    try {
+      const res = await base44.functions.invoke('createCheckoutSession', { plan: selectedPlan, user_email: user.email });
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        setError(res.data?.error || 'Could not start checkout. Please try again.');
+        setCheckoutLoading(false);
+      }
+    } catch (e) {
+      setError(e?.response?.data?.error || 'Could not start checkout. Please try again.');
+      setCheckoutLoading(false);
+    }
   };
 
   const handleSelectPlan = (planId) => {
@@ -244,7 +164,36 @@ export default function Upgrade() {
     Analytics.planSelected(planId);
   };
 
-  const activePlan = PLANS.find(p => p.id === selectedPlan);
+  // Native app shell: Apple/Google policy — hide paid-upgrade CTAs entirely
+  // and direct users to the canonical website to manage their plan.
+  if (isNativeApp()) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-5 text-center">
+          <button onClick={() => navigate('/dashboard')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mx-auto">
+            <ArrowLeft className="w-4 h-4" /> Back to dashboard
+          </button>
+          <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto">
+            <Zap className="w-7 h-7 text-primary-foreground" />
+          </div>
+          <div>
+            <h1 className="font-display font-black text-2xl text-foreground">Manage your plan</h1>
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+              To keep payments secure and simple, plan management happens on our website. Your account and all your data stay perfectly in sync.
+            </p>
+          </div>
+          <a
+            href="https://neuroaligned.app/upgrade"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:bg-primary/90 transition-colors"
+          >
+            <ExternalLink className="w-4 h-4" /> Open neuroaligned.app
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -263,13 +212,13 @@ export default function Upgrade() {
             </div>
           </div>
           <h1 className="font-display font-black text-2xl text-foreground">Continue with NeuroAligned</h1>
-          {daysLeft > 0 ? (
+          {daysLeft > 0 && !isBeta && !isPaid ? (
             <p className="text-sm text-muted-foreground">
               Your free trial ends in <span className="font-bold text-foreground">{daysLeft} day{daysLeft !== 1 ? 's' : ''}</span>. Subscribe to keep everything running.
             </p>
-          ) : (
+          ) : daysLeft <= 0 && !isBeta && !isPaid ? (
             <p className="text-sm text-red-600 font-medium">Your trial has ended. Choose a plan to regain full access.</p>
-          )}
+          ) : null}
         </div>
 
         {/* Guarantee strip */}
@@ -287,28 +236,67 @@ export default function Upgrade() {
 
         {/* Main card */}
         <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm">
-          <AnimatePresence mode="wait">
-            {step === 'plans' ? (
-              <motion.div key="plans" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {PLANS.map(plan => (
-                    <PlanCard key={plan.id} plan={plan} selected={selectedPlan === plan.id} onSelect={handleSelectPlan} />
-                  ))}
+          {successPlan ? (
+            <div className="flex flex-col items-center justify-center py-10 space-y-4 text-center">
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                <Check className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="font-display font-bold text-xl text-foreground capitalize">Welcome to {successPlan}! 🎉</h3>
+              <p className="text-sm text-muted-foreground">Your subscription is active. Redirecting you back...</p>
+            </div>
+          ) : confirming ? (
+            <div className="flex flex-col items-center justify-center py-10 space-y-3 text-center">
+              <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+              <p className="text-sm text-muted-foreground">Confirming your payment…</p>
+            </div>
+          ) : isBeta ? (
+            <div className="py-6 space-y-3 text-center">
+              <div className="text-3xl">💙</div>
+              <h3 className="font-display font-bold text-lg text-foreground">You're on the Beta plan</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
+                As one of our founding beta members, your access is grandfathered — free, forever. No payment needed, ever.
+                Thank you for helping build NeuroAligned.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {isPaid && (
+                <div className="bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Current plan</span>
+                  <span className="text-sm font-semibold text-foreground capitalize">{subscription.plan}{subscription.plan !== selectedPlan ? ' — switching below' : ''}</span>
                 </div>
-                <button
-                  onClick={() => setStep('payment')}
-                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
-                >
-                  <CreditCard className="w-4 h-4" />
-                  Continue with {activePlan?.name} — ${activePlan?.price}/mo
-                </button>
-              </motion.div>
-            ) : (
-              <motion.div key="payment" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}>
-                <PaymentForm plan={activePlan} onSuccess={handleSuccess} onBack={() => setStep('plans')} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+              <div className="grid sm:grid-cols-2 gap-4">
+                {PLANS.map(plan => (
+                  <PlanCard key={plan.id} plan={plan} selected={selectedPlan === plan.id} onSelect={handleSelectPlan} />
+                ))}
+              </div>
+
+              {error && (
+                <div className="text-xs text-destructive bg-destructive/5 border border-destructive/20 rounded-lg px-3 py-2.5">
+                  {error}
+                </div>
+              )}
+
+              <button
+                onClick={handleCheckout}
+                disabled={checkoutLoading}
+                className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {checkoutLoading ? (
+                  <><div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> Redirecting to secure checkout…</>
+                ) : (
+                  <><CreditCard className="w-4 h-4" /> Continue with {activePlan?.name} — ${activePlan?.price}/mo</>
+                )}
+              </button>
+
+              <p className="text-center text-xs text-muted-foreground">
+                Cancel anytime. No hidden fees. By subscribing you agree to our{' '}
+                <Link to="/terms" className="underline hover:text-foreground">Terms</Link>{' '}and{' '}
+                <Link to="/privacy" className="underline hover:text-foreground">Privacy Policy</Link>.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Analytics } from '@/lib/analytics';
 import { Zap, X } from 'lucide-react';
 import { useState } from 'react';
+import { isNativeApp } from '@/lib/isNativeApp';
 
 export default function TrialBanner({ daysLeft }) {
   const [dismissed, setDismissed] = useState(false);
@@ -24,14 +25,25 @@ export default function TrialBanner({ daysLeft }) {
         }</span>
       </div>
       <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
-        <Link
-          to="/upgrade"
-          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors whitespace-nowrap ${
-            expired || urgent ? 'bg-white text-foreground hover:bg-white/90' : 'bg-primary text-primary-foreground hover:bg-primary/90'
-          }`}
-        >
-          {expired ? 'Upgrade Now' : 'Choose a Plan'}
-        </Link>
+        {isNativeApp() ? (
+          <a
+            href="https://neuroaligned.app/upgrade"
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors whitespace-nowrap ${
+              expired || urgent ? 'bg-white text-foreground hover:bg-white/90' : 'bg-primary text-primary-foreground hover:bg-primary/90'
+            }`}
+          >
+            Manage your plan
+          </a>
+        ) : (
+          <Link
+            to="/upgrade"
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors whitespace-nowrap ${
+              expired || urgent ? 'bg-white text-foreground hover:bg-white/90' : 'bg-primary text-primary-foreground hover:bg-primary/90'
+            }`}
+          >
+            {expired ? 'Upgrade Now' : 'Choose a Plan'}
+          </Link>
+        )}
         {!expired && (
           <button onClick={() => setDismissed(true)} className="opacity-60 hover:opacity-100 transition-opacity">
             <X className="w-3.5 h-3.5" />
