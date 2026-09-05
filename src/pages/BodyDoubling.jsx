@@ -286,7 +286,7 @@ export default function BodyDoubling() {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
-      <main className="flex-1 overflow-y-auto pb-16 md:pb-0 pt-[env(safe-area-inset-top)]">
+      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
         <div className="max-w-lg mx-auto px-5 py-8">
 
           {/* Header */}

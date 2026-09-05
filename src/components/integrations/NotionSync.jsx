@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import {
   CheckCircle2, Loader2, Database, Users, RefreshCw,
-  ExternalLink, AlertCircle, ChevronDown, Link2, Link2Off
+  ExternalLink, AlertCircle, Link2, Link2Off
 } from 'lucide-react';
+import DatabaseSelect from '@/components/notion/DatabaseSelect';
 
 const CONNECTOR_ID = '6a1cfa4c8db502aafb000e1a';
 
@@ -44,25 +45,6 @@ function SyncResultBox({ result, status }) {
     </p>
   );
   return null;
-}
-
-function DatabaseSelect({ databases, value, onChange, loading }) {
-  return (
-    <div className="relative">
-      <select
-        className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary appearance-none disabled:opacity-50"
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        disabled={loading || databases.length === 0}
-      >
-        <option value="">Select a database…</option>
-        {databases.map(db => (
-          <option key={db.id} value={db.id}>{db.name}</option>
-        ))}
-      </select>
-      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
-    </div>
-  );
 }
 
 export default function NotionSync() {

@@ -151,7 +151,7 @@ export default function FocusRooms() {
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
 
-      <main className="flex-1 overflow-y-auto pb-20 md:pb-0 pt-[env(safe-area-inset-top)]">
+      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
         <div className="max-w-4xl mx-auto px-5 lg:px-8 py-7 space-y-6">
 
           {/* Header */}

@@ -3,8 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { Check, Clock, Flame, Zap, Leaf, Calendar, ChevronDown, Sparkles, Trash2, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ENERGY_STATES } from '@/components/dashboard/EnergyCheckIn';
-import PullToRefresh from '@/components/ui/PullToRefresh';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAppRefresh } from '@/hooks/useAppRefresh';
 import { cn } from '@/lib/utils';
 import DueSoonBanner from './DueSoonBanner';
 import useDeadlineNotifications from '@/hooks/useDeadlineNotifications';
@@ -141,6 +141,9 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
     onTasksChange(refreshed);
   }, [onTasksChange]);
 
+  // Pull gesture is handled by the global refresher — just register the callback
+  useAppRefresh(handleRefresh);
+
   const filteredByEnergy = (colTasks) => {
     if (energyState.allowedEnergy.length === 3) return colTasks; // hyperfocus — show all
     if (energyState.value === 'burnout_risk') return []; // burnout — show nothing
@@ -165,7 +168,6 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
   };
 
   return (
-    <PullToRefresh onRefresh={handleRefresh}>
     <div className="flex flex-col gap-5 flex-1 px-4 py-5 overflow-x-auto">
       {/* Due Soon banner */}
       <DueSoonBanner tasks={tasks} onUpdate={handleUpdate} />
@@ -259,6 +261,5 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
       })}
       </div>
     </div>
-    </PullToRefresh>
   );
 }

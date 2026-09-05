@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import ArticleDetail from '../components/wiki/ArticleDetail';
 import { Search, BookOpen, Brain, Zap, Shield, Heart, Sparkles, ChevronRight } from 'lucide-react';
@@ -402,7 +403,9 @@ Stop trying to feel time. Build external systems that make time visible, audible
 export default function KnowledgeBase() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
-  const [selectedArticle, setSelectedArticle] = useState(null);
+  // Selected article lives in the URL (?article=id) so back-swipe closes it
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedArticle = ARTICLES.find(a => String(a.id) === searchParams.get('article')) || null;
 
   const filtered = useMemo(() => {
     return ARTICLES.filter(a => {
@@ -417,7 +420,7 @@ export default function KnowledgeBase() {
     <div className="flex h-screen bg-background overflow-hidden">
       <DashboardSidebar />
 
-      <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
         <div className="max-w-4xl mx-auto px-5 lg:px-8 py-7 space-y-6">
 
           {/* Header */}
@@ -472,7 +475,7 @@ export default function KnowledgeBase() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  onClick={() => setSelectedArticle(article)}
+                  onClick={() => setSearchParams({ article: String(article.id) })}
                   className="text-left bg-card border border-border/60 rounded-2xl p-5 hover:border-primary/30 hover:shadow-sm transition-all space-y-3 group"
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -500,7 +503,7 @@ export default function KnowledgeBase() {
 
       <AnimatePresence>
         {selectedArticle && (
-          <ArticleDetail article={selectedArticle} onClose={() => setSelectedArticle(null)} />
+          <ArticleDetail article={selectedArticle} onClose={() => setSearchParams({}, { replace: true })} />
         )}
       </AnimatePresence>
     </div>
