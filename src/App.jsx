@@ -12,6 +12,7 @@ import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import VoiceDictationFab from '@/components/voice/VoiceDictationFab';
 import ReadAloudFab from '@/components/voice/ReadAloudFab';
 import GlobalPullToRefresh from '@/components/GlobalPullToRefresh';
+import AppShell from '@/components/workspace/AppShell';
 
 // Lazily-loaded pages — keeps the initial bundle small for faster first paint on mobile
 const Login = lazy(() => import('./pages/Login'));
@@ -106,10 +107,15 @@ const AuthenticatedApp = () => {
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/" element={<Landing />} />
               <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              {/* Core workspace — shared shell handles sidebar, safe areas & auth */}
+              <Route element={<AppShell />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/tasks" element={<Tasks />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/journal" element={<Journal />} />
+                <Route path="/focus-modes" element={<FocusModes />} />
+              </Route>
               <Route path="/admin" element={<Admin />} />
-              <Route path="/tasks" element={<Tasks />} />
-              <Route path="/focus-modes" element={<FocusModes />} />
               <Route path="/integrations" element={<Navigate to="/integration-settings" replace />} />
               <Route path="/burnout" element={<BurnoutRisk />} />
               <Route path="/knowledge" element={<KnowledgeBase />} />
@@ -119,10 +125,8 @@ const AuthenticatedApp = () => {
               <Route path="/check-in" element={<CheckIn />} />
               <Route path="/body-doubling" element={<BodyDoubling />} />
               <Route path="/sensory" element={<SensorySettings />} />
-              <Route path="/journal" element={<Journal />} />
               <Route path="/focus-rooms" element={<FocusRooms />} />
               <Route path="/productivity" element={<Productivity />} />
-              <Route path="/projects" element={<Projects />} />
               <Route path="/notion-sync" element={<NotionDashboard />} />
               <Route path="/calendar-sync" element={<CalendarSync />} />
               <Route path="/about" element={<About />} />

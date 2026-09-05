@@ -1,26 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useAppRefresh } from '@/hooks/useAppRefresh';
-import DashboardSidebar from '../components/dashboard/DashboardSidebar';
-import JournalEditor from '../components/journal/JournalEditor';
-import JournalEntryCard from '../components/journal/JournalEntryCard';
+import JournalEditor from '@/components/journal/JournalEditor';
+import JournalEntryCard from '@/components/journal/JournalEntryCard';
+import { InlineSpinner } from '@/components/workspace/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Flame, TrendingUp, CalendarDays } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function Journal() {
-  const [user, setUser] = useState(null);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
   const load = async () => {
-    const [u, e] = await Promise.all([
-      base44.auth.me(),
-      base44.entities.JournalEntry.list('-created_date', 30),
-    ]);
-    if (!u) { base44.auth.redirectToLogin('/journal'); return; }
-    setUser(u);
+    const e = await base44.entities.JournalEntry.list('-created_date', 30);
     setEntries(e);
     setLoading(false);
   };
@@ -61,19 +55,11 @@ export default function Journal() {
     return streak;
   })();
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <InlineSpinner />;
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <DashboardSidebar user={user} />
-
-      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
+    <>
+      <div className="flex-1 overflow-y-auto">
         <div className="max-w-2xl mx-auto px-5 lg:px-8 py-7 space-y-6">
 
           {/* Header */}
@@ -141,7 +127,7 @@ export default function Journal() {
             </div>
           )}
         </div>
-      </main>
+      </div>
 
       {/* Toast */}
       <AnimatePresence>
@@ -156,6 +142,6 @@ export default function Journal() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }

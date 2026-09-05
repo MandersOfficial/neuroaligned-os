@@ -3,9 +3,9 @@ import { base44 } from '@/api/base44Client';
 import { useAppRefresh } from '@/hooks/useAppRefresh';
 import { Plus, Sparkles } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import DashboardSidebar from '../components/dashboard/DashboardSidebar';
-import FocusModeCard from '../components/focus/FocusModeCard';
-import FocusModeEditor from '../components/focus/FocusModeEditor';
+import FocusModeCard from '@/components/focus/FocusModeCard';
+import FocusModeEditor from '@/components/focus/FocusModeEditor';
+import { InlineSpinner } from '@/components/workspace/LoadingScreen';
 
 // Built-in neurotype templates (not stored in DB, seeded on first load)
 const TEMPLATES = [
@@ -97,18 +97,13 @@ const TEMPLATES = [
 ];
 
 export default function FocusModes() {
-  const [user, setUser] = useState(null);
   const [modes, setModes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showEditor, setShowEditor] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
 
   const load = async () => {
-    const [u, saved] = await Promise.all([
-      base44.auth.me(),
-      base44.entities.FocusMode.list('-created_date', 50),
-    ]);
-    setUser(u);
+    const saved = await base44.entities.FocusMode.list('-created_date', 50);
     setModes(saved);
     setLoading(false);
   };
@@ -150,22 +145,12 @@ export default function FocusModes() {
 
   const savedTemplateNames = new Set(modes.map(m => m.name));
   const unseededTemplates = TEMPLATES.filter(t => !savedTemplateNames.has(t.name));
-  const customModes = modes.filter(m => m.is_custom);
-  const templateModes = modes.filter(m => !m.is_custom);
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <InlineSpinner />;
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <DashboardSidebar user={user} />
-
-      <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
+    <>
+      <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-5 lg:px-8 py-7 space-y-8">
 
           {/* Header */}
@@ -274,7 +259,7 @@ export default function FocusModes() {
             </section>
           )}
         </div>
-      </main>
+      </div>
 
       <AnimatePresence>
         {showEditor && (
@@ -285,6 +270,6 @@ export default function FocusModes() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
