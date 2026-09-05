@@ -76,7 +76,8 @@
         },
         {
           "user_condition": {
-            "role": "admin"
+            "role": "admin",
+            "email": "mandersofficial@gmail.com"
           }
         }
       ]
@@ -88,7 +89,8 @@
         },
         {
           "user_condition": {
-            "role": "admin"
+            "role": "admin",
+            "email": "mandersofficial@gmail.com"
           }
         }
       ]
