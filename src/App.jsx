@@ -9,8 +9,6 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { SensoryProvider, useSensory } from '@/lib/SensoryContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
-import VoiceDictationFab from '@/components/voice/VoiceDictationFab';
-import ReadAloudFab from '@/components/voice/ReadAloudFab';
 import GlobalPullToRefresh from '@/components/GlobalPullToRefresh';
 import AppShell from '@/components/workspace/AppShell';
 
@@ -144,8 +142,6 @@ const AuthenticatedApp = () => {
         </motion.div>
       </AnimatePresence>
       <GlobalPullToRefresh />
-      <VoiceDictationFab />
-      <ReadAloudFab />
     </MotionConfig>
   );
 };
