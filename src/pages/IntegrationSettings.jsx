@@ -5,11 +5,12 @@ import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import AutoBreakScheduler from '@/components/integrations/AutoBreakScheduler';
 import ContextCapture from '@/components/integrations/ContextCapture';
 import CalendlySyncPanel from '@/components/integrations/CalendlySyncPanel';
+import NotionSyncPanel from '@/components/integrations/NotionSyncPanel';
 import {
   CheckCircle2, Link2, Loader2, RefreshCw, AlertCircle,
   Calendar, Video, Table, FileText, Presentation, Mail,
   ListTodo, FolderKanban, ChevronDown, ChevronUp,
-  Coffee, Brain, Zap, ExternalLink, CalendarClock, ArrowLeft
+  Coffee, Brain, Zap, ExternalLink, CalendarClock, ArrowLeft, NotebookPen
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -76,6 +77,13 @@ const CONNECTORS = [
     description: 'Connect your own Calendly account to sync bookings into project deadlines.',
     icon: CalendarClock,
     color: 'bg-indigo-50 text-indigo-500',
+  },
+  {
+    id: '6a9c83fae18c151ef517de3b',
+    name: 'Notion',
+    description: 'Push your projects and task list into a Notion database you choose.',
+    icon: NotebookPen,
+    color: 'bg-stone-100 text-stone-600',
   },
 ];
 
@@ -285,6 +293,17 @@ export default function IntegrationSettings() {
               defaultOpen={false}
             >
               <CalendlySyncPanel />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={NotebookPen}
+              color="text-stone-600"
+              bg="bg-stone-100"
+              title="Notion Project & Task Sync"
+              description="Push your projects and current task list into a Notion database on demand."
+              defaultOpen={false}
+            >
+              <NotionSyncPanel connected={!!statuses['6a9c83fae18c151ef517de3b']} />
             </FeaturePanel>
           </div>
 
