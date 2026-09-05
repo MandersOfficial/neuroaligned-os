@@ -2,8 +2,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
-  BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, DoorOpen, FolderKanban, Database, Calendar,
-  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors, HeartHandshake
+  BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, FolderKanban, Database, Calendar,
+  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import { useState, useEffect } from 'react';
@@ -27,8 +27,6 @@ const NAV_GROUPS = [
     label: 'Wellbeing',
     items: [
       { icon: ShieldAlert, label: 'Burnout Risk', href: '/burnout' },
-      { icon: DoorOpen, label: 'Focus Rooms', href: '/focus-rooms' },
-      { icon: HeartHandshake, label: 'Find a Partner', href: '/body-doubling-match' },
       { icon: BookOpen, label: 'Knowledge Base', href: '/knowledge' },
     ],
   },

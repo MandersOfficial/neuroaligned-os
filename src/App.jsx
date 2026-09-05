@@ -29,10 +29,8 @@ const Upgrade = lazy(() => import('./pages/Upgrade'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const CheckIn = lazy(() => import('./pages/CheckIn'));
-const BodyDoubling = lazy(() => import('./pages/BodyDoubling'));
 const SensorySettings = lazy(() => import('./pages/SensorySettings'));
 const Journal = lazy(() => import('./pages/Journal'));
-const FocusRooms = lazy(() => import('./pages/FocusRooms'));
 const Productivity = lazy(() => import('./pages/Productivity'));
 const Projects = lazy(() => import('./pages/Projects'));
 const NotionDashboard = lazy(() => import('./pages/NotionDashboard'));
@@ -45,7 +43,6 @@ const IntegrationSettings = lazy(() => import('./pages/IntegrationSettings'));
 const HelpCenter = lazy(() => import('./pages/HelpCenter'));
 const Support = lazy(() => import('./pages/Support'));
 const TaskBreakdown = lazy(() => import('./pages/TaskBreakdown'));
-const BodyDoublingMatch = lazy(() => import('./pages/BodyDoublingMatch'));
 
 function PageLoader() {
   return (
@@ -121,9 +118,7 @@ const AuthenticatedApp = () => {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/check-in" element={<CheckIn />} />
-              <Route path="/body-doubling" element={<BodyDoubling />} />
               <Route path="/sensory" element={<SensorySettings />} />
-              <Route path="/focus-rooms" element={<FocusRooms />} />
               <Route path="/productivity" element={<Productivity />} />
               <Route path="/notion-sync" element={<NotionDashboard />} />
               <Route path="/calendar-sync" element={<CalendarSync />} />
@@ -135,7 +130,6 @@ const AuthenticatedApp = () => {
               <Route path="/help-center" element={<HelpCenter />} />
               <Route path="/support" element={<Support />} />
               <Route path="/task-breakdown" element={<TaskBreakdown />} />
-              <Route path="/body-doubling-match" element={<BodyDoublingMatch />} />
               <Route path="*" element={<PageNotFound />} />
             </Routes>
           </Suspense>

@@ -16,7 +16,7 @@ const NOTION_ID = '6a1cfa4c8db502aafb000e1a';
 const DAILY_LOOP = [
   { icon: Battery, title: 'Check your energy', desc: 'Start on the dashboard by picking how your brain feels. Tasks filter to match your capacity.', color: 'text-violet-500', bg: 'bg-violet-50' },
   { icon: ListTodo, title: 'Pick today’s focus', desc: 'Work from Today’s Focus. One task at a time beats an overwhelming list.', color: 'text-blue-500', bg: 'bg-blue-50' },
-  { icon: Timer, title: 'Work in a focus mode', desc: 'Use Focus Modes for timed work/break blocks. Try a Focus Room or body-doubling for accountability.', color: 'text-green-500', bg: 'bg-green-50' },
+  { icon: Timer, title: 'Work in a focus mode', desc: 'Use Focus Modes for timed work/break blocks that match your rhythm.', color: 'text-green-500', bg: 'bg-green-50' },
   { icon: HeartHandshake, title: 'Regulate & reflect', desc: 'Take regulation breaks. Journal a brain dump when scattered. Rest is productive.', color: 'text-rose-500', bg: 'bg-rose-50' },
 ];
 
@@ -193,7 +193,7 @@ export default function GettingStartedFlow({ user, onComplete }) {
                   </div>
                   <ul className="space-y-2 text-sm text-foreground">
                     <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Deadlines sync automatically</li>
-                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Create Meet links from focus rooms</li>
+                    <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Schedule project syncs & deadline calls</li>
                     <li className="flex items-center gap-2"><Check className="w-4 h-4 text-green-500" /> Auto-break scheduler protects your energy</li>
                   </ul>
                   <ConnectorButton
