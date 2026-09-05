@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { isOwnerAdmin } from "../../shared/adminGate.ts";
 
 const BRAIN_STATE_MESSAGES = {
   overwhelmed: {
@@ -69,7 +70,7 @@ Deno.serve(async (req) => {
 
     // Verify this is being called by an admin or the scheduler
     const user = await base44.auth.me();
-    if (!user || user.role !== 'admin') {
+    if (!isOwnerAdmin(user)) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 

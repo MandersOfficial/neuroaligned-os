@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { isOwnerAdmin } from "../../shared/adminGate.ts";
 
 const STATUSES = ['new', 'in_progress', 'resolved', 'closed'];
 
@@ -6,7 +7,7 @@ export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
-    if (!user || user.role !== 'admin') {
+    if (!isOwnerAdmin(user)) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 

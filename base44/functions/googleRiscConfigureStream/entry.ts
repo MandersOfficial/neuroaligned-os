@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { isOwnerAdmin } from "../../shared/adminGate.ts";
 
 // Google RISC stream configuration.
 // Ports the Java makeBearerToken() example: signs an RS256 JWT with the
@@ -81,7 +82,7 @@ export default async function (req) {
     } catch {
       user = null;
     }
-    if (!user || user.role !== 'admin') {
+    if (!isOwnerAdmin(user)) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

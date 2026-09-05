@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { isOwnerAdmin } from "../../shared/adminGate.ts";
 
 Deno.serve(async (req) => {
   try {
@@ -6,7 +7,7 @@ Deno.serve(async (req) => {
 
     // Check admin or scheduler
     const user = await base44.auth.me();
-    if (!user || user.role !== 'admin') {
+    if (!isOwnerAdmin(user)) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
