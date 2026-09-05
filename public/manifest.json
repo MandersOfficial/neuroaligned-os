@@ -1,0 +1,33 @@
+{
+  "name": "NeuroAligned OS — Productivity for Neurodivergent Business Owners",
+  "short_name": "NeuroAligned",
+  "description": "A regulation-first work-management platform for ADHD, autistic, dyslexic, and burnout-recovering entrepreneurs. Match tasks to your energy, prevent burnout, and get things done.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#050a1f",
+  "theme_color": "#050a1f",
+  "categories": ["productivity", "business", "health"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
