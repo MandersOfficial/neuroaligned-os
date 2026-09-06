@@ -8,6 +8,20 @@ const MAX_CHILDREN = 100; // Notion page-create limit
 const STATUS_OPTIONS = ['active', 'paused', 'completed', 'archived'];
 const PRIORITY_OPTIONS = ['low', 'medium', 'high'];
 
+// Notion averages ~3 requests/sec per connection; 429/529 responses carry a
+// Retry-After header we respect before retrying (docs: retry rate-limited
+// requests with capped backoff).
+async function notionFetch(url, options = {}, attempt = 0) {
+  const res = await fetch(url, options);
+  if ((res.status === 429 || res.status === 529) && attempt < 3) {
+    const retryAfter = Number(res.headers.get('Retry-After'));
+    const delay = Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter : Math.min(2 ** attempt, 10);
+    await new Promise(resolve => setTimeout(resolve, delay * 1000));
+    return notionFetch(url, options, attempt + 1);
+  }
+  return res;
+}
+
 // Two-way sync between the user's NeuroAligned projects/tasks and a Notion
 // data source they chose (listNotionDatabases).
 //   Pull (Notion → app): rows become projects; edits to Status/Priority/Due
@@ -34,7 +48,7 @@ export default async function(req) {
     };
 
     // 1. Load the data source schema and add missing sync properties
-    const dsRes = await fetch(`https://api.notion.com/v1/data_sources/${encodeURIComponent(dataSourceId)}`, { headers });
+    const dsRes = await notionFetch(`https://api.notion.com/v1/data_sources/${encodeURIComponent(dataSourceId)}`, { headers });
     const ds = await dsRes.json();
     if (!dsRes.ok) {
       const msg = ds.code === 'object_not_found'
@@ -52,7 +66,7 @@ export default async function(req) {
     if (!props['Due Date']) missing['Due Date'] = { date: {} };
     if (!props.Client) missing.Client = { rich_text: {} };
     if (Object.keys(missing).length > 0) {
-      await fetch(`https://api.notion.com/v1/data_sources/${encodeURIComponent(dataSourceId)}`, {
+      await notionFetch(`https://api.notion.com/v1/data_sources/${encodeURIComponent(dataSourceId)}`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify({ properties: missing }),
@@ -63,7 +77,7 @@ export default async function(req) {
     const rows = [];
     let cursor = null;
     do {
-      const qRes = await fetch(`https://api.notion.com/v1/data_sources/${encodeURIComponent(dataSourceId)}/query`, {
+      const qRes = await notionFetch(`https://api.notion.com/v1/data_sources/${encodeURIComponent(dataSourceId)}/query`, {
         method: 'POST',
         headers,
         body: JSON.stringify(cursor ? { page_size: 100, start_cursor: cursor } : { page_size: 100 }),
@@ -144,8 +158,8 @@ export default async function(req) {
 
       const existing = rowsByTitle.get(name.toLowerCase());
       const res = existing
-        ? await fetch(`https://api.notion.com/v1/pages/${existing.id}`, { method: 'PATCH', headers, body: JSON.stringify({ properties: payload }) })
-        : await fetch('https://api.notion.com/v1/pages', {
+        ? await notionFetch(`https://api.notion.com/v1/pages/${existing.id}`, { method: 'PATCH', headers, body: JSON.stringify({ properties: payload }) })
+        : await notionFetch('https://api.notion.com/v1/pages', {
             method: 'POST',
             headers,
             body: JSON.stringify({ parent: { type: 'data_source_id', data_source_id: dataSourceId }, properties: payload }),
@@ -164,7 +178,7 @@ export default async function(req) {
     if (tasks.length > 0) {
       const oldPage = rowsByTitle.get(TASKS_PAGE_TITLE.toLowerCase());
       if (oldPage) {
-        await fetch(`https://api.notion.com/v1/pages/${oldPage.id}`, {
+        await notionFetch(`https://api.notion.com/v1/pages/${oldPage.id}`, {
           method: 'PATCH',
           headers,
           body: JSON.stringify({ archived: true }),
@@ -196,7 +210,7 @@ export default async function(req) {
           counted++;
         }
       }
-      const res = await fetch('https://api.notion.com/v1/pages', {
+      const res = await notionFetch('https://api.notion.com/v1/pages', {
         method: 'POST',
         headers,
         body: JSON.stringify({
