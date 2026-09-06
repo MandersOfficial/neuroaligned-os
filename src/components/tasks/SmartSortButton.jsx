@@ -33,42 +33,17 @@ export default function SmartSortButton({ tasks, profile, energy, focusMinutes =
       due_date: t.due_date || null,
     }));
 
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an AI task prioritizer for neurodivergent entrepreneurs.
-
-USER CONTEXT:
-- Neurotypes: ${profile?.neurotypes?.join(', ') || 'not specified'}
-- Energy peak window: ${profile?.energy_peak || 'unknown'}
-- Work style: ${profile?.work_style || 'unknown'}
-- Current energy state: ${energy}
-- Minutes remaining in focus session: ${focusMinutes}
-
-TASK LIST:
-${JSON.stringify(taskList, null, 2)}
-
-RULES:
-1. Match task energy_required to the user's current energy state:
-   - hyperfocus/flow → high and medium energy tasks first
-   - sluggish → low energy tasks first, avoid high
-   - burnout_risk → only self_care or very low tasks if any
-2. If focus session has < 15 min left, prioritize tasks with short estimated_minutes
-3. Respect neurotype: ADHD/Anxiety users benefit from quick wins first (low estimated_minutes); Autistic users prefer category clustering
-4. Overdue tasks get a small priority boost
-5. Return ALL task IDs in your preferred order, plus a very short reason (max 5 words) for the top 3
-
-Return a JSON object.`,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          ordered_ids: { type: 'array', items: { type: 'string' } },
-          reasons: {
-            type: 'object',
-            additionalProperties: { type: 'string' },
-          },
-        },
+    const res = await base44.functions.invoke('smartSortTasks', {
+      tasks: taskList,
+      profile: {
+        neurotypes: profile?.neurotypes,
+        energy_peak: profile?.energy_peak,
+        work_style: profile?.work_style,
       },
+      energy,
+      focusMinutes,
     });
-
+    const result = res.data;
     if (result?.ordered_ids?.length > 0) {
       // Build a map for fast lookup
       const taskMap = Object.fromEntries(tasks.map(t => [t.id, t]));

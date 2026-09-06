@@ -80,27 +80,16 @@ function EnergyPriorityPrompt({ energy, tasks }) {
     const pending = tasks
       .filter(t => t.status !== 'done')
       .slice(0, 15)
-      .map(t => `- "${t.title}" [energy: ${t.energy_required}, category: ${t.category || 'general'}${t.due_date ? `, due: ${t.due_date}` : ''}${t.estimated_minutes ? `, ~${t.estimated_minutes}min` : ''}]`)
-      .join('\n');
+      .map(t => ({
+        title: t.title,
+        energy_required: t.energy_required,
+        category: t.category,
+        due_date: t.due_date,
+        estimated_minutes: t.estimated_minutes,
+      }));
 
-    const res = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a compassionate AI coach for neurodivergent entrepreneurs.
-
-The user's current energy level is ${energy}/5 (${ENERGY_LABELS[energy]}).
-
-Their pending tasks are:
-${pending || '(no tasks yet)'}
-
-Answer the question: "What is the single most important task I should do right now, given my energy?"
-
-Guidelines:
-- Be direct and specific — name ONE task (or suggest a short task if all are mismatched)
-- Explain WHY it's the right fit for their energy level in 1-2 sentences
-- If energy is low (1-2), protect them from overcommitting — suggest the gentlest option
-- If energy is high (4-5), help them capitalise on it with the highest-leverage task
-- End with one tiny encouraging sentence. Keep total response under 100 words.`,
-    });
-    setResult(res);
+    const res = await base44.functions.invoke('getEnergyPriority', { energy, tasks: pending });
+    setResult(res.data?.text || '');
     setLoading(false);
   };
 
@@ -148,23 +137,8 @@ function TaskBreakdownPrompt({ tasks }) {
     setLoading(true);
     setResult('');
 
-    const res = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a compassionate AI coach for neurodivergent entrepreneurs (ADHD, Autistic, Dyslexic, Burnout survivors).
-
-The user needs help breaking down this task into small, manageable steps:
-"${title}"
-
-Create a step-by-step breakdown that:
-1. Starts with the absolute smallest possible first action (under 2 minutes)
-2. Keeps each step concrete and actionable — no vague verbs
-3. Groups related micro-steps together
-4. Includes a "rest checkpoint" after every 3-4 steps
-5. Flags which steps need high energy vs can be done on low energy
-6. Stays under 250 words total
-
-Format as numbered steps. Be warm and non-judgmental in tone.`,
-    });
-    setResult(res);
+    const res = await base44.functions.invoke('breakDownTask', { taskTitle: title });
+    setResult(res.data?.text || '');
     setLoading(false);
   };
 

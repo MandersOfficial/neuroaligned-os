@@ -39,27 +39,8 @@ export default function JournalEditor({ onSaved }) {
     });
 
     // AI analysis
-    const analysis = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a compassionate coach for neurodivergent entrepreneurs. Analyze this brain dump journal entry and extract:
-1. Key emotional/cognitive themes (max 4, short labels e.g. "task avoidance", "overwhelm", "creative block")
-2. Core insights about what the person is experiencing (max 3, one sentence each, warm and non-judgmental)
-3. Concrete small action steps they could take at their next check-in (max 4, very specific, energy-aware — not overwhelming)
-
-Brain dump: "${content}"
-Mood self-report: ${mood}
-
-Respond in JSON only.`,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          themes: { type: 'array', items: { type: 'string' } },
-          insights: { type: 'array', items: { type: 'string' } },
-          action_steps: { type: 'array', items: { type: 'string' } },
-        },
-      },
-    });
-
-    // Update entry with AI results
+    const analysisRes = await base44.functions.invoke('analyzeJournalEntry', { content: content.trim(), mood });
+    const analysis = analysisRes.data;
     const updated = await base44.entities.JournalEntry.update(entry.id, {
       ai_themes: analysis.themes || [],
       ai_insights: analysis.insights || [],

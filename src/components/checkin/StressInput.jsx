@@ -10,33 +10,9 @@ export default function StressInput({ brainState, onSteps }) {
   const handleBreakdown = async () => {
     if (!text.trim()) return;
     setLoading(true);
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a supportive productivity coach for neurodivergent entrepreneurs using the Regulated Brain Framework.
-
-The user is currently in the ${brainState.zone?.toUpperCase() || 'GREEN'} ZONE (${brainState.label}).
-Nervous system state: ${brainState.sublabel}.
-Cognitive capacity right now: ${brainState.capacity}.
-Task tone guidance: ${brainState.taskTone}
-
-The user shared: "${text.trim()}"
-
-Break this into 1-3 actionable steps appropriate for their current nervous system state.
-Rules:
-- Each step must be under 12 words
-- Match the energy level: ${brainState.capacity} capacity
-- ${brainState.zone === 'red' || brainState.zone === 'blue' ? 'NO complex or multi-step tasks. Start with the tiniest possible first action.' : ''}
-- ${brainState.zone === 'flow' ? 'They have high capacity — one or two meaningful, deep-work steps are ideal.' : ''}
-- Frame steps as actions, not goals. Start with a verb.
-- Make each step feel doable, not overwhelming.
-
-Return JSON with a "steps" array of strings.`,
-      response_json_schema: {
-        type: 'object',
-        properties: { steps: { type: 'array', items: { type: 'string' } } },
-      },
-    });
+    const result = await base44.functions.invoke('coachBreakdown', { brainState, text: text.trim() });
     setLoading(false);
-    onSteps(result.steps || [], text.trim());
+    onSteps(result.data?.steps || [], text.trim());
   };
 
   return (

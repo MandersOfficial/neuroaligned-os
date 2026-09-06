@@ -21,36 +21,12 @@ export default function EnergyScheduler({ energy, onEnergyChange, tasks, onRecom
       estimated_minutes: t.estimated_minutes,
     }));
 
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an AI assistant for neurodivergent entrepreneurs. The user's current energy state is "${currentState.label}" — ${currentState.hint}
-
-Here are their pending tasks:
-${JSON.stringify(taskList, null, 2)}
-
-Tasks they can handle at "${currentState.label}" state: energy_required values ${JSON.stringify(currentState.allowedEnergy)}.
-For burnout_risk: recommend 0 tasks and focus on rest.
-
-Return up to 5 prioritised task IDs with a brief one-sentence reason each. Also give a one-line scheduling tip.`,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          tip: { type: 'string' },
-          recommended_tasks: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                reason: { type: 'string' },
-              },
-            },
-          },
-        },
-      },
+    const result = await base44.functions.invoke('suggestEnergyTasks', {
+      state: { label: currentState.label, hint: currentState.hint, allowedEnergy: currentState.allowedEnergy },
+      tasks: taskList,
     });
-
-    setSuggestions(result);
-    onRecommend(result.recommended_tasks?.map(r => r.id) || []);
+    setSuggestions(result.data);
+    onRecommend(result.data?.recommended_tasks?.map(r => r.id) || []);
     setLoading(false);
   };
 

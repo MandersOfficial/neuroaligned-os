@@ -49,41 +49,10 @@ export default function RecoveryPlan({ score, stress, missedBreaks, overdueTasks
 
   const generateAIPlan = async () => {
     setLoading(true);
-    const res = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a compassionate coach specialising in neurodivergent burnout recovery. Based on this person's current state, give a personalised, concrete 3-step recovery micro-plan for the next 2 hours.
-
-Current state:
-- Burnout risk score: ${score}/100 (${levelKey})
-- Self-reported stress: ${stress}/5
-- Missed breaks today: ${missedBreaks}
-- Overdue tasks: ${overdueTasks}
-- Energy pattern: ${energyPattern}
-
-Return JSON with:
-- headline: one empathetic sentence (max 15 words) addressing them directly
-- steps: array of exactly 3 objects, each with: emoji (string), title (max 6 words), action (1–2 sentence concrete instruction), duration (e.g. "5 min", "20 min")
-- closing: one gentle motivating sentence`,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          headline: { type: 'string' },
-          steps: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                emoji: { type: 'string' },
-                title: { type: 'string' },
-                action: { type: 'string' },
-                duration: { type: 'string' },
-              },
-            },
-          },
-          closing: { type: 'string' },
-        },
-      },
+    const res = await base44.functions.invoke('generateRecoveryPlan', {
+      score, stress, missedBreaks, overdueTasks, energyPattern,
     });
-    setAiPlan(res);
+    setAiPlan(res.data);
     setLoading(false);
   };
 

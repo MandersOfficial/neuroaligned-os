@@ -36,34 +36,8 @@ export default function ContextCapture() {
     if (!text.trim()) return;
     setLoading(true);
     setResult(null);
-    const res = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an AI assistant for neurodivergent entrepreneurs. Analyze the following email or note and extract structured context for task management.
-
-Email/Note:
-"${text}"
-
-Return a JSON with:
-- summary: 1-sentence plain-language summary (max 20 words)
-- action_items: array of 2-4 specific, clear next actions (strings)
-- key_people: array of names/roles mentioned
-- deadline: string or null (e.g. "March 15th", "EOD Friday")
-- estimated_energy: "low" | "medium" | "high" (how cognitively demanding is this?)
-- suggested_task_title: concise task title (max 8 words)
-- tags: array of 2-3 relevant tags (e.g. "client", "deadline", "creative")`,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          summary: { type: 'string' },
-          action_items: { type: 'array', items: { type: 'string' } },
-          key_people: { type: 'array', items: { type: 'string' } },
-          deadline: { type: 'string' },
-          estimated_energy: { type: 'string' },
-          suggested_task_title: { type: 'string' },
-          tags: { type: 'array', items: { type: 'string' } },
-        },
-      },
-    });
-    setResult(res);
+    const res = await base44.functions.invoke('extractTaskContext', { text });
+    setResult(res.data);
     setLoading(false);
   };
 
