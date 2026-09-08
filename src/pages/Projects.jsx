@@ -14,6 +14,7 @@ import ProjectSyncPanel from '@/components/integrations/ProjectSyncPanel';
 import UpcomingMeetingsPanel from '@/components/integrations/UpcomingMeetingsPanel';
 import GoogleTasksSyncPanel from '@/components/integrations/GoogleTasksSyncPanel';
 import ClickUpSyncPanel from '@/components/integrations/ClickUpSyncPanel';
+import TodoistSyncPanel from '@/components/integrations/TodoistSyncPanel';
 import PitchDeckPanel from '@/components/integrations/PitchDeckPanel';
 import { InlineSpinner } from '@/components/workspace/LoadingScreen';
 
@@ -92,6 +93,7 @@ export default function Projects() {
           <UpcomingMeetingsPanel />
           <GoogleTasksSyncPanel projects={projects} />
           <ClickUpSyncPanel projects={projects} />
+          <TodoistSyncPanel projects={projects} />
           <PitchDeckPanel projects={projects} />
 
           {/* Project list */}
