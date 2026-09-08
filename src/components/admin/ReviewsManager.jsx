@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, Star, Search, Inbox, MessageSquareQuote, CheckCircle2, XCircle } from 'lucide-react';
+import useDebouncedValue from '@/hooks/useDebouncedValue';
 
 const WTP_LABEL = {
   free: 'Free ($0)', starter: 'Starter ($10–20)', pro: 'Pro ($30–50)', power: 'Power ($75+)',
@@ -30,6 +31,7 @@ export default function ReviewsManager() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [query, setQuery] = useState('');
+  const debouncedQuery = useDebouncedValue(query, 250);
 
   const load = async () => {
     setLoading(true);
@@ -46,8 +48,8 @@ export default function ReviewsManager() {
   const filtered = reviews.filter(r => {
     if (filter === 'consented' && !r.review_consent) return false;
     if (filter === 'pending' && r.review_consent) return false;
-    if (query) {
-      const q = query.toLowerCase();
+    if (debouncedQuery) {
+      const q = debouncedQuery.toLowerCase();
       const hay = [r.message, r.name, r.email, r.subject].join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }

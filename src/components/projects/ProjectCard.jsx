@@ -10,6 +10,7 @@ import {
   STATUS_STYLES, PRIORITY_STYLES, EMOJI_OPTIONS,
   STATUS_SELECT_OPTIONS, PRIORITY_OPTIONS,
 } from '@/components/projects/projectMeta';
+import useSingleAction from '@/hooks/useSingleAction';
 
 export default function ProjectCard({ project, onUpdate, onDelete }) {
   const [expanded, setExpanded] = useState(false);
@@ -45,11 +46,11 @@ export default function ProjectCard({ project, onUpdate, onDelete }) {
     setExpanded(!expanded);
   };
 
-  const handleSave = async () => {
+  const handleSave = useSingleAction(async () => {
     const updated = await base44.entities.Project.update(project.id, form);
     onUpdate({ ...project, ...updated });
     setEditing(false);
-  };
+  });
 
   const handleToggleTask = async (task) => {
     const newStatus = task.status === 'done' ? 'todo' : 'done';
@@ -57,7 +58,7 @@ export default function ProjectCard({ project, onUpdate, onDelete }) {
     setTasks(prev => prev.map(t => t.id === task.id ? { ...t, ...updated } : t));
   };
 
-  const handleAddTask = async () => {
+  const handleAddTask = useSingleAction(async () => {
     if (!newTaskTitle.trim()) return;
     const task = await base44.entities.Task.create({
       title: newTaskTitle.trim(),
@@ -68,7 +69,7 @@ export default function ProjectCard({ project, onUpdate, onDelete }) {
     setTasks(prev => [...prev, task]);
     setNewTaskTitle('');
     setAddingTask(false);
-  };
+  });
 
   const handleDeleteTask = async (task) => {
     await base44.entities.Task.delete(task.id);

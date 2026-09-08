@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, ChevronDown, ChevronUp, Save, ExternalLink, Search, Inbox } from 'lucide-react';
 import MobileSelect from '@/components/ui/MobileSelect';
+import useDebouncedValue from '@/hooks/useDebouncedValue';
 
 const STATUSES = ['new', 'in_progress', 'resolved', 'closed'];
 const STATUS_CLS = {
@@ -23,6 +24,7 @@ export default function SupportTicketsManager() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [query, setQuery] = useState('');
+  const debouncedQuery = useDebouncedValue(query, 250);
   const [expanded, setExpanded] = useState(null);
   const [drafts, setDrafts] = useState({});
   const [saving, setSaving] = useState(null);
@@ -40,8 +42,8 @@ export default function SupportTicketsManager() {
 
   const filtered = tickets.filter(t => {
     if (filter !== 'all' && t.status !== filter) return false;
-    if (query) {
-      const q = query.toLowerCase();
+    if (debouncedQuery) {
+      const q = debouncedQuery.toLowerCase();
       const hay = [t.subject, t.message, t.name, t.email, t.submitter_email].join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }

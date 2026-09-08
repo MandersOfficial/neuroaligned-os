@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Sparkles, Lightbulb, ListChecks, Tag, Trash2, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
+import useSingleAction from '@/hooks/useSingleAction';
 
 const MOOD_META = {
   overwhelmed: { emoji: '🔴', label: 'Overwhelmed', color: 'text-red-500 bg-red-50 border-red-200' },
@@ -30,10 +31,10 @@ export default function JournalEntryCard({ entry, onDelete, onActionAdded }) {
     onActionAdded?.(step);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = useSingleAction(async () => {
     await base44.entities.JournalEntry.delete(entry.id);
     onDelete(entry.id);
-  };
+  });
 
   return (
     <motion.div

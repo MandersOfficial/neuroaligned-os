@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, ChevronDown, ChevronUp, Save, Search, Lightbulb } from 'lucide-react';
 import MobileSelect from '@/components/ui/MobileSelect';
+import useDebouncedValue from '@/hooks/useDebouncedValue';
 
 const STATUSES = ['submitted', 'reviewing', 'planned', 'in_progress', 'shipped', 'declined'];
 const STATUS_CLS = {
@@ -27,6 +28,7 @@ export default function FeatureRequestsManager() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [query, setQuery] = useState('');
+  const debouncedQuery = useDebouncedValue(query, 250);
   const [expanded, setExpanded] = useState(null);
   const [drafts, setDrafts] = useState({});
   const [saving, setSaving] = useState(null);
@@ -43,8 +45,8 @@ export default function FeatureRequestsManager() {
 
   const filtered = items.filter(r => {
     if (filter !== 'all' && r.status !== filter) return false;
-    if (query) {
-      const q = query.toLowerCase();
+    if (debouncedQuery) {
+      const q = debouncedQuery.toLowerCase();
       const hay = [r.title, r.description, r.submitter_name, r.submitter_email].join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }

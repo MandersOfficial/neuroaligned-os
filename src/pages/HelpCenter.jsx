@@ -7,6 +7,7 @@ import {
   ListTodo, FolderKanban, Plug, ShieldCheck, Lightbulb, ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import useDebouncedValue from '@/hooks/useDebouncedValue';
 
 const FAQS = [
   {
@@ -244,15 +245,18 @@ export default function HelpCenter() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebouncedValue(search, 250);
 
+  // Filter runs once typing pauses instead of on every keystroke
+  const q = debouncedSearch.toLowerCase();
   const filteredFaqs = FAQS.filter(f =>
-    f.q.toLowerCase().includes(search.toLowerCase()) ||
-    f.a.toLowerCase().includes(search.toLowerCase())
+    f.q.toLowerCase().includes(q) ||
+    f.a.toLowerCase().includes(q)
   );
 
   const filteredGuides = GUIDES.filter(g =>
-    g.title.toLowerCase().includes(search.toLowerCase()) ||
-    g.description.toLowerCase().includes(search.toLowerCase())
+    g.title.toLowerCase().includes(q) ||
+    g.description.toLowerCase().includes(q)
   );
 
   return (

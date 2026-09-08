@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Brain, Loader2 } from 'lucide-react';
 import { safeReturnTo } from '@/lib/authReturnTo';
+import useSingleAction from '@/hooks/useSingleAction';
 
 // New sign-ups continue to onboarding next. Honor ?returnTo= if present
 // (e.g. /onboarding or /onboarding?complete=1), defaulting to /onboarding.
@@ -49,14 +50,14 @@ export default function Register() {
     setLoading(false);
   };
 
-  const handleResend = async () => {
+  const handleResend = useSingleAction(async () => {
     setError('');
     try {
       await base44.auth.resendOtp(email);
     } catch {
       // silent
     }
-  };
+  });
 
   const handleGoogle = () => {
     base44.auth.loginWithProvider('google', nextAfterRegister());

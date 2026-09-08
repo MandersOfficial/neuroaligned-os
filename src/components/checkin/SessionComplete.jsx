@@ -23,6 +23,7 @@ export default function SessionComplete({ firstTask, weekStats, isFirstSession }
   const affirmation = AFFIRMATIONS[Math.floor(Math.random() * AFFIRMATIONS.length)];
 
   const handleCheckin = async (val) => {
+    if (saved) return;
     setCheckinPref(val);
     setSaved(true);
     // Save preference to user profile

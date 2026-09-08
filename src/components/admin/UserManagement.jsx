@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import useDebouncedValue from '@/hooks/useDebouncedValue';
 import { Search, Shield, User, MoreHorizontal, ChevronDown, Trash2, Edit2, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -80,6 +81,7 @@ function UserRow({ user, onRoleChange, onDelete }) {
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebouncedValue(search, 250);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState('');
 
@@ -102,9 +104,10 @@ export default function UserManagement() {
     showToast('User deleted.');
   };
 
+  const q = debouncedSearch.toLowerCase();
   const filtered = users.filter(u =>
-    u.email?.toLowerCase().includes(search.toLowerCase()) ||
-    u.full_name?.toLowerCase().includes(search.toLowerCase())
+    u.email?.toLowerCase().includes(q) ||
+    u.full_name?.toLowerCase().includes(q)
   );
 
   return (

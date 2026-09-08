@@ -4,16 +4,17 @@ import MobileSelect from '@/components/ui/MobileSelect';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { EMOJI_OPTIONS, PRIORITY_OPTIONS } from '@/components/projects/projectMeta';
+import useSingleAction from '@/hooks/useSingleAction';
 
 export default function NewProjectModal({ onCreated, onClose }) {
   const [form, setForm] = useState({ name: '', emoji: '📁', client_name: '', client_email: '', status: 'active', priority: 'medium', due_date: '' });
 
-  const handleCreate = async () => {
+  const handleCreate = useSingleAction(async () => {
     if (!form.name.trim()) return;
     const project = await base44.entities.Project.create({ ...form });
     onCreated(project);
     onClose();
-  };
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">

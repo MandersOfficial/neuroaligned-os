@@ -9,6 +9,7 @@ import RegulationTool from '../components/checkin/RegulationTool';
 import StressInput from '../components/checkin/StressInput';
 import ActionSteps from '../components/checkin/ActionSteps';
 import SessionComplete from '../components/checkin/SessionComplete';
+import useSingleAction from '@/hooks/useSingleAction';
 
 // Steps:
 // 'select'      → Brain state selection
@@ -66,7 +67,9 @@ export default function CheckIn() {
     init();
   }, []);
 
-  const handleStateSelect = async (state) => {
+  // useSingleAction: a double-tap on a state card can't fire two profile
+  // updates (which would double-increment the session count).
+  const handleStateSelect = useSingleAction(async (state) => {
     setBrainState(state);
     setStep('support');
 
@@ -80,7 +83,7 @@ export default function CheckIn() {
         session_count: (profile.session_count || 0) + 1,
       });
     }
-  };
+  });
 
   const handleSteps = (steps, text) => {
     setAiSteps(steps);
@@ -124,8 +127,8 @@ export default function CheckIn() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-5 py-8">
-        <div className="w-full max-w-md">
+      <main className="flex-1 flex flex-col items-center justify-start px-5 py-6">
+        <div className="w-full max-w-md my-auto">
           <AnimatePresence mode="wait">
 
             {/* ── State Selection ── */}
@@ -135,7 +138,7 @@ export default function CheckIn() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="flex flex-col items-center gap-8"
+                className="flex flex-col items-center gap-6"
               >
                 <div className="text-center space-y-2">
                   <motion.p
@@ -167,7 +170,7 @@ export default function CheckIn() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="flex flex-col items-center gap-8 text-center"
+                className="flex flex-col items-center gap-6 text-center"
               >
                 <div className="space-y-4">
                   <p className="text-5xl">{brainState.emoji}</p>

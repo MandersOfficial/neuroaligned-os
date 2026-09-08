@@ -3,6 +3,7 @@ import { Plus, FolderOpen, ChevronRight, X, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
+import useSingleAction from '@/hooks/useSingleAction';
 
 const EMOJIS = ['📁', '🚀', '💼', '🎨', '📊', '🧠', '🌱', '⚡', '🔥', '💡'];
 const COLORS = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
@@ -20,7 +21,7 @@ export default function ProjectPanel({ projects, selectedProjectId, onSelectProj
   const [newEmoji, setNewEmoji] = useState('📁');
   const [newColor, setNewColor] = useState('#8B5CF6');
 
-  const handleCreate = async () => {
+  const handleCreate = useSingleAction(async () => {
     if (!newName.trim()) return;
     const project = await base44.entities.Project.create({
       name: newName.trim(),
@@ -30,7 +31,7 @@ export default function ProjectPanel({ projects, selectedProjectId, onSelectProj
     });
     onProjectsChange([...projects, project]);
     setNewName(''); setCreating(false);
-  };
+  });
 
   return (
     <div className="w-56 shrink-0 flex flex-col gap-1">

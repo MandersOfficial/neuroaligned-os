@@ -4,35 +4,43 @@ import { motion } from 'framer-motion';
 import { Check, Clock, Loader2 } from 'lucide-react';
 
 export default function ActionSteps({ steps, stressText, brainState, onStarted, onSaveLater }) {
-  const [saving, setSaving] = useState(false);
-  const [starting, setStarting] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
 
   const hasSteps = steps.length > 0;
 
   const saveTasks = async () => {
-    for (const title of steps) {
-      await base44.entities.Task.create({
-        title,
-        status: 'todo',
-        is_today: true,
-        energy_required: brainState.value === 'focused' ? 'high' : brainState.value === 'low_energy' ? 'low' : 'medium',
-      });
+    if (steps.length === 0) return;
+    await base44.entities.Task.bulkCreate(steps.map(title => ({
+      title,
+      status: 'todo',
+      is_today: true,
+      energy_required: brainState.value === 'focused' ? 'high' : brainState.value === 'low_energy' ? 'low' : 'medium',
+    })));
+  };
+
+  // One shared in-flight guard: double-tapping either button — or tapping
+  // Start and then Save — can't save the steps twice.
+  const handleStart = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await saveTasks();
+      onStarted(steps[0]);
+    } finally {
+      setBusy(false);
     }
   };
 
-  const handleStart = async () => {
-    setStarting(true);
-    await saveTasks();
-    setStarting(false);
-    onStarted(steps[0]);
-  };
-
   const handleSaveLater = async () => {
-    setSaving(true);
-    await saveTasks();
-    setSaving(false);
-    onSaveLater();
+    if (busy) return;
+    setBusy(true);
+    try {
+      await saveTasks();
+      onSaveLater();
+    } finally {
+      setBusy(false);
+    }
   };
 
   if (!hasSteps) {
@@ -83,17 +91,17 @@ export default function ActionSteps({ steps, stressText, brainState, onStarted, 
       <div className="flex items-center gap-2 pt-1">
         <button
           onClick={handleStart}
-          disabled={starting}
+          disabled={busy}
           className="flex-1 py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {starting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Clock className="w-4 h-4" /> Start this (2 min)</>}
+          {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Clock className="w-4 h-4" /> Start this (2 min)</>}
         </button>
         <button
           onClick={handleSaveLater}
-          disabled={saving}
+          disabled={busy}
           className="flex-1 py-3.5 border border-border rounded-2xl text-sm font-medium text-foreground hover:bg-secondary transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save for later'}
+          {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save for later'}
         </button>
       </div>
     </div>
