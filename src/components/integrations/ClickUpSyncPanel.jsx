@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Link2, ChevronDown, ChevronUp, ListChecks, RefreshCw, Upload, AlertCircle, CheckCircle2, ExternalLink } from 'lucide-react';
+import { Loader2, Link2, ChevronDown, ChevronUp, ListChecks, RefreshCw, Upload, AlertCircle, CheckCircle2, ExternalLink, CalendarClock } from 'lucide-react';
 import MobileSelect from '@/components/ui/MobileSelect';
 
 const CLICKUP_CONNECTOR_ID = '6a58c092588cac2ae027fd72';
@@ -14,6 +14,7 @@ export default function ClickUpSyncPanel({ projects = [] }) {
   const [selectedList, setSelectedList] = useState('');
   const [syncing, setSyncing] = useState(false);
   const [result, setResult] = useState(null);
+  const [taskResult, setTaskResult] = useState(null);
   const [error, setError] = useState(null);
 
   const fetchLists = async () => {
@@ -75,6 +76,24 @@ export default function ClickUpSyncPanel({ projects = [] }) {
     setSyncing(false);
   };
 
+  const handleSyncTasks = async () => {
+    if (!selectedList) return;
+    setSyncing(true);
+    setTaskResult(null);
+    setError(null);
+    try {
+      const res = await base44.functions.invoke('syncTaskDeadlinesToClickUp', { list_id: selectedList });
+      if (res.data.error) {
+        setError(res.data.error);
+      } else {
+        setTaskResult(res.data);
+      }
+    } catch (e) {
+      setError(e?.response?.data?.error || e.message);
+    }
+    setSyncing(false);
+  };
+
   const activeWithDeadlines = projects.filter(p => p.status === 'active' && p.due_date);
 
   return (
@@ -89,7 +108,7 @@ export default function ClickUpSyncPanel({ projects = [] }) {
           </div>
           <div className="text-left">
             <p className="text-sm font-semibold text-foreground">Sync to ClickUp</p>
-            <p className="text-xs text-muted-foreground">Push project deadlines as ClickUp tasks</p>
+            <p className="text-xs text-muted-foreground">Push project & task deadlines as ClickUp tasks</p>
           </div>
         </div>
         {expanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
@@ -158,7 +177,15 @@ export default function ClickUpSyncPanel({ projects = [] }) {
                     disabled={!selectedList || syncing}
                     className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-violet-600 text-white text-xs font-semibold hover:bg-violet-700 disabled:opacity-50 transition-colors"
                   >
-                    {syncing ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Syncing…</> : <><Upload className="w-3.5 h-3.5" /> Sync Deadlines</>}
+                    {syncing ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Syncing…</> : <><Upload className="w-3.5 h-3.5" /> Sync Project Deadlines</>}
+                  </button>
+
+                  <button
+                    onClick={handleSyncTasks}
+                    disabled={!selectedList || syncing}
+                    className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg border border-violet-200 bg-violet-50 text-violet-700 text-xs font-semibold hover:bg-violet-100 disabled:opacity-50 transition-colors"
+                  >
+                    {syncing ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Syncing…</> : <><CalendarClock className="w-3.5 h-3.5" /> Sync Task Deadlines</>}
                   </button>
                 </>
               )}
@@ -180,6 +207,32 @@ export default function ClickUpSyncPanel({ projects = [] }) {
                   ))}
                   {result.results?.filter(r => !r.success).map((r, i) => (
                     <div key={`fail-${i}`} className="text-red-600">✗ {r.project}: {r.error}</div>
+                  ))}
+                </div>
+              )}
+
+              {taskResult && (
+                <div className="rounded-lg bg-violet-50 border border-violet-200 px-3 py-2.5 text-xs text-violet-700 space-y-1.5">
+                  <p className="font-semibold">
+                    {taskResult.synced} task{taskResult.synced !== 1 ? 's' : ''} synced
+                    {taskResult.created > 0 && ` · ${taskResult.created} new`}
+                    {taskResult.updated > 0 && ` · ${taskResult.updated} updated`}
+                    {taskResult.total > taskResult.synced ? ` · ${taskResult.total - taskResult.synced} failed` : ''}
+                  </p>
+                  {taskResult.results?.filter(r => r.success).map((r, i) => (
+                    <div key={`t-${i}`} className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-violet-600">✓</span>
+                      <span className="font-medium">{r.task}</span>
+                      <span className="text-violet-400">{r.action === 'updated' ? 'updated' : `due ${r.due_date}`}</span>
+                      {r.task_url && r.action === 'created' && (
+                        <a href={r.task_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-blue-600 hover:underline">
+                          <ExternalLink className="w-3 h-3" /> Task
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                  {taskResult.results?.filter(r => !r.success).map((r, i) => (
+                    <div key={`tfail-${i}`} className="text-red-600">✗ {r.task}: {r.error}</div>
                   ))}
                 </div>
               )}
