@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAppRefresh } from '@/hooks/useAppRefresh';
 import { Plus, Sparkles } from 'lucide-react';
@@ -101,6 +102,7 @@ export default function FocusModes() {
   const [loading, setLoading] = useState(true);
   const [showEditor, setShowEditor] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
+  const navigate = useNavigate();
 
   const load = async () => {
     const saved = await base44.entities.FocusMode.list('-created_date', 50);
@@ -187,9 +189,18 @@ export default function FocusModes() {
                   {activeMode.ambient_sound !== 'none' && <span>🎵 {activeMode.ambient_sound}</span>}
                 </div>
               </div>
-              <button onClick={() => handleActivate(activeMode)} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 bg-background/60 rounded-xl border border-border/40">
-                Deactivate
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => navigate('/focus-room')}
+                  className="text-xs font-semibold text-white px-3.5 py-1.5 rounded-xl transition-opacity hover:opacity-90"
+                  style={{ background: activeMode.color_accent }}
+                >
+                  Enter Focus Room
+                </button>
+                <button onClick={() => handleActivate(activeMode)} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 bg-background/60 rounded-xl border border-border/40">
+                  Deactivate
+                </button>
+              </div>
             </motion.div>
           )}
 

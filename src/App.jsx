@@ -10,6 +10,7 @@ import { SensoryProvider, useSensory } from '@/lib/SensoryContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import GlobalPullToRefresh from '@/components/GlobalPullToRefresh';
+import GlobalVoiceAssistant from '@/components/accessibility/GlobalVoiceAssistant';
 import AppShell from '@/components/workspace/AppShell';
 
 // Lazily-loaded pages — keeps the initial bundle small for faster first paint on mobile
@@ -41,6 +42,7 @@ const IntegrationSettings = lazy(() => import('./pages/IntegrationSettings'));
 const HelpCenter = lazy(() => import('./pages/HelpCenter'));
 const Support = lazy(() => import('./pages/Support'));
 const TaskBreakdown = lazy(() => import('./pages/TaskBreakdown'));
+const FocusRoom = lazy(() => import('./pages/FocusRoom'));
 
 function PageLoader() {
   return (
@@ -108,6 +110,7 @@ const AuthenticatedApp = () => {
                 <Route path="/journal" element={<Journal />} />
                 <Route path="/focus-modes" element={<FocusModes />} />
               </Route>
+              <Route path="/focus-room" element={<FocusRoom />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/integrations" element={<Navigate to="/integration-settings" replace />} />
               <Route path="/burnout" element={<BurnoutRisk />} />
@@ -132,6 +135,7 @@ const AuthenticatedApp = () => {
         </motion.div>
       </AnimatePresence>
       <GlobalPullToRefresh />
+      <GlobalVoiceAssistant />
     </MotionConfig>
   );
 };
