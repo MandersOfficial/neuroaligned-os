@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 import { Sparkles, Send, Loader2 } from 'lucide-react';
+import JournalDictation from '@/components/journal/JournalDictation';
 
 const MOOD_OPTIONS = [
   { value: 'overwhelmed', emoji: '🔴', label: 'Overwhelmed' },
@@ -24,9 +25,16 @@ export default function JournalEditor({ onSaved }) {
   const [mood, setMood] = useState('neutral');
   const [analyzing, setAnalyzing] = useState(false);
   const [prompt] = useState(() => PROMPTS[Math.floor(Math.random() * PROMPTS.length)]);
+  const stopDictationRef = useRef(null);
+
+  // Appends dictated speech onto the end of the entry
+  const appendDictated = (text) => {
+    setContent(prev => prev.trim() ? prev.trimEnd() + ' ' + text : text);
+  };
 
   const handleSubmit = async () => {
     if (!content.trim()) return;
+    stopDictationRef.current?.();
     setAnalyzing(true);
 
     // Save entry first
@@ -90,22 +98,28 @@ export default function JournalEditor({ onSaved }) {
       </div>
 
       {/* Footer */}
-      <div className="px-5 pb-5 flex items-center justify-between">
+      <div className="px-5 pb-5 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Sparkles className="w-3.5 h-3.5 text-primary" />
           AI will extract insights &amp; action steps
         </div>
-        <button
-          onClick={handleSubmit}
-          disabled={!content.trim() || analyzing}
-          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
-          {analyzing ? (
-            <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing…</>
-          ) : (
-            <><Send className="w-4 h-4" /> Dump &amp; Analyze</>
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <JournalDictation
+            onText={appendDictated}
+            registerStop={fn => { stopDictationRef.current = fn; }}
+          />
+          <button
+            onClick={handleSubmit}
+            disabled={!content.trim() || analyzing}
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            {analyzing ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing…</>
+            ) : (
+              <><Send className="w-4 h-4" /> Dump &amp; Analyze</>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
