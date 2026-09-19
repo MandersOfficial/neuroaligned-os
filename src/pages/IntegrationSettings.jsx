@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import AutoBreakScheduler from '@/components/integrations/AutoBreakScheduler';
 import ContextCapture from '@/components/integrations/ContextCapture';
 import CalendlySyncPanel from '@/components/integrations/CalendlySyncPanel';
@@ -17,8 +16,7 @@ import CalendarSchedulePanel from '@/components/integrations/CalendarSchedulePan
 import DeadlineCallPanel from '@/components/integrations/DeadlineCallPanel';
 import PitchDeckPanel from '@/components/integrations/PitchDeckPanel';
 import {
-  CheckCircle2, Link2, Loader2, RefreshCw, AlertCircle,
-  Calendar, Video, Table, FileText, Presentation, Mail,
+  Loader2, Calendar, Video, Table, FileText, Presentation, Mail,
   ListTodo, FolderKanban, ChevronDown, ChevronUp,
   Coffee, Brain, Zap, ExternalLink, CalendarClock, ArrowLeft, NotebookPen, PhoneCall
 } from 'lucide-react';
@@ -219,7 +217,6 @@ function FeaturePanel({ icon: Icon, color, bg, title, description, children, def
 }
 
 export default function IntegrationSettings() {
-  const [user, setUser] = useState(null);
   const [statuses, setStatuses] = useState({});
   const [projects, setProjects] = useState([]);
   const navigate = useNavigate();
@@ -238,15 +235,12 @@ export default function IntegrationSettings() {
   }, []);
 
   useEffect(() => {
-    base44.auth.me().then(u => setUser(u));
     fetchStatuses();
     base44.entities.Project.list('-created_date', 100).then(setProjects).catch(() => {});
   }, [fetchStatuses]);
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <DashboardSidebar user={user} />
-      <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
+    <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-5 lg:px-8 py-7 space-y-6">
           <div>
             <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-3">
@@ -440,7 +434,6 @@ export default function IntegrationSettings() {
           </div>
 
         </div>
-      </main>
     </div>
   );
 }

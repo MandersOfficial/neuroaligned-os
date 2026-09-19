@@ -109,6 +109,7 @@ const AuthenticatedApp = () => {
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/journal" element={<Journal />} />
                 <Route path="/focus-modes" element={<FocusModes />} />
+                <Route path="/integration-settings" element={<IntegrationSettings />} />
               </Route>
               <Route path="/focus-room" element={<FocusRoom />} />
               <Route path="/admin" element={<Admin />} />
@@ -125,7 +126,6 @@ const AuthenticatedApp = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="/regulation-first" element={<RegulationFirst />} />
               <Route path="/disclaimer" element={<Disclaimer />} />
-              <Route path="/integration-settings" element={<IntegrationSettings />} />
               <Route path="/help-center" element={<HelpCenter />} />
               <Route path="/support" element={<Support />} />
               <Route path="/task-breakdown" element={<TaskBreakdown />} />
