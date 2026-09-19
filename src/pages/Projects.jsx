@@ -2,20 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAppRefresh } from '@/hooks/useAppRefresh';
-import { Plus, ArrowLeft } from 'lucide-react';
+import { Plus, ArrowLeft, Plug } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import ProjectCard from '@/components/projects/ProjectCard';
 import NewProjectModal from '@/components/projects/NewProjectModal';
-import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPanel';
-import MeetingSummaryPanel from '@/components/integrations/MeetingSummaryPanel';
-import CalendarSchedulePanel from '@/components/integrations/CalendarSchedulePanel';
-import DeadlineCallPanel from '@/components/integrations/DeadlineCallPanel';
-import ProjectSyncPanel from '@/components/integrations/ProjectSyncPanel';
-import UpcomingMeetingsPanel from '@/components/integrations/UpcomingMeetingsPanel';
-import GoogleTasksSyncPanel from '@/components/integrations/GoogleTasksSyncPanel';
-import ClickUpSyncPanel from '@/components/integrations/ClickUpSyncPanel';
-import TodoistSyncPanel from '@/components/integrations/TodoistSyncPanel';
-import PitchDeckPanel from '@/components/integrations/PitchDeckPanel';
 import { InlineSpinner } from '@/components/workspace/LoadingScreen';
 
 const FILTERS = [['active', 'Active'], ['paused', 'Paused'], ['completed', 'Completed'], ['all', 'All']];
@@ -84,17 +74,22 @@ export default function Projects() {
             ))}
           </div>
 
-          {/* Integration panels */}
-          <GoogleSheetsSyncPanel />
-          <MeetingSummaryPanel projects={projects} />
-          <CalendarSchedulePanel projects={projects} />
-          <DeadlineCallPanel />
-          <ProjectSyncPanel projects={projects} />
-          <UpcomingMeetingsPanel />
-          <GoogleTasksSyncPanel projects={projects} />
-          <ClickUpSyncPanel projects={projects} />
-          <TodoistSyncPanel projects={projects} />
-          <PitchDeckPanel projects={projects} />
+          {/* Integrations live in Settings — single clean shortcut */}
+          <button
+            onClick={() => navigate('/integration-settings')}
+            className="w-full flex items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card px-5 py-3.5 hover:bg-secondary/30 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <Plug className="w-4 h-4 text-primary" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-foreground">Sync & integrations</p>
+                <p className="text-xs text-muted-foreground">Notion, ClickUp, Todoist, Google & more — managed in Settings.</p>
+              </div>
+            </div>
+            <ArrowLeft className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
+          </button>
 
           {/* Project list */}
           {filtered.length === 0 ? (

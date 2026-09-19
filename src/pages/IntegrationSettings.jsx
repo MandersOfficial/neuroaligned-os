@@ -6,11 +6,21 @@ import AutoBreakScheduler from '@/components/integrations/AutoBreakScheduler';
 import ContextCapture from '@/components/integrations/ContextCapture';
 import CalendlySyncPanel from '@/components/integrations/CalendlySyncPanel';
 import NotionSyncPanel from '@/components/integrations/NotionSyncPanel';
+import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPanel';
+import GoogleTasksSyncPanel from '@/components/integrations/GoogleTasksSyncPanel';
+import ClickUpSyncPanel from '@/components/integrations/ClickUpSyncPanel';
+import TodoistSyncPanel from '@/components/integrations/TodoistSyncPanel';
+import UpcomingMeetingsPanel from '@/components/integrations/UpcomingMeetingsPanel';
+import ProjectSyncPanel from '@/components/integrations/ProjectSyncPanel';
+import MeetingSummaryPanel from '@/components/integrations/MeetingSummaryPanel';
+import CalendarSchedulePanel from '@/components/integrations/CalendarSchedulePanel';
+import DeadlineCallPanel from '@/components/integrations/DeadlineCallPanel';
+import PitchDeckPanel from '@/components/integrations/PitchDeckPanel';
 import {
   CheckCircle2, Link2, Loader2, RefreshCw, AlertCircle,
   Calendar, Video, Table, FileText, Presentation, Mail,
   ListTodo, FolderKanban, ChevronDown, ChevronUp,
-  Coffee, Brain, Zap, ExternalLink, CalendarClock, ArrowLeft, NotebookPen
+  Coffee, Brain, Zap, ExternalLink, CalendarClock, ArrowLeft, NotebookPen, PhoneCall
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -70,6 +80,13 @@ const CONNECTORS = [
     description: 'Sync project deadlines as tasks into your ClickUp lists.',
     icon: FolderKanban,
     color: 'bg-purple-50 text-purple-500',
+  },
+  {
+    id: '6aa063064d9baaa5807a360c',
+    name: 'Todoist',
+    description: 'Sync project deadlines as tasks into a Todoist project.',
+    icon: ListTodo,
+    color: 'bg-red-50 text-red-500',
   },
   {
     id: '6a88338fe746048ca65ac142',
@@ -204,6 +221,7 @@ function FeaturePanel({ icon: Icon, color, bg, title, description, children, def
 export default function IntegrationSettings() {
   const [user, setUser] = useState(null);
   const [statuses, setStatuses] = useState({});
+  const [projects, setProjects] = useState([]);
   const navigate = useNavigate();
 
   const fetchStatuses = useCallback(async () => {
@@ -222,6 +240,7 @@ export default function IntegrationSettings() {
   useEffect(() => {
     base44.auth.me().then(u => setUser(u));
     fetchStatuses();
+    base44.entities.Project.list('-created_date', 100).then(setProjects).catch(() => {});
   }, [fetchStatuses]);
 
   return (
@@ -260,7 +279,7 @@ export default function IntegrationSettings() {
             ))}
           </div>
 
-          {/* Feature panels */}
+          {/* AI features */}
           <div className="space-y-3 pt-2">
             <h2 className="font-display font-semibold text-lg text-foreground">AI-Powered Features</h2>
 
@@ -283,6 +302,51 @@ export default function IntegrationSettings() {
             >
               <ContextCapture />
             </FeaturePanel>
+          </div>
+
+          {/* Project & task sync */}
+          <div className="space-y-3 pt-2">
+            <h2 className="font-display font-semibold text-lg text-foreground">Project & Task Sync</h2>
+
+            <FeaturePanel
+              icon={Table}
+              color="text-emerald-500"
+              bg="bg-emerald-50"
+              title="Google Sheets Export"
+              description="Push project data into a Google Sheet for reporting."
+            >
+              <GoogleSheetsSyncPanel />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={ListTodo}
+              color="text-yellow-500"
+              bg="bg-yellow-50"
+              title="Google Tasks Sync"
+              description="Sync project deadlines into your Google Tasks list."
+            >
+              <GoogleTasksSyncPanel projects={projects} />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={FolderKanban}
+              color="text-purple-500"
+              bg="bg-purple-50"
+              title="ClickUp Sync"
+              description="Sync project and task deadlines into your ClickUp lists."
+            >
+              <ClickUpSyncPanel projects={projects} />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={ListTodo}
+              color="text-red-500"
+              bg="bg-red-50"
+              title="Todoist Sync"
+              description="Sync project deadlines as tasks into a Todoist project."
+            >
+              <TodoistSyncPanel projects={projects} />
+            </FeaturePanel>
 
             <FeaturePanel
               icon={CalendarClock}
@@ -290,7 +354,6 @@ export default function IntegrationSettings() {
               bg="bg-indigo-50"
               title="Calendly Booking Sync"
               description="Match new team meeting bookings to project deadlines (match or create)."
-              defaultOpen={false}
             >
               <CalendlySyncPanel />
             </FeaturePanel>
@@ -301,9 +364,78 @@ export default function IntegrationSettings() {
               bg="bg-stone-100"
               title="Notion Project & Task Sync"
               description="Two-way sync your projects and tasks with Notion — manually or automatically on sign-in."
-              defaultOpen={false}
             >
               <NotionSyncPanel connected={!!statuses['6a9c83fae18c151ef517de3b']} />
+            </FeaturePanel>
+          </div>
+
+          {/* Meetings & client communication */}
+          <div className="space-y-3 pt-2">
+            <h2 className="font-display font-semibold text-lg text-foreground">Meetings & Client Communication</h2>
+
+            <FeaturePanel
+              icon={Calendar}
+              color="text-blue-500"
+              bg="bg-blue-50"
+              title="Upcoming Meetings"
+              description="See what's coming up on your Google Calendar."
+            >
+              <UpcomingMeetingsPanel />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={Video}
+              color="text-green-500"
+              bg="bg-green-50"
+              title="Project Sync Meetings"
+              description="Create Google Meet links for project sync sessions."
+            >
+              <ProjectSyncPanel projects={projects} />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={FileText}
+              color="text-indigo-500"
+              bg="bg-indigo-50"
+              title="Meeting Summaries"
+              description="Generate AI meeting summaries and notes in Google Docs."
+            >
+              <MeetingSummaryPanel projects={projects} />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={CalendarClock}
+              color="text-blue-500"
+              bg="bg-blue-50"
+              title="Schedule Project Meetings"
+              description="Put project meetings straight onto your Google Calendar."
+            >
+              <CalendarSchedulePanel projects={projects} />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={PhoneCall}
+              color="text-rose-500"
+              bg="bg-rose-50"
+              title="Deadline Calls"
+              description="Schedule calls ahead of upcoming project deadlines."
+            >
+              <DeadlineCallPanel />
+            </FeaturePanel>
+          </div>
+
+          {/* Business tools */}
+          <div className="space-y-3 pt-2">
+            <h2 className="font-display font-semibold text-lg text-foreground">Business Tools</h2>
+
+            <FeaturePanel
+              icon={Presentation}
+              color="text-amber-500"
+              bg="bg-amber-50"
+              title="Pitch Deck Builder"
+              description="Generate a pitch deck in Google Slides from a project."
+            >
+              <PitchDeckPanel projects={projects} />
             </FeaturePanel>
           </div>
 
