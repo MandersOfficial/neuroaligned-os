@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Connector display order: rendered grouped by CONNECTOR_CATEGORIES below
 const CONNECTORS = [
   {
     id: '69fd1ec20e0e670e38251275',
@@ -29,6 +30,7 @@ const CONNECTORS = [
     description: 'Sync deadlines, schedule meetings, and track upcoming events.',
     icon: Calendar,
     color: 'bg-blue-50 text-blue-500',
+    category: 'Communication & Scheduling',
   },
   {
     id: '69fd203fe5416ec116a6593a',
@@ -36,6 +38,7 @@ const CONNECTORS = [
     description: 'Create instant video meeting links for projects.',
     icon: Video,
     color: 'bg-green-50 text-green-500',
+    category: 'Communication & Scheduling',
   },
   {
     id: '6a58b955a3acbfb32bf0271c',
@@ -43,6 +46,7 @@ const CONNECTORS = [
     description: 'Export project data to spreadsheets for reporting.',
     icon: Table,
     color: 'bg-emerald-50 text-emerald-500',
+    category: 'Documents & Files',
   },
   {
     id: '6a58bb594a5a09e519c6c4a1',
@@ -50,6 +54,7 @@ const CONNECTORS = [
     description: 'Generate meeting summaries and notes from project data.',
     icon: FileText,
     color: 'bg-indigo-50 text-indigo-500',
+    category: 'Documents & Files',
   },
   {
     id: '6a58c008c3935ea2b4e8de42',
@@ -57,6 +62,7 @@ const CONNECTORS = [
     description: 'Create pitch decks and presentations from projects.',
     icon: Presentation,
     color: 'bg-amber-50 text-amber-500',
+    category: 'Documents & Files',
   },
   {
     id: '69fd1ff7759e80cf1cc1e1e9',
@@ -64,6 +70,7 @@ const CONNECTORS = [
     description: 'Send emails and notifications to your contacts.',
     icon: Mail,
     color: 'bg-red-50 text-red-500',
+    category: 'Communication & Scheduling',
   },
   {
     id: '69fd1eef9864033b48130ab1',
@@ -71,6 +78,7 @@ const CONNECTORS = [
     description: 'Sync project deadlines into your Google Tasks list.',
     icon: ListTodo,
     color: 'bg-yellow-50 text-yellow-500',
+    category: 'Task Management',
   },
   {
     id: '6a58c092588cac2ae027fd72',
@@ -78,6 +86,7 @@ const CONNECTORS = [
     description: 'Sync project deadlines as tasks into your ClickUp lists.',
     icon: FolderKanban,
     color: 'bg-purple-50 text-purple-500',
+    category: 'Task Management',
   },
   {
     id: '6aa063064d9baaa5807a360c',
@@ -85,6 +94,7 @@ const CONNECTORS = [
     description: 'Sync project deadlines as tasks into a Todoist project.',
     icon: ListTodo,
     color: 'bg-red-50 text-red-500',
+    category: 'Task Management',
   },
   {
     id: '6a88338fe746048ca65ac142',
@@ -92,6 +102,7 @@ const CONNECTORS = [
     description: 'Connect your own Calendly account to sync bookings into project deadlines.',
     icon: CalendarClock,
     color: 'bg-indigo-50 text-indigo-500',
+    category: 'Communication & Scheduling',
   },
   {
     id: '6a9c83fae18c151ef517de3b',
@@ -99,8 +110,11 @@ const CONNECTORS = [
     description: 'Two-way sync your projects and task list with a Notion database you choose.',
     icon: NotebookPen,
     color: 'bg-stone-100 text-stone-600',
+    category: 'Task Management',
   },
 ];
+
+const CONNECTOR_CATEGORIES = ['Task Management', 'Communication & Scheduling', 'Documents & Files'];
 
 function ConnectorCard({ connector, connected, onRecheck }) {
   const [loading, setLoading] = useState(false);
@@ -261,15 +275,22 @@ export default function IntegrationSettings() {
             </div>
           </div>
 
-          {/* Connector grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {CONNECTORS.map(c => (
-              <ConnectorCard
-                key={c.id}
-                connector={c}
-                connected={!!statuses[c.id]}
-                onRecheck={fetchStatuses}
-              />
+          {/* Connectors grouped by category */}
+          <div className="space-y-6">
+            {CONNECTOR_CATEGORIES.map(label => (
+              <div key={label} className="space-y-3">
+                <h2 className="font-display font-semibold text-lg text-foreground">{label}</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {CONNECTORS.filter(c => c.category === label).map(c => (
+                    <ConnectorCard
+                      key={c.id}
+                      connector={c}
+                      connected={!!statuses[c.id]}
+                      onRecheck={fetchStatuses}
+                    />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
 
