@@ -86,8 +86,8 @@ export default function ReadAloudButton() {
     stopRef.current = false;
     for (const chunk of chunks) {
       if (stopRef.current) return;
-      const res = await base44.functions.invoke('generateElevenLabsSpeech', {
-        voice_id: voiceId,
+      const res = await base44.functions.invoke('generateOpenAISpeech', {
+        voice: voiceId,
         text: chunk,
       });
       if (stopRef.current) return;

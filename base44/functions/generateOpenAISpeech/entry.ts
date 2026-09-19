@@ -1,11 +1,15 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { ELEVENLABS_API_BASE, getElevenLabsKey } from "../../shared/elevenlabs.ts";
+import { secrets } from 'base44:runtime';
 
 const MAX_CHARS = 2500; // protects the key's character budget per request
+const VOICES = new Set([
+  'alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova',
+  'onyx', 'sage', 'shimmer', 'verse', 'marin', 'cedar',
+]);
 
 /**
- * Generates premium read-aloud audio with ElevenLabs for a chosen voice.
- * Input: { voice_id, text } — returns { audio } (mp3 as base64).
+ * Generates premium read-aloud audio with OpenAI's GPT-4o mini TTS.
+ * Input: { voice, text } — returns { audio } (mp3 as base64).
  */
 export default async function(req) {
   try {
@@ -15,30 +19,30 @@ export default async function(req) {
 
     const payload = await req.json().catch(() => null);
     const text = typeof payload?.text === 'string' ? payload.text.trim().slice(0, MAX_CHARS) : '';
-    const voiceId = typeof payload?.voice_id === 'string' ? payload.voice_id.trim() : '';
+    const voice = typeof payload?.voice === 'string' ? payload.voice.trim() : '';
     if (!text) return Response.json({ error: 'text is required' }, { status: 400 });
-    if (!/^[a-zA-Z0-9_-]{4,64}$/.test(voiceId)) {
-      return Response.json({ error: 'valid voice_id is required' }, { status: 400 });
-    }
+    if (!VOICES.has(voice)) return Response.json({ error: 'valid voice is required' }, { status: 400 });
 
-    const res = await fetch(
-      `${ELEVENLABS_API_BASE}/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
-      {
-        method: 'POST',
-        headers: {
-          'xi-api-key': getElevenLabsKey(),
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text,
-          model_id: 'eleven_turbo_v2_5',
-        }),
-      }
-    );
+    const apiKey = secrets.get('OPENAI_API_KEY');
+    if (!apiKey) return Response.json({ error: 'OPENAI_API_KEY is not configured' }, { status: 500 });
+
+    const res = await fetch('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini-tts',
+        voice,
+        input: text,
+        response_format: 'mp3',
+      }),
+    });
     if (!res.ok) {
       const detail = await res.text();
       return Response.json(
-        { error: `ElevenLabs speech failed (${res.status})`, detail: detail.slice(0, 500) },
+        { error: `OpenAI speech failed (${res.status})`, detail: detail.slice(0, 500) },
         { status: 502 }
       );
     }
