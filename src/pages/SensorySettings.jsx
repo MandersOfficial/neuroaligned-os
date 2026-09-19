@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon, Trash2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon, Trash2, AlertTriangle, Volume2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSensory, THEMES } from '../lib/SensoryContext';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
+import ReaderVoicePicker from '@/components/accessibility/ReaderVoicePicker';
 import { base44 } from '@/api/base44Client';
 
 export default function SensorySettings() {
@@ -202,6 +203,18 @@ export default function SensorySettings() {
               label="Reduce motion & animations"
               description="Disables non-essential animations and transitions. Helpful for vestibular sensitivity, migraine, or sensory overload."
             />
+          </section>
+
+          {/* Reader Voice */}
+          <section className="bg-card border border-border/60 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center gap-2 mb-1">
+              <Volume2 className="w-4 h-4 text-primary" />
+              <h2 className="font-display font-semibold text-base text-foreground">Reader Voice</h2>
+            </div>
+            <p className="text-xs text-muted-foreground -mt-2">
+              Choose the voice for Read Aloud. The device voice is free and always available; premium voices are richer and more natural.
+            </p>
+            <ReaderVoicePicker />
           </section>
 
           {/* Current state indicator */}

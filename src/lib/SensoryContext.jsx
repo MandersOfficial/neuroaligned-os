@@ -83,6 +83,8 @@ const defaultPrefs = {
   reducedMotion: false,         // disable framer-motion animations
   largerText: false,            // bump base font size
   darkMode: false,              // dark mode
+  readerVoiceId: '',            // '' = free device voice; ElevenLabs voice id for premium
+  readerVoiceName: '',          // display name of the chosen reader voice
 };
 
 function systemPrefersDark() {
