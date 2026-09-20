@@ -74,9 +74,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Fetch all user profiles that opted into daily check-ins
+    // Fetch all user profiles that opted into daily update emails
     const profiles = await base44.asServiceRole.entities.UserProfile.filter({
-      checkin_preference: 'daily',
+      email_update_frequency: 'daily',
     });
 
     if (!profiles || profiles.length === 0) {
@@ -104,8 +104,8 @@ ${msg.cta}
 ${checkinUrl}
 
 ---
-You're receiving this because you opted into daily check-ins on NeuroAligned.
-To change your check-in preference, visit your workspace settings.
+You're receiving this because of your Email Updates setting (Daily).
+Change it anytime in the app under Settings → Email Updates.
 `;
 
       try {

@@ -62,6 +62,26 @@ export default function Support() {
 
           {tab === 'support' && (
             <div className="space-y-8">
+              {/* Reminder: reviews & feature requests live in the other tabs */}
+              <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                <p className="text-xs text-muted-foreground leading-relaxed flex-1">
+                  Heads up — you can also <span className="font-medium text-foreground">submit a review</span> or <span className="font-medium text-foreground">request a feature</span> right from this page.
+                </p>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={() => setTab('feedback')}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-card border border-border/60 text-xs font-semibold text-foreground hover:bg-secondary transition-colors"
+                  >
+                    <Star className="w-3.5 h-3.5 text-amber-500" /> Submit a Review
+                  </button>
+                  <button
+                    onClick={() => setTab('features')}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-card border border-border/60 text-xs font-semibold text-foreground hover:bg-secondary transition-colors"
+                  >
+                    <Lightbulb className="w-3.5 h-3.5 text-amber-500" /> Feature Request
+                  </button>
+                </div>
+              </div>
               <HelpTicketForm onSubmitted={() => setReloadKey(k => k + 1)} />
               <HelpTicketHistory reloadKey={reloadKey} />
             </div>

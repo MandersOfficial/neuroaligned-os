@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon, Trash2, AlertTriangle, Volume2 } from 'lucide-react';
+import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon, Trash2, AlertTriangle, Volume2, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSensory, THEMES } from '../lib/SensoryContext';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import ReaderVoicePicker from '@/components/accessibility/ReaderVoicePicker';
+import EmailUpdateFrequency from '@/components/settings/EmailUpdateFrequency';
 import { base44 } from '@/api/base44Client';
 
 export default function SensorySettings() {
@@ -215,6 +216,18 @@ export default function SensorySettings() {
               Choose the voice for Read Aloud. The device voice is free and always available; premium voices are richer and more natural.
             </p>
             <ReaderVoicePicker />
+          </section>
+
+          {/* Email Updates */}
+          <section className="bg-card border border-border/60 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center gap-2 mb-1">
+              <Mail className="w-4 h-4 text-primary" />
+              <h2 className="font-display font-semibold text-base text-foreground">Email Updates</h2>
+            </div>
+            <p className="text-xs text-muted-foreground -mt-2">
+              Choose how often NeuroAligned emails you — daily or weekly. Prefer no email at all? That works too.
+            </p>
+            <EmailUpdateFrequency />
           </section>
 
           {/* Current state indicator */}

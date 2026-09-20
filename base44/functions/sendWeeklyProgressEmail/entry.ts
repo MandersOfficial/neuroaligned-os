@@ -11,9 +11,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Get all completed onboarding profiles
+    // Only users who opted into weekly update emails
     const profiles = await base44.asServiceRole.entities.UserProfile.filter({
       onboarding_completed: true,
+      email_update_frequency: 'weekly',
     });
 
     if (!profiles || profiles.length === 0) {
@@ -70,6 +71,8 @@ Open your dashboard →
 https://neuroaligned.app
 
 You're doing better than you think. See you next week.
+
+You're receiving this because of your Email Updates setting (Weekly) — change it anytime in the app under Settings → Email Updates.
 
 — The NeuroAligned Team
 `,

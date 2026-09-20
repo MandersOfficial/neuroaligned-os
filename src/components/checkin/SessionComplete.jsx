@@ -30,9 +30,15 @@ export default function SessionComplete({ firstTask, weekStats, isFirstSession }
     const me = await base44.auth.me();
     const profiles = await base44.entities.UserProfile.filter({ user_email: me.email });
     if (profiles.length > 0) {
-      await base44.entities.UserProfile.update(profiles[0].id, {
-        checkin_preference: val,
-      });
+      const updates = { checkin_preference: val };
+      // Keep the email schedule in sync: "daily" opts into daily emails;
+      // backing away from daily nudges drops them back to the weekly recap
+      if (val === 'daily') {
+        updates.email_update_frequency = 'daily';
+      } else if (profiles[0].email_update_frequency === 'daily') {
+        updates.email_update_frequency = 'weekly';
+      }
+      await base44.entities.UserProfile.update(profiles[0].id, updates);
     }
   };
 

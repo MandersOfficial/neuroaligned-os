@@ -14,6 +14,15 @@ Deno.serve(async (req) => {
     // Get all users (service role)
     const users = await base44.asServiceRole.entities.User.list();
 
+    // Only email users who opted into weekly update emails in their settings
+    const optedProfiles = await base44.asServiceRole.entities.UserProfile.filter({
+      email_update_frequency: 'weekly',
+    });
+    const optedInEmails = new Set(optedProfiles.map(p => p.user_email).filter(Boolean));
+    if (optedInEmails.size === 0) {
+      return Response.json({ success: true, sent: 0, errors: 0, message: 'No users opted into weekly updates.' });
+    }
+
     const now = new Date();
     const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     const sevenDaysAhead = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -23,7 +32,7 @@ Deno.serve(async (req) => {
     let errors = 0;
 
     for (const user of users) {
-      if (!user.email) continue;
+      if (!user.email || !optedInEmails.has(user.email)) continue;
 
       try {
         // Fetch data for this user
@@ -210,7 +219,7 @@ function buildEmailHtml({ firstName, weekOf, activeProjects, recentlyCompleted, 
 
         <!-- Footer -->
         <tr><td style="padding:20px;text-align:center;">
-          <p style="margin:0;font-size:11px;color:#9ca3af;">You're receiving this because you have an active NeuroAligned OS account. Sent every Monday.</p>
+          <p style="margin:0;font-size:11px;color:#9ca3af;">You're receiving this because of your Email Updates setting (Weekly). Change it anytime in the app under Settings → Email Updates.</p>
         </td></tr>
 
       </table>

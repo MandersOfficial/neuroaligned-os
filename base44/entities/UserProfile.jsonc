@@ -117,6 +117,16 @@
         "stuck",
         "no"
       ]
+    },
+    "email_update_frequency": {
+      "type": "string",
+      "title": "Email Update Frequency",
+      "enum": [
+        "daily",
+        "weekly",
+        "none"
+      ],
+      "default": "weekly"
     }
   },
   "required": [
