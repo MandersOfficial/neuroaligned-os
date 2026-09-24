@@ -34,7 +34,7 @@ function splitIntoChunks(text, limit) {
  * voice via the backend function. Falls back to device speech if the premium
  * voice fails. Stops automatically on navigation.
  */
-export default function ReadAloudButton() {
+export default function ReadAloudButton({ variant = 'floating', collapsed = false }) {
   const [speaking, setSpeaking] = useState(false);
   const [loading, setLoading] = useState(false);
   const location = useLocation();
@@ -131,16 +131,26 @@ export default function ReadAloudButton() {
     speakWithDevice(text);
   };
 
+  const isSidebar = variant === 'sidebar';
+  const className = isSidebar
+    ? `w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+        collapsed ? 'justify-center px-0' : ''
+      } ${
+        speaking
+          ? 'bg-primary/10 text-primary border-primary/30'
+          : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary'
+      }`
+    : `flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold shadow-lg border transition-colors ${
+        speaking
+          ? 'bg-primary text-primary-foreground border-primary'
+          : 'bg-card text-foreground border-border hover:bg-secondary'
+      }`;
+
   return (
     <button
       type="button"
       onClick={toggle}
-      disabled={loading && !speaking ? false : false}
-      className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold shadow-lg border transition-colors ${
-        speaking
-          ? 'bg-primary text-primary-foreground border-primary'
-          : 'bg-card text-foreground border-border hover:bg-secondary'
-      }`}
+      className={className}
       title={loading ? 'Preparing audio…' : speaking ? 'Stop reading' : 'Read this page aloud'}
     >
       {loading ? (
@@ -150,7 +160,7 @@ export default function ReadAloudButton() {
       ) : (
         <Volume2 className="w-4 h-4 text-primary" />
       )}
-      {loading ? 'Loading…' : speaking ? 'Stop' : 'Read Aloud'}
+      {(!isSidebar || !collapsed) && (loading ? 'Loading…' : speaking ? 'Stop' : 'Read Aloud')}
     </button>
   );
 }

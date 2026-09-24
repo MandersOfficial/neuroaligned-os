@@ -20,7 +20,11 @@ export default function GlobalVoiceAssistant() {
   return (
     <div className="fixed right-4 bottom-24 md:bottom-6 z-[60] flex flex-col items-end gap-2">
       <VoiceDictation />
-      <ReadAloudButton />
+      {/* Read Aloud lives under the sidebar logo on desktop; only floats here on
+          mobile, where there is no sidebar. */}
+      <div className="md:hidden">
+        <ReadAloudButton />
+      </div>
     </div>
   );
 }

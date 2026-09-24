@@ -6,6 +6,7 @@ import {
   HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
+import ReadAloudButton from '@/components/accessibility/ReadAloudButton';
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
@@ -131,6 +132,11 @@ export default function DashboardSidebar({ user }) {
             <img src="https://media.base44.com/images/public/69d83404dff23f1198ddc883/8749fbb8f_image.png" alt="NeuroAligned OS" className="w-full h-full object-cover" />
           </div>
           {!collapsed && <span className="font-display font-bold text-sm text-foreground leading-tight">NeuroAligned OS</span>}
+        </div>
+
+        {/* Read Aloud — under the logo so it never covers the chat */}
+        <div className="px-2 pt-2">
+          <ReadAloudButton variant="sidebar" collapsed={collapsed} />
         </div>
 
         {/* Nav groups */}
