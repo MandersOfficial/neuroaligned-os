@@ -22,9 +22,22 @@ export const THEMES = {
       '--foreground': '250 25% 10%',
       '--primary': '258 62% 55%',
       '--card': '0 0% 100%',
+      '--secondary': '255 15% 95%',
       '--muted': '250 10% 95%',
       '--muted-foreground': '250 10% 45%',
       '--border': '250 12% 90%',
+      '--ring': '258 62% 55%',
+    },
+    darkVars: {
+      '--background': '250 25% 6%',
+      '--foreground': '240 20% 96%',
+      '--primary': '258 62% 60%',
+      '--card': '250 20% 9%',
+      '--secondary': '250 15% 15%',
+      '--muted': '250 15% 15%',
+      '--muted-foreground': '250 10% 55%',
+      '--border': '250 15% 18%',
+      '--ring': '258 62% 60%',
     },
   },
   calm: {
@@ -37,9 +50,22 @@ export const THEMES = {
       '--foreground': '215 30% 15%',
       '--primary': '210 60% 45%',
       '--card': '210 30% 99%',
+      '--secondary': '210 20% 93%',
       '--muted': '210 20% 93%',
       '--muted-foreground': '210 15% 50%',
       '--border': '210 20% 88%',
+      '--ring': '210 60% 45%',
+    },
+    darkVars: {
+      '--background': '210 30% 8%',
+      '--foreground': '210 20% 94%',
+      '--primary': '205 65% 60%',
+      '--card': '210 25% 11%',
+      '--secondary': '210 20% 16%',
+      '--muted': '210 20% 16%',
+      '--muted-foreground': '210 12% 60%',
+      '--border': '210 20% 20%',
+      '--ring': '205 65% 60%',
     },
   },
   highContrast: {
@@ -52,9 +78,22 @@ export const THEMES = {
       '--foreground': '0 0% 0%',
       '--primary': '270 100% 40%',
       '--card': '0 0% 98%',
+      '--secondary': '0 0% 92%',
       '--muted': '0 0% 92%',
       '--muted-foreground': '0 0% 20%',
       '--border': '0 0% 60%',
+      '--ring': '270 100% 40%',
+    },
+    darkVars: {
+      '--background': '0 0% 0%',
+      '--foreground': '0 0% 100%',
+      '--primary': '270 100% 70%',
+      '--card': '0 0% 7%',
+      '--secondary': '0 0% 14%',
+      '--muted': '0 0% 14%',
+      '--muted-foreground': '0 0% 85%',
+      '--border': '0 0% 70%',
+      '--ring': '270 100% 70%',
     },
   },
   warm: {
@@ -67,9 +106,22 @@ export const THEMES = {
       '--foreground': '30 25% 12%',
       '--primary': '25 70% 45%',
       '--card': '35 30% 99%',
+      '--secondary': '35 20% 93%',
       '--muted': '35 20% 93%',
       '--muted-foreground': '30 15% 50%',
       '--border': '30 20% 87%',
+      '--ring': '25 70% 45%',
+    },
+    darkVars: {
+      '--background': '30 20% 8%',
+      '--foreground': '35 20% 94%',
+      '--primary': '25 75% 58%',
+      '--card': '30 18% 11%',
+      '--secondary': '30 15% 16%',
+      '--muted': '30 15% 16%',
+      '--muted-foreground': '30 12% 62%',
+      '--border': '30 15% 20%',
+      '--ring': '25 75% 58%',
     },
   },
 };
@@ -108,18 +160,14 @@ function loadPrefs() {
 
 function applyTheme(themeId, darkMode) {
   const root = document.documentElement;
-  // Toggle dark class — CSS vars in .dark handle the dark palette
-  if (darkMode) {
-    root.classList.add('dark');
-    // Clear any light-mode color overrides so .dark vars take effect
-    Object.keys(THEMES.default.vars).forEach(key => root.style.removeProperty(key));
-  } else {
-    root.classList.remove('dark');
-    const theme = THEMES[themeId] || THEMES.default;
-    Object.entries(theme.vars).forEach(([key, val]) => {
-      root.style.setProperty(key, val);
-    });
-  }
+  root.classList.toggle('dark', darkMode);
+  // Every palette ships a light AND a dark set, so the chosen palette applies
+  // in either mode — picking a palette always visibly changes the app.
+  const theme = THEMES[themeId] || THEMES.default;
+  const vars = darkMode ? theme.darkVars : theme.vars;
+  Object.entries(vars).forEach(([key, val]) => {
+    root.style.setProperty(key, val);
+  });
 }
 
 function applyAccessibility(prefs) {
@@ -182,11 +230,10 @@ export function SensoryProvider({ children }) {
 
   const updatePref = useCallback((key, value) => {
     if (key === 'darkMode') manualDark.current = true;
-    setPrefs(prev => {
-      const next = { ...prev, [key]: value };
-      if (key === 'manualTheme') setActiveThemeId(value);
-      return next;
-    });
+    // Keep the active theme id in sync outside the state updater (updaters
+    // must stay pure — nesting a setState there can drop the change).
+    if (key === 'manualTheme') setActiveThemeId(value);
+    setPrefs(prev => ({ ...prev, [key]: value }));
   }, []);
 
   // Called from CheckIn when brain state is saved
