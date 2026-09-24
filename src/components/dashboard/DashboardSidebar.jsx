@@ -75,7 +75,8 @@ export default function DashboardSidebar({ user }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    base44.auth.me().then(u => setIsAdmin(u?.role === 'admin')).catch(() => {});
+    // Owner-only: the admin console is never exposed to other accounts
+    base44.auth.me().then(u => setIsAdmin(u?.role === 'admin' && u?.email === 'mandersofficial@gmail.com')).catch(() => {});
   }, []);
 
   // A tab stays selected on interior pages (like native apps): match the

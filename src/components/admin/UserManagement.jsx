@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import useDebouncedValue from '@/hooks/useDebouncedValue';
-import { Search, Shield, User, MoreHorizontal, ChevronDown, Trash2, Edit2, CheckCircle } from 'lucide-react';
+import { Search, MoreHorizontal, Trash2, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
@@ -20,7 +20,7 @@ const ROLE_CONFIG = {
   user: { label: 'User', color: 'text-muted-foreground bg-secondary' },
 };
 
-function UserRow({ user, onRoleChange, onDelete }) {
+function UserRow({ user, onDelete }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const role = ROLE_CONFIG[user.role] || ROLE_CONFIG.user;
 
@@ -57,13 +57,6 @@ function UserRow({ user, onRoleChange, onDelete }) {
           {menuOpen && (
             <div className="absolute right-0 top-full mt-1 z-10 bg-card border border-border rounded-xl shadow-lg py-1 min-w-[160px]">
               <button
-                onClick={() => { onRoleChange(user, user.role === 'admin' ? 'user' : 'admin'); setMenuOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-foreground hover:bg-secondary transition-colors"
-              >
-                <Shield className="w-3.5 h-3.5" />
-                {user.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
-              </button>
-              <button
                 onClick={() => { onDelete(user); setMenuOpen(false); }}
                 className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-destructive hover:bg-destructive/5 transition-colors"
               >
@@ -90,12 +83,6 @@ export default function UserManagement() {
   useEffect(() => {
     base44.entities.User.list().then(u => { setUsers(u); setLoading(false); });
   }, []);
-
-  const handleRoleChange = async (user, newRole) => {
-    await base44.entities.User.update(user.id, { role: newRole });
-    setUsers(users.map(u => u.id === user.id ? { ...u, role: newRole } : u));
-    showToast(`${user.full_name || user.email} is now ${newRole}`);
-  };
 
   const handleDelete = async (user) => {
     if (!confirm(`Delete ${user.email}? This cannot be undone.`)) return;
@@ -150,7 +137,7 @@ export default function UserManagement() {
                   <tr><td colSpan={5} className="text-center py-12 text-muted-foreground text-sm">No users found</td></tr>
                 ) : (
                   filtered.map(user => (
-                    <UserRow key={user.id} user={user} onRoleChange={handleRoleChange} onDelete={handleDelete} />
+                    <UserRow key={user.id} user={user} onDelete={handleDelete} />
                   ))
                 )}
               </tbody>
