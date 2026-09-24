@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { APP_BASE_URL } from '../../shared/appBaseUrl.ts';
 
 const TICKET_CATEGORIES = ['help', 'support', 'bug'];
 
@@ -42,8 +43,9 @@ export default async function(req) {
       try {
         const admins = await base44.asServiceRole.entities.User.filter({ role: 'admin' }, '-created_date', 10);
         if (admins && admins.length) {
-          const origin = req.headers.get('origin') || '';
-          const link = origin ? `${origin.replace(/\/$/, '')}/admin` : '';
+          // Link uses the app's own base URL — the Origin header is caller-supplied
+          // and must never be trusted inside an email sent to an admin.
+          const link = `${APP_BASE_URL}/admin`;
           const lines = [
             'A user replied to their support ticket on NeuroAligned.',
             '',
@@ -54,7 +56,7 @@ export default async function(req) {
             'Their reply:',
             newReply,
             '',
-            link ? `Open Support Tickets in your admin console: ${link}` : 'Manage this in your admin console under Support Tickets.',
+            `Open Support Tickets in your admin console: ${link}`,
           ].join('\n');
           await base44.asServiceRole.integrations.Core.SendEmail({
             to: admins[0].email,

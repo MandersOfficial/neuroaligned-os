@@ -1,4 +1,5 @@
 import { secrets } from "base44:runtime";
+import { APP_BASE_URL } from "../../shared/appBaseUrl.ts";
 
 // Creates a Stripe Checkout subscription session. Public app — the caller's
 // email is passed from the client (the Upgrade page requires a signed-in user
@@ -21,12 +22,8 @@ export default async function(req) {
       return Response.json({ error: "A valid signed-in email is required" }, { status: 400 });
     }
 
-    const origin = req.headers.get("origin") || "";
-    if (!origin) {
-      console.error("createCheckoutSession: missing origin header");
-      return Response.json({ error: "Missing origin" }, { status: 400 });
-    }
-
+    // Redirect targets come from the app's own canonical base URL — never from
+    // the caller-supplied Origin header, which would allow an open redirect.
     const appId = secrets.get("BASE44_APP_ID") || "";
     const params = new URLSearchParams();
     params.set("mode", "subscription");
@@ -34,8 +31,8 @@ export default async function(req) {
     params.set("line_items[0][price]", PRICE_IDS[plan]);
     params.set("line_items[0][quantity]", "1");
     params.set("customer_email", userEmail);
-    params.set("success_url", `${origin}/upgrade?session_id={CHECKOUT_SESSION_ID}`);
-    params.set("cancel_url", `${origin}/upgrade?canceled=1`);
+    params.set("success_url", `${APP_BASE_URL}/upgrade?session_id={CHECKOUT_SESSION_ID}`);
+    params.set("cancel_url", `${APP_BASE_URL}/upgrade?canceled=1`);
     params.set("metadata[base44_app_id]", appId);
     params.set("metadata[user_email]", userEmail);
     params.set("metadata[plan]", plan);
