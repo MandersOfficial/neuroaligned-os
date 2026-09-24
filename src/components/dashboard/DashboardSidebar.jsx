@@ -2,11 +2,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
-  BookOpen, Users, Zap, Eye, Moon, Sun, NotebookPen, TrendingUp, FolderKanban,
-  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors
+  BookOpen, Users, Zap, Moon, Sun, NotebookPen, TrendingUp, FolderKanban,
+  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors, Star, Settings as SettingsIcon
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import ReadAloudButton from '@/components/accessibility/ReadAloudButton';
+import VoiceDictation from '@/components/accessibility/VoiceDictation';
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
@@ -41,7 +42,8 @@ const NAV_GROUPS = [
   {
     label: 'Account & Support',
     items: [
-      { icon: Eye, label: 'Sensory', href: '/sensory' },
+      { icon: SettingsIcon, label: 'Settings', href: '/sensory' },
+      { icon: Star, label: 'Feedback', href: '/feedback' },
       { icon: LifeBuoy, label: 'Support', href: '/support' },
       { icon: HelpCircle, label: 'Help Center', href: '/help-center' },
       { icon: Shield, label: 'Privacy Policy', href: '/privacy' },
@@ -134,9 +136,10 @@ export default function DashboardSidebar({ user }) {
           {!collapsed && <span className="font-display font-bold text-sm text-foreground leading-tight">NeuroAligned OS</span>}
         </div>
 
-        {/* Read Aloud — under the logo so it never covers the chat */}
-        <div className="px-2 pt-2">
+        {/* Read Aloud + Dictate — under the logo so they never cover the chat */}
+        <div className="px-2 pt-2 space-y-0.5">
           <ReadAloudButton variant="sidebar" collapsed={collapsed} />
+          <VoiceDictation variant="sidebar" collapsed={collapsed} />
         </div>
 
         {/* Nav groups */}

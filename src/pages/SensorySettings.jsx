@@ -77,7 +77,7 @@ export default function SensorySettings() {
             <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
               <ArrowLeft className="w-3.5 h-3.5" /> Back
             </button>
-            <h1 className="font-display font-bold text-2xl sm:text-3xl text-foreground">Sensory Settings</h1>
+            <h1 className="font-display font-bold text-2xl sm:text-3xl text-foreground">Settings</h1>
             <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
               Customize how NeuroAligned looks and feels for your brain. Changes apply instantly and are saved to your device.
             </p>

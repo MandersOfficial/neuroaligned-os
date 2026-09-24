@@ -7,7 +7,7 @@ const TEXT_FIELD_SELECTOR = 'input[type="text"], input[type="search"], input[typ
  * Global voice-to-text dictation. The mic pill only appears while a text
  * input is actively focused; dictated text is inserted into that field.
  */
-export default function VoiceDictation() {
+export default function VoiceDictation({ variant = 'floating', collapsed = false }) {
   const [activeField, setActiveField] = useState(null);
   const [listening, setListening] = useState(false);
   const fieldRef = useRef(null);
@@ -87,21 +87,32 @@ export default function VoiceDictation() {
   const supported = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
   if (!supported || !activeField) return null;
 
+  const isSidebar = variant === 'sidebar';
+  const className = isSidebar
+    ? `w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+        collapsed ? 'justify-center px-0' : ''
+      } ${
+        listening
+          ? 'bg-red-600/10 text-red-600 border-red-600/30'
+          : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary'
+      }`
+    : `flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold shadow-lg border transition-colors ${
+        listening
+          ? 'bg-red-600 text-white border-red-600 animate-pulse-soft'
+          : 'bg-card text-foreground border-border hover:bg-secondary'
+      }`;
+
   return (
     <button
       data-dictation-pill
       type="button"
       onMouseDown={(e) => e.preventDefault()}
       onClick={toggle}
-      className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold shadow-lg border transition-colors ${
-        listening
-          ? 'bg-red-600 text-white border-red-600 animate-pulse-soft'
-          : 'bg-card text-foreground border-border hover:bg-secondary'
-      }`}
+      className={className}
       title={listening ? 'Stop dictation' : 'Dictate into this field'}
     >
       {listening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4 text-primary" />}
-      {listening ? 'Stop' : 'Dictate'}
+      {(!isSidebar || !collapsed) && (listening ? 'Stop' : 'Dictate')}
     </button>
   );
 }

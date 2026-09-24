@@ -41,6 +41,7 @@ const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 const IntegrationSettings = lazy(() => import('./pages/IntegrationSettings'));
 const HelpCenter = lazy(() => import('./pages/HelpCenter'));
 const Support = lazy(() => import('./pages/Support'));
+const Feedback = lazy(() => import('./pages/Feedback'));
 const TaskBreakdown = lazy(() => import('./pages/TaskBreakdown'));
 const FocusRoom = lazy(() => import('./pages/FocusRoom'));
 
@@ -128,6 +129,7 @@ const AuthenticatedApp = () => {
               <Route path="/disclaimer" element={<Disclaimer />} />
               <Route path="/help-center" element={<HelpCenter />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/feedback" element={<Feedback />} />
               <Route path="/task-breakdown" element={<TaskBreakdown />} />
               <Route path="*" element={<PageNotFound />} />
             </Routes>
