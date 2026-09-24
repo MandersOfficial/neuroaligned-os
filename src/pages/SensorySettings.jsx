@@ -6,6 +6,7 @@ import { useSensory, THEMES } from '../lib/SensoryContext';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import ReaderVoicePicker from '@/components/accessibility/ReaderVoicePicker';
 import EmailUpdateFrequency from '@/components/settings/EmailUpdateFrequency';
+import ThemePreview from '@/components/settings/ThemePreview';
 import { base44 } from '@/api/base44Client';
 
 export default function SensorySettings() {
@@ -89,7 +90,7 @@ export default function SensorySettings() {
               <Palette className="w-4 h-4 text-primary" />
               <h2 className="font-display font-semibold text-base text-foreground">Color Palette</h2>
             </div>
-            <p className="text-xs text-muted-foreground -mt-2">Pick the visual environment that works for your sensory needs.</p>
+            <p className="text-xs text-muted-foreground -mt-2">Pick the visual environment that works for your sensory needs. Each palette previews in both light and dark.</p>
 
             <div className="grid sm:grid-cols-2 gap-3">
               {Object.values(THEMES).map(theme => (
@@ -97,17 +98,20 @@ export default function SensorySettings() {
                   key={theme.id}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => updatePref('manualTheme', theme.id)}
-                  className={`relative flex items-start gap-3 p-4 rounded-xl border text-left transition-all ${
+                  className={`relative flex flex-col p-4 rounded-xl border text-left transition-all ${
                     prefs.manualTheme === theme.id
                       ? 'border-primary/50 bg-primary/5 shadow-sm'
                       : 'border-border/60 hover:border-primary/30 hover:bg-secondary/50'
                   }`}
                 >
-                  <span className="text-xl shrink-0">{theme.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">{theme.label}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{theme.description}</p>
+                  <div className="flex items-start gap-3">
+                    <span className="text-xl shrink-0">{theme.emoji}</span>
+                    <div className="flex-1 min-w-0 pr-5">
+                      <p className="text-sm font-semibold text-foreground">{theme.label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{theme.description}</p>
+                    </div>
                   </div>
+                  <ThemePreview theme={theme} darkMode={prefs.darkMode} />
                   {prefs.manualTheme === theme.id && (
                     <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
                       <Check className="w-3 h-3 text-white" />
