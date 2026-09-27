@@ -11,8 +11,10 @@ import {
   STATUS_SELECT_OPTIONS, PRIORITY_OPTIONS,
 } from '@/components/projects/projectMeta';
 import useSingleAction from '@/hooks/useSingleAction';
+import TaskForm from '@/components/tasks/TaskForm';
+import { spawnNextOccurrence } from '@/lib/taskRecurrence';
 
-export default function ProjectCard({ project, onUpdate, onDelete }) {
+export default function ProjectCard({ project, projects = [], onUpdate, onDelete }) {
   const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ ...project });
@@ -21,6 +23,7 @@ export default function ProjectCard({ project, onUpdate, onDelete }) {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [addingTask, setAddingTask] = useState(false);
   const [joiningMeet, setJoiningMeet] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
 
   const handleJoinMeet = async () => {
     setJoiningMeet(true);
@@ -56,7 +59,18 @@ export default function ProjectCard({ project, onUpdate, onDelete }) {
     const newStatus = task.status === 'done' ? 'todo' : 'done';
     const updated = await base44.entities.Task.update(task.id, { status: newStatus });
     setTasks(prev => prev.map(t => t.id === task.id ? { ...t, ...updated } : t));
+    // Completing a repeating task rolls it forward instead of losing it
+    if (newStatus === 'done' && task.recurrence && task.recurrence !== 'none') {
+      const next = await spawnNextOccurrence({ ...task, status: newStatus });
+      if (next) setTasks(prev => [...prev, next]);
+    }
   };
+
+  const handleSaveTask = useSingleAction(async (formData) => {
+    const updated = await base44.entities.Task.update(editingTask.id, formData);
+    setTasks(prev => prev.map(t => (t.id === editingTask.id ? { ...t, ...updated } : t)));
+    setEditingTask(null);
+  });
 
   const handleAddTask = useSingleAction(async () => {
     if (!newTaskTitle.trim()) return;
@@ -197,9 +211,13 @@ export default function ProjectCard({ project, onUpdate, onDelete }) {
                             ? <CheckCircle2 className="w-4 h-4 text-primary" />
                             : <Circle className="w-4 h-4 text-muted-foreground hover:text-primary transition-colors" />}
                         </button>
-                        <span className={`text-sm flex-1 ${task.status === 'done' ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
+                        <button
+                          onClick={() => setEditingTask(task)}
+                          title="Open task"
+                          className={`text-sm flex-1 text-left hover:underline ${task.status === 'done' ? 'line-through text-muted-foreground' : 'text-foreground'}`}
+                        >
                           {task.title}
-                        </span>
+                        </button>
                         {task.estimated_minutes && (
                           <span className="text-[10px] text-muted-foreground flex items-center gap-0.5 shrink-0">
                             <Clock className="w-3 h-3" />{task.estimated_minutes}m
@@ -237,6 +255,18 @@ export default function ProjectCard({ project, onUpdate, onDelete }) {
               </div>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Task editor — opens from a task row */}
+      <AnimatePresence>
+        {editingTask && (
+          <TaskForm
+            projects={projects}
+            task={editingTask}
+            onSave={handleSaveTask}
+            onClose={() => setEditingTask(null)}
+          />
         )}
       </AnimatePresence>
 

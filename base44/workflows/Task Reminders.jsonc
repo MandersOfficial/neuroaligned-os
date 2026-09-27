@@ -1,0 +1,45 @@
+{
+  "name": "Task Reminders",
+  "description": "Checks every hour for tasks whose reminder is due and emails the owner a short digest",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 * * * *",
+      "one_time_date": null,
+      "timezone": "America/Los_Angeles",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "task_reminders",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_reminders": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendTaskReminders",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send task reminders",
+            "description": "Emails any reminders that are due"
+          }
+        }
+      }
+    ]
+  }
+}

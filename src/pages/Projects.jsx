@@ -108,7 +108,7 @@ export default function Projects() {
             <div className="space-y-3">
               <AnimatePresence>
                 {filtered.map(p => (
-                  <ProjectCard key={p.id} project={p} onUpdate={handleUpdate} onDelete={handleDelete} />
+                  <ProjectCard key={p.id} project={p} projects={projects} onUpdate={handleUpdate} onDelete={handleDelete} />
                 ))}
               </AnimatePresence>
             </div>

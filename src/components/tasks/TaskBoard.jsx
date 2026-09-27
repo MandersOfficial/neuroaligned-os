@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Check, Clock, Flame, Zap, Leaf, Calendar, ChevronDown, Sparkles, Trash2, Info } from 'lucide-react';
+import { Check, Clock, Flame, Zap, Leaf, Calendar, ChevronDown, Sparkles, Trash2, Info, Edit2, Repeat, Bell } from 'lucide-react';
+import { spawnNextOccurrence } from '@/lib/taskRecurrence';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ENERGY_STATES } from '@/components/dashboard/EnergyCheckIn';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -24,7 +25,7 @@ const STATUS_COLS = [
   { id: 'done', label: 'Done', color: 'bg-green-100' },
 ];
 
-function TaskCard({ task, projects, recommended, onUpdate, onDelete }) {
+function TaskCard({ task, projects, recommended, onUpdate, onDelete, onEdit }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const energy = ENERGY_CONFIG[task.energy_required] || ENERGY_CONFIG.medium;
   const EnergyIcon = energy.icon;
@@ -89,6 +90,10 @@ function TaskCard({ task, projects, recommended, onUpdate, onDelete }) {
                 })}
               </div>
               <div className="border-t border-border/40 mt-1 pt-1">
+                <button onClick={() => { onEdit?.(task); setMenuOpen(false); }}
+                  className="w-full px-3 py-1.5 text-xs text-left text-foreground hover:bg-secondary flex items-center gap-1.5 transition-colors">
+                  <Edit2 className="w-3 h-3" /> Edit task
+                </button>
                 <button onClick={() => { onDelete(task); setMenuOpen(false); }}
                   className="w-full px-3 py-1.5 text-xs text-left text-destructive hover:bg-destructive/5 flex items-center gap-1.5 transition-colors">
                   <Trash2 className="w-3 h-3" /> Delete
@@ -122,12 +127,22 @@ function TaskCard({ task, projects, recommended, onUpdate, onDelete }) {
             {project.emoji} {project.name}
           </span>
         )}
+        {task.recurrence && task.recurrence !== 'none' && (
+          <span className="text-xs px-1.5 py-0.5 rounded-md bg-primary/10 text-primary flex items-center gap-1" title={`Repeats ${task.recurrence}`}>
+            <Repeat className="w-3 h-3" />{task.recurrence}
+          </span>
+        )}
+        {task.reminder_frequency && task.reminder_frequency !== 'none' && (
+          <span className="text-xs text-muted-foreground flex items-center gap-1" title={`Reminder ${task.reminder_frequency}`}>
+            <Bell className="w-3 h-3" />
+          </span>
+        )}
       </div>
     </motion.div>
   );
 }
 
-export default function TaskBoard({ tasks, projects, energy, recommendedIds, onTasksChange }) {
+export default function TaskBoard({ tasks, projects, energy, recommendedIds, onTasksChange, onEditTask }) {
   const energyState = ENERGY_STATES.find(s => s.value === energy) || ENERGY_STATES[1];
   const isFiltering = energyState.allowedEnergy.length < 3;
   const isMobile = useIsMobile();
@@ -154,6 +169,11 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
     try {
       const updated = await base44.entities.Task.update(task.id, changes);
       onTasksChange(prev => prev.map(t => (t.id === task.id ? { ...t, ...updated } : t)));
+      // Completing a repeating task rolls it forward instead of losing it
+      if (changes.status === 'done' && task.recurrence && task.recurrence !== 'none') {
+        const next = await spawnNextOccurrence({ ...task, ...changes });
+        if (next) onTasksChange(prev => [next, ...prev]);
+      }
     } catch {
       onTasksChange(prev => prev.map(t => (t.id === task.id ? task : t)));
     }
@@ -248,6 +268,7 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
                       recommended={recommendedIds.includes(task.id)}
                       onUpdate={handleUpdate}
                       onDelete={handleDelete}
+                      onEdit={onEditTask}
                     />
                   ))
                 )}

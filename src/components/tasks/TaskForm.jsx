@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { X, Calendar, Clock, Zap, FolderOpen, Flame, Leaf } from 'lucide-react';
+import { X, Calendar, Clock, Zap, FolderOpen, Flame, Leaf, Repeat, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import MobileSelect from '@/components/ui/MobileSelect';
+import TaskNotesEditor from './TaskNotesEditor';
 import { motion } from 'framer-motion';
 
 const ENERGY_OPTIONS = [
@@ -21,23 +22,59 @@ const CATEGORIES = [
   { value: 'planning', label: '🗺️ Planning' },
 ];
 
-export default function TaskForm({ projects, onSave, onClose, initialProjectId = '' }) {
+const STATUS_OPTIONS = [
+  { value: 'todo', label: 'To Do' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'done', label: 'Done' },
+  { value: 'deferred', label: 'Deferred' },
+];
+
+const RECURRENCE_OPTIONS = [
+  { value: 'none', label: 'Does not repeat' },
+  { value: 'daily', label: 'Every day' },
+  { value: 'weekly', label: 'Every week' },
+  { value: 'monthly', label: 'Every month' },
+];
+
+const REMINDER_OPTIONS = [
+  { value: 'none', label: 'No reminder' },
+  { value: 'hourly', label: 'Every hour' },
+  { value: 'daily', label: 'Every day' },
+  { value: 'weekly', label: 'Every week' },
+  { value: 'monthly', label: 'Every month' },
+];
+
+/**
+ * Create and edit a task in one place. Passing `task` switches it to edit mode
+ * and pre-fills every field, so nothing is lost when changing something.
+ */
+export default function TaskForm({ projects = [], task = null, initialProjectId = '', onSave, onClose }) {
+  const isEdit = !!task;
+
   const [form, setForm] = useState({
-    title: '',
-    description: '',
-    project_id: initialProjectId,
-    energy_required: 'medium',
-    category: 'deep_work',
-    due_date: '',
-    estimated_minutes: '',
-    is_today: false,
+    title: task?.title || '',
+    description: task?.description || '',
+    notes: task?.notes || [],
+    status: task?.status || 'todo',
+    project_id: task?.project_id || initialProjectId || '',
+    energy_required: task?.energy_required || 'medium',
+    category: task?.category || 'deep_work',
+    due_date: task?.due_date || '',
+    estimated_minutes: task?.estimated_minutes ?? '',
+    is_today: task?.is_today || false,
+    recurrence: task?.recurrence || 'none',
+    reminder_frequency: task?.reminder_frequency || 'none',
   });
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSave = () => {
     if (!form.title.trim()) return;
-    onSave({ ...form, status: 'todo', estimated_minutes: Number(form.estimated_minutes) || undefined });
+    onSave({
+      ...form,
+      title: form.title.trim(),
+      estimated_minutes: Number(form.estimated_minutes) || undefined,
+    });
   };
 
   return (
@@ -52,17 +89,19 @@ export default function TaskForm({ projects, onSave, onClose, initialProjectId =
         initial={{ scale: 0.95, y: 10 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.95, y: 10 }}
-        className="bg-card border border-border/60 rounded-2xl w-full max-w-lg shadow-2xl"
+        className="bg-card border border-border/60 rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
-          <h3 className="font-display font-semibold text-base text-foreground">New Task</h3>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border/40 shrink-0">
+          <h3 className="font-display font-semibold text-base text-foreground">
+            {isEdit ? 'Edit Task' : 'New Task'}
+          </h3>
           <button onClick={onClose} className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="p-6 space-y-5">
+        <div className="p-6 space-y-5 overflow-y-auto">
           {/* Title */}
           <div className="space-y-1.5">
             <Label className="text-sm font-medium">Task title</Label>
@@ -87,6 +126,9 @@ export default function TaskForm({ projects, onSave, onClose, initialProjectId =
               className="w-full px-3 py-2.5 text-sm rounded-xl border border-border/60 bg-background focus:outline-none focus:ring-1 focus:ring-primary resize-none text-foreground placeholder:text-muted-foreground"
             />
           </div>
+
+          {/* Notes — additive log */}
+          <TaskNotesEditor notes={form.notes} onChange={v => set('notes', v)} />
 
           {/* Energy */}
           <div className="space-y-2">
@@ -136,6 +178,21 @@ export default function TaskForm({ projects, onSave, onClose, initialProjectId =
             </div>
           </div>
 
+          {/* Status (edit only) */}
+          {isEdit && (
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Status</Label>
+              <MobileSelect
+                value={form.status}
+                onChange={v => set('status', v)}
+                options={STATUS_OPTIONS}
+                placeholder="Status"
+                label="Status"
+                className="border border-border rounded-xl px-3 py-2 text-sm bg-card h-9 w-full"
+              />
+            </div>
+          )}
+
           {/* Row: Date + Estimate */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
@@ -147,6 +204,43 @@ export default function TaskForm({ projects, onSave, onClose, initialProjectId =
               <Input type="number" placeholder="e.g. 30" value={form.estimated_minutes} onChange={e => set('estimated_minutes', e.target.value)} className="h-9 text-sm" />
             </div>
           </div>
+
+          {/* Row: Repeats + Reminder */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium flex items-center gap-1.5"><Repeat className="w-3.5 h-3.5" />Repeats</Label>
+              <MobileSelect
+                value={form.recurrence}
+                onChange={v => set('recurrence', v)}
+                options={RECURRENCE_OPTIONS}
+                placeholder="Does not repeat"
+                label="Repeats"
+                className="border border-border rounded-xl px-3 py-2 text-sm bg-card h-9 w-full"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium flex items-center gap-1.5"><Bell className="w-3.5 h-3.5" />Reminder</Label>
+              <MobileSelect
+                value={form.reminder_frequency}
+                onChange={v => set('reminder_frequency', v)}
+                options={REMINDER_OPTIONS}
+                placeholder="No reminder"
+                label="Reminder"
+                className="border border-border rounded-xl px-3 py-2 text-sm bg-card h-9 w-full"
+              />
+            </div>
+          </div>
+
+          {form.recurrence !== 'none' && (
+            <p className="text-xs text-muted-foreground bg-secondary/40 border border-border/40 rounded-xl px-3 py-2">
+              When you complete this task, the next one is created automatically.
+            </p>
+          )}
+          {form.reminder_frequency !== 'none' && (
+            <p className="text-xs text-muted-foreground bg-secondary/40 border border-border/40 rounded-xl px-3 py-2">
+              We'll email you a reminder every {form.reminder_frequency === 'hourly' ? 'hour' : form.reminder_frequency.replace('ly', '')} while it's open.
+            </p>
+          )}
 
           {/* Today toggle */}
           <label className="flex items-center gap-3 cursor-pointer">
@@ -162,10 +256,10 @@ export default function TaskForm({ projects, onSave, onClose, initialProjectId =
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-border/40 flex gap-3 justify-end">
+        <div className="px-6 py-4 border-t border-border/40 flex gap-3 justify-end shrink-0">
           <Button variant="ghost" onClick={onClose} className="rounded-full">Cancel</Button>
           <Button onClick={handleSave} disabled={!form.title.trim()} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
-            Create Task
+            {isEdit ? 'Save Changes' : 'Create Task'}
           </Button>
         </div>
       </motion.div>

@@ -29,6 +29,7 @@ export default function Tasks() {
   const [loading, setLoading] = useState(true);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [energyFilter, setEnergyFilter] = useState('all');
+  const [editingTask, setEditingTask] = useState(null);
 
   const load = async () => {
     const [t, p] = await Promise.all([
@@ -47,12 +48,24 @@ export default function Tasks() {
   useEffect(() => { load(); }, []);
   useAppRefresh(load);
 
-  const handleCreateTask = async (formData) => {
-    const task = await base44.entities.Task.create(formData);
-    setTasks(prev => [task, ...prev]);
+  // One save path for both creating and editing a task
+  const handleSaveTask = async (formData) => {
+    if (editingTask) {
+      const updated = await base44.entities.Task.update(editingTask.id, formData);
+      setTasks(prev => prev.map(t => (t.id === editingTask.id ? { ...t, ...updated } : t)));
+      setEditingTask(null);
+    } else {
+      const task = await base44.entities.Task.create(formData);
+      setTasks(prev => [task, ...prev]);
+    }
     setSortedTasks(null);
     setSortReasons({});
     setShowForm(false);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingTask(null);
   };
 
   const baseTasks = sortedTasks || tasks;
@@ -90,7 +103,7 @@ export default function Tasks() {
             isSorted={sortedTasks !== null}
           />
           <button
-            onClick={() => setShowForm(true)}
+            onClick={() => { setEditingTask(null); setShowForm(true); }}
             className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full text-sm font-semibold transition-colors"
           >
             <Plus className="w-4 h-4" />
@@ -163,6 +176,7 @@ export default function Tasks() {
             energy={energy}
             recommendedIds={recommendedIds}
             onTasksChange={setTasks}
+            onEditTask={t => { setEditingTask(t); setShowForm(true); }}
           />
         </div>
       </div>
@@ -180,9 +194,10 @@ export default function Tasks() {
         {showForm && (
           <TaskForm
             projects={projects}
+            task={editingTask}
             initialProjectId={selectedProjectId || ''}
-            onSave={handleCreateTask}
-            onClose={() => setShowForm(false)}
+            onSave={handleSaveTask}
+            onClose={closeForm}
           />
         )}
       </AnimatePresence>

@@ -10,6 +10,13 @@
       "type": "string",
       "title": "Description"
     },
+    "notes": {
+      "type": "array",
+      "title": "Notes",
+      "items": {
+        "type": "string"
+      }
+    },
     "status": {
       "type": "string",
       "title": "Status",
@@ -43,6 +50,10 @@
         "planning"
       ]
     },
+    "project_id": {
+      "type": "string",
+      "title": "Project"
+    },
     "due_date": {
       "type": "string",
       "format": "date",
@@ -70,6 +81,33 @@
         "delegate",
         "eliminate"
       ]
+    },
+    "recurrence": {
+      "type": "string",
+      "title": "Repeats",
+      "enum": [
+        "none",
+        "daily",
+        "weekly",
+        "monthly"
+      ],
+      "default": "none"
+    },
+    "reminder_frequency": {
+      "type": "string",
+      "title": "Reminder Frequency",
+      "enum": [
+        "none",
+        "hourly",
+        "daily",
+        "weekly",
+        "monthly"
+      ],
+      "default": "none"
+    },
+    "last_reminded_at": {
+      "type": "string",
+      "title": "Last Reminder Sent At"
     }
   },
   "required": [
