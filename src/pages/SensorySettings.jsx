@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon, Trash2, AlertTriangle, Volume2, Mail } from 'lucide-react';
+import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon, Trash2, AlertTriangle, Volume2, Mail, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSensory, THEMES } from '../lib/SensoryContext';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
@@ -8,6 +8,7 @@ import ReaderVoicePicker from '@/components/accessibility/ReaderVoicePicker';
 import EmailUpdateFrequency from '@/components/settings/EmailUpdateFrequency';
 import ThemePreview from '@/components/settings/ThemePreview';
 import { base44 } from '@/api/base44Client';
+import { getCommandMode, setCommandMode as persistCommandMode, subscribeCommandMode, loadCommandMode } from '@/lib/voiceCommandStore';
 
 export default function SensorySettings() {
   const { prefs, updatePref, activeThemeId } = useSensory();
@@ -15,10 +16,20 @@ export default function SensorySettings() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteInput, setDeleteInput] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [commandMode, setCommandMode] = useState(getCommandMode());
+  const [speechSupported] = useState(
+    () => typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition)
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => base44.auth.redirectToLogin('/sensory'));
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = subscribeCommandMode(setCommandMode);
+    loadCommandMode();
+    return unsubscribe;
   }, []);
 
   const handleDeleteAccount = async () => {
@@ -208,6 +219,29 @@ export default function SensorySettings() {
               label="Reduce motion & animations"
               description="Disables non-essential animations and transitions. Helpful for vestibular sensitivity, migraine, or sensory overload."
             />
+          </section>
+
+          {/* Voice Commands */}
+          <section className="bg-card border border-border/60 rounded-2xl p-6 space-y-1">
+            <div className="flex items-center gap-2 mb-4">
+              <Mic className="w-4 h-4 text-primary" />
+              <h2 className="font-display font-semibold text-base text-foreground">Voice Commands</h2>
+            </div>
+
+            <Toggle
+              checked={commandMode}
+              onChange={persistCommandMode}
+              icon={Mic}
+              color="bg-indigo-500"
+              label="Command Mode"
+              description="Speak commands like “go to tasks” or “set my focus mode to hyperfocus” instead of typing. Common phrases are matched instantly; anything else is understood by AI. While this is on, dictation pauses so the mic listens for instructions."
+            />
+
+            {!speechSupported && (
+              <p className="text-xs text-muted-foreground pt-3">
+                Speech recognition isn't available in this browser, so Command Mode can't be used here.
+              </p>
+            )}
           </section>
 
           {/* Reader Voice */}

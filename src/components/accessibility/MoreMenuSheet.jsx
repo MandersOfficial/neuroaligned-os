@@ -5,7 +5,6 @@ import {
 } from 'lucide-react';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import ReadAloudButton from '@/components/accessibility/ReadAloudButton';
-import CommandModeToggle from '@/components/accessibility/CommandModeToggle';
 import { requestDictate } from '@/lib/voiceCommandStore';
 
 // Everything in the sidebar that does not already have a bottom-bar tab
@@ -52,8 +51,6 @@ export default function MoreMenuSheet({ open, onOpenChange }) {
           <button type="button" onClick={startDictation} className={ROW}>
             <Mic className="w-4 h-4 shrink-0" /> Dictate
           </button>
-
-          <CommandModeToggle variant="sheet" />
 
           <div className="h-px bg-border my-3" />
 

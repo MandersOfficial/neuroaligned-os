@@ -9,7 +9,6 @@ import { useSensory } from '@/lib/SensoryContext';
 import ReadAloudButton from '@/components/accessibility/ReadAloudButton';
 import VoiceDictation from '@/components/accessibility/VoiceDictation';
 import CommandMic from '@/components/accessibility/CommandMic';
-import CommandModeToggle from '@/components/accessibility/CommandModeToggle';
 import MoreMenuSheet from '@/components/accessibility/MoreMenuSheet';
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
@@ -152,7 +151,6 @@ export default function DashboardSidebar({ user }) {
             <div className="space-y-0.5">
               <ReadAloudButton variant="sidebar" collapsed={collapsed} />
               <VoiceDictation variant="sidebar" collapsed={collapsed} />
-              <CommandModeToggle variant="sidebar" collapsed={collapsed} />
               <CommandMic variant="sidebar" collapsed={collapsed} />
             </div>
           </div>
