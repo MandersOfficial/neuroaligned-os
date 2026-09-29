@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 import Logo from '@/components/landing/v2/Logo';
 
 export default function Navbar() {
@@ -22,7 +23,7 @@ export default function Navbar() {
           </div>
         </div>
         <div className="nav-cta">
-          <button className="nav-login" onClick={() => navigate('/login')}>Log in</button>
+          <button className="nav-login" onClick={() => base44.auth.redirectToLogin('/dashboard')}>Log in</button>
           <a
             href="#start"
             className="btn btn-primary btn-sm"
@@ -46,7 +47,7 @@ export default function Navbar() {
         <a href="#features" onClick={() => setOpen(false)}>Features</a>
         <a href="#stories" onClick={() => setOpen(false)}>Stories</a>
         <a href="#faq" onClick={() => setOpen(false)}>FAQ</a>
-        <button className="nav-menu-login" onClick={() => { setOpen(false); navigate('/login'); }}>Log in</button>
+        <button className="nav-menu-login" onClick={() => { setOpen(false); base44.auth.redirectToLogin('/dashboard'); }}>Log in</button>
       </div>
     </header>
   );
