@@ -12,6 +12,7 @@ import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import GlobalPullToRefresh from '@/components/GlobalPullToRefresh';
 import GlobalVoiceAssistant from '@/components/accessibility/GlobalVoiceAssistant';
 import AppShell from '@/components/workspace/AppShell';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 // Lazily-loaded pages — keeps the initial bundle small for faster first paint on mobile
 const Login = lazy(() => import('./pages/Login'));
@@ -102,35 +103,39 @@ const AuthenticatedApp = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/" element={<Landing />} />
-              <Route path="/onboarding" element={<Onboarding />} />
-              {/* Core workspace — shared shell handles sidebar, safe areas & auth */}
-              <Route element={<AppShell />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/tasks" element={<Tasks />} />
-                <Route path="/projects" element={<Projects />} />
-                <Route path="/journal" element={<Journal />} />
-                <Route path="/focus-modes" element={<FocusModes />} />
-                <Route path="/integration-settings" element={<IntegrationSettings />} />
-              </Route>
-              <Route path="/focus-room" element={<FocusRoom />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/integrations" element={<Navigate to="/integration-settings" replace />} />
-              <Route path="/burnout" element={<BurnoutRisk />} />
-              <Route path="/knowledge" element={<KnowledgeBase />} />
-              <Route path="/upgrade" element={<Upgrade />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
-              <Route path="/check-in" element={<CheckIn />} />
-              <Route path="/sensory" element={<SensorySettings />} />
-              <Route path="/productivity" element={<Productivity />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/regulation-first" element={<RegulationFirst />} />
               <Route path="/disclaimer" element={<Disclaimer />} />
               <Route path="/help-center" element={<HelpCenter />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="/feedback" element={<Feedback />} />
-              <Route path="/task-breakdown" element={<TaskBreakdown />} />
+
+              {/* Members only — visitors without a session land on the login page */}
+              <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+                <Route path="/onboarding" element={<Onboarding />} />
+                {/* Core workspace — shared shell handles sidebar and safe areas */}
+                <Route element={<AppShell />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/tasks" element={<Tasks />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/journal" element={<Journal />} />
+                  <Route path="/focus-modes" element={<FocusModes />} />
+                  <Route path="/integration-settings" element={<IntegrationSettings />} />
+                </Route>
+                <Route path="/focus-room" element={<FocusRoom />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/integrations" element={<Navigate to="/integration-settings" replace />} />
+                <Route path="/burnout" element={<BurnoutRisk />} />
+                <Route path="/knowledge" element={<KnowledgeBase />} />
+                <Route path="/upgrade" element={<Upgrade />} />
+                <Route path="/check-in" element={<CheckIn />} />
+                <Route path="/sensory" element={<SensorySettings />} />
+                <Route path="/productivity" element={<Productivity />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/feedback" element={<Feedback />} />
+                <Route path="/task-breakdown" element={<TaskBreakdown />} />
+              </Route>
               <Route path="*" element={<PageNotFound />} />
             </Routes>
           </Suspense>
