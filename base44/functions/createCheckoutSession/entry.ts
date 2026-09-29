@@ -1,14 +1,28 @@
+import { createClientFromRequest } from "npm:@base44/sdk@0.8.52";
 import { secrets } from "base44:runtime";
 import { APP_BASE_URL } from "../../shared/appBaseUrl.ts";
 
-// Creates a Stripe Checkout subscription session. Public app — the caller's
-// email is passed from the client (the Upgrade page requires a signed-in user
-// in practice), no auth lookup here.
+// Creates a Stripe Checkout subscription session for the signed-in member.
+// The buyer's email is taken from the authenticated session, never from the
+// request body — otherwise any anonymous caller could put a victim's address in
+// the session metadata and have the webhook overwrite that user's Subscription
+// record (downgrade or cancel a paying customer).
 export default async function(req) {
   try {
+    const base44 = createClientFromRequest(req);
+    let user = null;
+    try {
+      user = await base44.auth.me();
+    } catch {
+      user = null;
+    }
+    if (!user?.email) {
+      return Response.json({ error: "Please sign in to continue" }, { status: 401 });
+    }
+
     const body = await req.json();
     const plan = String(body.plan || "");
-    const userEmail = String(body.user_email || "").trim().toLowerCase();
+    const userEmail = String(user.email).trim().toLowerCase();
 
     const PRICE_IDS = {
       starter: secrets.get("STRIPE_PRICE_STARTER"),

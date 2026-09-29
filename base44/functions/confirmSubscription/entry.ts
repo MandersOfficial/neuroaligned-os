@@ -7,6 +7,16 @@ import { secrets } from "base44:runtime";
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    let caller = null;
+    try {
+      caller = await base44.auth.me();
+    } catch {
+      caller = null;
+    }
+    if (!caller?.email) {
+      return Response.json({ error: "Please sign in to continue" }, { status: 401 });
+    }
+
     const body = await req.json();
     const sessionId = String(body.session_id || "").trim();
 
@@ -39,6 +49,14 @@ export default async function(req) {
     if (!plan || !userEmail) {
       console.error("confirmSubscription: session missing metadata", session.id);
       return Response.json({ error: "Missing payment metadata" }, { status: 400 });
+    }
+
+    // Trust boundary: the metadata email was written by createCheckoutSession
+    // from the signed-in buyer, so it must match the caller here. A session id
+    // that belongs to someone else can't be used to write their record.
+    if (String(caller.email).toLowerCase() !== userEmail) {
+      console.error("confirmSubscription: caller does not own session", session.id);
+      return Response.json({ error: "Session does not belong to this account" }, { status: 403 });
     }
 
     const sub = session.subscription || {};
