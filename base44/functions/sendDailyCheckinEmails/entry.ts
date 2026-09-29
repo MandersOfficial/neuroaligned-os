@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { isOwnerAdmin } from "../../shared/adminGate.ts";
+import { APP_BASE_URL } from "../../shared/appBaseUrl.ts";
+import { sendUserPush, PUSH_PREFS } from "../../shared/pushNotifications.ts";
 
 const BRAIN_STATE_MESSAGES = {
   overwhelmed: {
@@ -83,9 +85,13 @@ Deno.serve(async (req) => {
       return Response.json({ sent: 0, message: 'No users opted into daily check-in.' });
     }
 
+    const users = await base44.asServiceRole.entities.User.list('-created_date', 1000);
+    const idByEmail = new Map(users.map(u => [u.email, u.id]));
+
     const checkinUrl = `${req.headers.get('origin') || 'https://neuroaligned.app'}/check-in`;
 
     let sent = 0;
+    let pushed = 0;
     const errors = [];
 
     for (const profile of profiles) {
@@ -118,13 +124,26 @@ Change it anytime in the app under Settings → Email Updates.
       } catch (emailErr) {
         errors.push({ email: profile.user_email, error: emailErr.message });
       }
+
+      // Nudge the member's phone too, if they opted into check-in pushes
+      const pushResult = await sendUserPush(base44, {
+        userId: idByEmail.get(profile.user_email),
+        profile,
+        preferenceKey: PUSH_PREFS.checkinNudge,
+        title: 'Your daily check-in is ready 🧠',
+        content: 'Two minutes to see where your energy is today.',
+        actionLabel: 'Check in',
+        actionUrl: `${APP_BASE_URL}/check-in`,
+      });
+      if (pushResult === 'sent') pushed++;
     }
 
     return Response.json({
       sent,
+      pushed,
       total: profiles.length,
       errors: errors.length > 0 ? errors : undefined,
-      message: `Successfully sent ${sent} of ${profiles.length} check-in emails.`,
+      message: `Successfully sent ${sent} of ${profiles.length} check-in emails and ${pushed} push notification(s).`,
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

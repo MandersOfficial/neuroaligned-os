@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon, Trash2, AlertTriangle, Volume2, Mail, Mic } from 'lucide-react';
+import { ArrowLeft, Eye, Type, Zap, Palette, Check, Wind, Moon, Trash2, AlertTriangle, Volume2, Mail, Mic, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSensory, THEMES } from '../lib/SensoryContext';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import ReaderVoicePicker from '@/components/accessibility/ReaderVoicePicker';
 import EmailUpdateFrequency from '@/components/settings/EmailUpdateFrequency';
+import PushNotificationSettings from '@/components/settings/PushNotificationSettings';
 import ThemePreview from '@/components/settings/ThemePreview';
 import { base44 } from '@/api/base44Client';
 import { getCommandMode, setCommandMode as persistCommandMode, subscribeCommandMode, loadCommandMode } from '@/lib/voiceCommandStore';
@@ -266,6 +267,18 @@ export default function SensorySettings() {
               Choose how often NeuroAligned emails you — daily or weekly. Prefer no email at all? That works too.
             </p>
             <EmailUpdateFrequency />
+          </section>
+
+          {/* Push Notifications */}
+          <section className="bg-card border border-border/60 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center gap-2 mb-1">
+              <Bell className="w-4 h-4 text-primary" />
+              <h2 className="font-display font-semibold text-base text-foreground">Push Notifications</h2>
+            </div>
+            <p className="text-xs text-muted-foreground -mt-2">
+              Choose what reaches your phone. Nothing is sent unless you turn it on here, and you can switch any type off on its own.
+            </p>
+            <PushNotificationSettings />
           </section>
 
           {/* Current state indicator */}

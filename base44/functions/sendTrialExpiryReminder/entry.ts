@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { isOwnerAdmin } from "../../shared/adminGate.ts";
+import { APP_BASE_URL } from "../../shared/appBaseUrl.ts";
+import { sendUserPush, PUSH_PREFS } from "../../shared/pushNotifications.ts";
 
 Deno.serve(async (req) => {
   try {
@@ -22,12 +24,12 @@ Deno.serve(async (req) => {
       status: 'trialing',
     });
 
-    if (!subs || subs.length === 0) {
-      return Response.json({ sent: 0, message: 'No trials expiring in 3 days.' });
-    }
+    const users = await base44.asServiceRole.entities.User.list('-created_date', 1000);
+    const idByEmail = new Map(users.map(u => [u.email, u.id]));
 
     let sent = 0;
-    for (const sub of subs) {
+    let pushed = 0;
+    for (const sub of (subs || [])) {
       if (!sub.user_email) continue;
 
       // Get their profile for personalization
@@ -59,9 +61,40 @@ If you have questions about which plan is right for your brain, just reply to th
 `,
       });
       sent++;
+
+      const pushResult = await sendUserPush(base44, {
+        userId: idByEmail.get(sub.user_email),
+        profile,
+        preferenceKey: PUSH_PREFS.billingUpdates,
+        title: 'Your free trial ends in 3 days ⏳',
+        content: 'Upgrade to keep your focus modes, tasks and check-in history.',
+        actionLabel: 'See plans',
+        actionUrl: `${APP_BASE_URL}/upgrade`,
+      });
+      if (pushResult === 'sent') pushed++;
     }
 
-    return Response.json({ sent, total: subs.length });
+    // Billing problems: a past-due subscription gets a push (no extra email)
+    const pastDue = await base44.asServiceRole.entities.Subscription.filter({ status: 'past_due' });
+
+    for (const sub of (pastDue || [])) {
+      if (!sub.user_email) continue;
+      const pastDueProfiles = await base44.asServiceRole.entities.UserProfile.filter({
+        user_email: sub.user_email,
+      });
+      const pastDueResult = await sendUserPush(base44, {
+        userId: idByEmail.get(sub.user_email),
+        profile: pastDueProfiles[0],
+        preferenceKey: PUSH_PREFS.billingUpdates,
+        title: 'Payment problem on your subscription',
+        content: 'We could not process your last payment. Update your card to keep your workspace.',
+        actionLabel: 'Fix payment',
+        actionUrl: `${APP_BASE_URL}/upgrade`,
+      });
+      if (pastDueResult === 'sent') pushed++;
+    }
+
+    return Response.json({ sent, pushed, total: (subs || []).length });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

@@ -132,6 +132,26 @@
       "type": "boolean",
       "title": "Voice Command Mode",
       "default": false
+    },
+    "push_notifications": {
+      "type": "boolean",
+      "title": "Push Notifications",
+      "default": false
+    },
+    "push_task_reminders": {
+      "type": "boolean",
+      "title": "Push Task Reminders",
+      "default": true
+    },
+    "push_checkin_nudge": {
+      "type": "boolean",
+      "title": "Push Check-in Nudge",
+      "default": true
+    },
+    "push_billing_updates": {
+      "type": "boolean",
+      "title": "Push Billing Updates",
+      "default": true
     }
   },
   "required": [

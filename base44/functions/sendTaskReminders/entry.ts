@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.49';
 import { isOwnerAdmin } from "../../shared/adminGate.ts";
 import { APP_BASE_URL } from "../../shared/appBaseUrl.ts";
+import { sendUserPush, PUSH_PREFS } from "../../shared/pushNotifications.ts";
 
 // How long to wait between reminders for each frequency (in hours)
 const INTERVAL_HOURS = {
@@ -32,12 +33,14 @@ export default async function (req) {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const [tasks, users] = await Promise.all([
+    const [tasks, users, profiles] = await Promise.all([
       base44.asServiceRole.entities.Task.list('-created_date', 1000),
       base44.asServiceRole.entities.User.list('-created_date', 1000),
+      base44.asServiceRole.entities.UserProfile.list('-created_date', 1000),
     ]);
 
     const emailById = new Map(users.map(u => [u.id, u.email]));
+    const profileByEmail = new Map(profiles.map(p => [p.user_email, p]));
     const now = Date.now();
 
     const dueTasks = tasks.filter(t => {
@@ -65,6 +68,7 @@ export default async function (req) {
     const errors = [];
     const remindedIds = [];
     let sent = 0;
+    let pushed = 0;
 
     for (const [email, ownerTasks] of byEmail) {
       const list = ownerTasks
@@ -99,6 +103,19 @@ Change or remove the reminder anytime by editing the task.
       } catch (emailErr) {
         errors.push({ email, error: emailErr.message });
       }
+
+      // Same digest to the member's phone, if they opted into push reminders
+      const pushResult = await sendUserPush(base44, {
+        userId: ownerTasks[0].created_by_id,
+        profile: profileByEmail.get(email),
+        preferenceKey: PUSH_PREFS.taskReminders,
+        title: ownerTasks.length === 1 ? 'Task reminder' : `${ownerTasks.length} task reminders`,
+        content: ownerTasks.slice(0, 3).map(t => t.title).join(' · ')
+          + (ownerTasks.length > 3 ? ` +${ownerTasks.length - 3} more` : ''),
+        actionLabel: 'Open tasks',
+        actionUrl: `${APP_BASE_URL}/tasks`,
+      });
+      if (pushResult === 'sent') pushed++;
     }
 
     if (remindedIds.length > 0) {
@@ -110,9 +127,10 @@ Change or remove the reminder anytime by editing the task.
 
     return Response.json({
       sent,
+      pushed,
       tasks: remindedIds.length,
       errors: errors.length > 0 ? errors : undefined,
-      message: `Sent ${sent} reminder email(s) covering ${remindedIds.length} task(s).`,
+      message: `Sent ${sent} reminder email(s) and ${pushed} push notification(s) covering ${remindedIds.length} task(s).`,
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
