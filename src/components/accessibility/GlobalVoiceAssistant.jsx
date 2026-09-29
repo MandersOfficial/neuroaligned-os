@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import ReadAloudButton from '@/components/accessibility/ReadAloudButton';
 import VoiceDictation from '@/components/accessibility/VoiceDictation';
+import CommandMic from '@/components/accessibility/CommandMic';
 
 /**
- * Global voice + accessibility controls for authenticated users. Floating on
- * the right edge so it never covers the left-hand sidebar; dictation only
- * appears while a text input is focused.
+ * Floating voice controls for authenticated users. Read Aloud, Dictate and the
+ * Command Mode switch live in the app's own menus (sidebar on desktop, More
+ * sheet on mobile) — this only carries the contextual dictation pill and, on
+ * mobile, the Command Mode mic.
  */
 export default function GlobalVoiceAssistant() {
   const [authed, setAuthed] = useState(false);
@@ -20,10 +21,8 @@ export default function GlobalVoiceAssistant() {
   return (
     <div className="fixed right-4 bottom-24 md:bottom-6 z-[60] flex flex-col items-end gap-2">
       <VoiceDictation />
-      {/* Read Aloud lives under the sidebar logo on desktop; only floats here on
-          mobile, where there is no sidebar. */}
       <div className="md:hidden">
-        <ReadAloudButton />
+        <CommandMic />
       </div>
     </div>
   );

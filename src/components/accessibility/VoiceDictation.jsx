@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff } from 'lucide-react';
+import { getCommandMode, subscribeCommandMode, loadCommandMode, subscribeDictateRequest } from '@/lib/voiceCommandStore';
 
 const TEXT_FIELD_SELECTOR = 'input[type="text"], input[type="search"], input[type="email"], input[type="url"], input[type="tel"], input:not([type]), textarea, [contenteditable="true"]';
 
@@ -10,6 +11,10 @@ const TEXT_FIELD_SELECTOR = 'input[type="text"], input[type="search"], input[typ
 export default function VoiceDictation({ variant = 'floating', collapsed = false }) {
   const [activeField, setActiveField] = useState(null);
   const [listening, setListening] = useState(false);
+  // Command Mode takes over the mic, so dictation stands down while it is on
+  const [commandMode, setCommandMode] = useState(getCommandMode());
+  // Set when "Dictate" is picked from the More sheet: start on the next field tap
+  const [pendingStart, setPendingStart] = useState(false);
   const fieldRef = useRef(null);
   const recognitionRef = useRef(null);
 
@@ -18,6 +23,14 @@ export default function VoiceDictation({ variant = 'floating', collapsed = false
     recognitionRef.current = null;
     setListening(false);
   };
+
+  useEffect(() => {
+    const unsubscribe = subscribeCommandMode(setCommandMode);
+    loadCommandMode();
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => subscribeDictateRequest(() => setPendingStart(true)), []);
 
   useEffect(() => {
     const onFocusIn = (e) => {
@@ -84,8 +97,16 @@ export default function VoiceDictation({ variant = 'floating', collapsed = false
     setListening(true);
   };
 
+  // "Dictate" from the More sheet: begin as soon as the member taps a field
+  useEffect(() => {
+    if (pendingStart && activeField && !listening) {
+      setPendingStart(false);
+      toggle();
+    }
+  }, [pendingStart, activeField, listening]);
+
   const supported = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
-  if (!supported || !activeField) return null;
+  if (!supported || !activeField || commandMode) return null;
 
   const isSidebar = variant === 'sidebar';
   const className = isSidebar

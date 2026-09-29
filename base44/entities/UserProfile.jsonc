@@ -127,6 +127,11 @@
         "none"
       ],
       "default": "weekly"
+    },
+    "voice_command_mode": {
+      "type": "boolean",
+      "title": "Voice Command Mode",
+      "default": false
     }
   },
   "required": [

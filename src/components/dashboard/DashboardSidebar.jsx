@@ -3,11 +3,14 @@ import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
   BookOpen, Users, Zap, Moon, Sun, NotebookPen, TrendingUp, FolderKanban,
-  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors, Star, Settings as SettingsIcon
+  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors, Star, Settings as SettingsIcon, Menu
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import ReadAloudButton from '@/components/accessibility/ReadAloudButton';
 import VoiceDictation from '@/components/accessibility/VoiceDictation';
+import CommandMic from '@/components/accessibility/CommandMic';
+import CommandModeToggle from '@/components/accessibility/CommandModeToggle';
+import MoreMenuSheet from '@/components/accessibility/MoreMenuSheet';
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
@@ -64,6 +67,7 @@ const TAB_PATHS_KEY = 'na_tab_paths';
 export default function DashboardSidebar({ user }) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   // Bottom-tab selection that survives navigation to interior pages and reloads
   const [lastTab, setLastTab] = useState(() => localStorage.getItem('na_last_tab') || '/dashboard');
@@ -137,14 +141,21 @@ export default function DashboardSidebar({ user }) {
           {!collapsed && <span className="font-display font-bold text-sm text-foreground leading-tight">NeuroAligned OS</span>}
         </div>
 
-        {/* Read Aloud + Dictate — under the logo so they never cover the chat */}
-        <div className="px-2 pt-2 space-y-0.5">
-          <ReadAloudButton variant="sidebar" collapsed={collapsed} />
-          <VoiceDictation variant="sidebar" collapsed={collapsed} />
-        </div>
-
-        {/* Nav groups */}
+        {/* Nav groups — the voice tools lead the list so they never cover the chat */}
         <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
+          <div>
+            {!collapsed && (
+              <p className="text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-widest px-3 mb-1">
+                Voice
+              </p>
+            )}
+            <div className="space-y-0.5">
+              <ReadAloudButton variant="sidebar" collapsed={collapsed} />
+              <VoiceDictation variant="sidebar" collapsed={collapsed} />
+              <CommandModeToggle variant="sidebar" collapsed={collapsed} />
+              <CommandMic variant="sidebar" collapsed={collapsed} />
+            </div>
+          </div>
           {NAV_GROUPS.map(group => (
             <div key={group.label}>
               {!collapsed && (
@@ -264,7 +275,20 @@ export default function DashboardSidebar({ user }) {
             </Link>
           );
         })}
+        <button
+          type="button"
+          onClick={() => setMoreOpen(true)}
+          className={cn(
+            'flex-1 flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-medium transition-colors min-w-0',
+            moreOpen ? 'text-primary' : 'text-muted-foreground'
+          )}
+        >
+          <Menu className="w-5 h-5 shrink-0" />
+          <span className="truncate w-full text-center">More</span>
+        </button>
       </nav>
+
+      <MoreMenuSheet open={moreOpen} onOpenChange={setMoreOpen} />
     </>
   );
 }
