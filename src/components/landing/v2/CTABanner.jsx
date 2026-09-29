@@ -9,7 +9,7 @@ export default function CTABanner() {
           <div className="cta-inner">
             <h2>Start building a business your brain can actually sustain.</h2>
             <p>Set up your OS in about ten minutes. No diagnosis required — just a brain that’s done fighting itself.</p>
-            <button className="btn btn-primary" onClick={() => navigate('/onboarding')}>Start your free trial</button>
+            <button className="btn btn-primary" onClick={() => navigate('/register')}>Start your free trial</button>
             <div className="cta-fine">No credit card required · Cancel anytime</div>
           </div>
         </div>

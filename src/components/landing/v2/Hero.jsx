@@ -42,7 +42,7 @@ export default function Hero() {
 
   const handleStart = () => {
     Analytics.heroCTAClicked();
-    navigate('/onboarding');
+    navigate('/register');
   };
 
   return (
