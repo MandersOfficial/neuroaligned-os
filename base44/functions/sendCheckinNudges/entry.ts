@@ -3,6 +3,7 @@ import { isOwnerAdmin } from "../../shared/adminGate.ts";
 import { APP_BASE_URL } from "../../shared/appBaseUrl.ts";
 import { sendUserPush, PUSH_PREFS } from "../../shared/pushNotifications.ts";
 import { isPreferredHour, DEFAULT_CHECKIN_TIME } from "../../shared/notificationSchedule.ts";
+import { nudgeForEnergyLevel } from "../../shared/checkinNudgeContent.ts";
 
 /**
  * Sends the daily check-in push nudge to every member who opted in, but only
@@ -49,12 +50,16 @@ export default async function (req) {
         continue;
       }
 
+      // Asks about their energy and names the grounding task that fits the
+      // state they reported last time.
+      const nudge = nudgeForEnergyLevel(profile.last_brain_state);
+
       const result = await sendUserPush(base44, {
         userId: idByEmail.get(profile.user_email),
         profile,
         preferenceKey: PUSH_PREFS.checkinNudge,
-        title: 'Your daily check-in is ready 🧠',
-        content: 'Two minutes to see where your energy is today.',
+        title: nudge.title,
+        content: nudge.content,
         actionLabel: 'Check in',
         actionUrl: `${APP_BASE_URL}/check-in`,
       });
