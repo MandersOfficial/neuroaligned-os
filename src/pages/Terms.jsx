@@ -61,11 +61,11 @@ One trial per person and per household. Creating multiple accounts to obtain add
   },
   {
     title: '6. Refund Policy',
-    content: `We offer a 30-day money-back guarantee on your first subscription payment. If you are not satisfied within the first 30 days of your paid subscription, contact us at support@neuroaligned.com for a full refund.
+    content: `We offer a 30-day money-back guarantee on your first subscription payment. If you are not satisfied within the first 30 days of your paid subscription, contact us at support@neuroaligned.app for a full refund.
 
 Subsequent payments are non-refundable except where required by applicable law. We do not offer prorated refunds for partial months.
 
-To request a refund, email support@neuroaligned.com with your account email and reason. We will process eligible refunds within 5–10 business days.`,
+To request a refund, email support@neuroaligned.app with your account email and reason. We will process eligible refunds within 5–10 business days.`,
   },
   {
     title: '7. FTC Disclosure — Results & Testimonials',
@@ -140,9 +140,9 @@ You agree to resolve disputes individually and waive the right to participate in
     title: '16. Contact',
     content: `Questions about these Terms? Contact us:
 
-Email: legal@neuroaligned.com
-Support: support@neuroaligned.com
-General: hello@neuroaligned.com
+Email: legal@neuroaligned.app
+Support: support@neuroaligned.app
+General: hello@neuroaligned.app
 
 NeuroAligned — In partnership with Amanda White (mandawhite.com)
 2026`,

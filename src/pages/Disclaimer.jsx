@@ -106,7 +106,7 @@ We are not responsible for the content, accuracy, privacy practices, or terms of
         ))}
 
         <p className="text-xs text-muted-foreground text-center">
-          Questions? Contact us at <a href="mailto:legal@neuroaligned.com" className="text-primary hover:underline">legal@neuroaligned.com</a>
+          Questions? Contact us at <a href="mailto:legal@neuroaligned.app" className="text-primary hover:underline">legal@neuroaligned.app</a>
         </p>
       </main>
     </div>

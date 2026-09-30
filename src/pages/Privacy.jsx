@@ -117,7 +117,7 @@ Journal entries, check-in data, and productivity logs are deleted within 30 days
 
 California residents may have additional rights under the California Consumer Privacy Act (CCPA), including the right to know what personal information is collected, the right to delete, and the right to opt out of sale (we do not sell data).
 
-To exercise any of these rights, contact us at privacy@neuroaligned.com. We will respond within 30 days.`,
+To exercise any of these rights, contact us at privacy@neuroaligned.app. We will respond within 30 days.`,
   },
   {
     title: '11. Cookies & Tracking',
@@ -137,7 +137,7 @@ In the event of a data breach that affects your personal data, we will notify yo
   },
   {
     title: '13. Children\'s Privacy',
-    content: `NeuroAligned is intended for users aged 16 and older. We do not knowingly collect personal data from anyone under 16. If you are a parent or guardian and believe your child has provided personal data, contact us at privacy@neuroaligned.com and we will delete it promptly.`,
+    content: `NeuroAligned is intended for users aged 16 and older. We do not knowingly collect personal data from anyone under 16. If you are a parent or guardian and believe your child has provided personal data, contact us at privacy@neuroaligned.app and we will delete it promptly.`,
   },
   {
     title: '14. Changes to This Policy',
@@ -147,9 +147,9 @@ In the event of a data breach that affects your personal data, we will notify yo
     title: '15. Contact & Data Requests',
     content: `For privacy questions, data access requests, or to exercise your rights:
 
-Email: privacy@neuroaligned.com
-General: hello@neuroaligned.com
-Legal: legal@neuroaligned.com
+Email: privacy@neuroaligned.app
+General: hello@neuroaligned.app
+Legal: legal@neuroaligned.app
 
 NeuroAligned — In partnership with Amanda White (mandawhite.com)
 2026`,

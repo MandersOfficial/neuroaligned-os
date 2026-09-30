@@ -109,10 +109,10 @@ export default function Contact() {
           <h3 className="font-display font-semibold text-base text-foreground">Email Contacts</h3>
           <div className="space-y-3 text-sm">
             {[
-              { label: 'General enquiries', email: 'hello@neuroaligned.com' },
-              { label: 'Support', email: 'support@neuroaligned.com' },
-              { label: 'Privacy & data requests', email: 'privacy@neuroaligned.com' },
-              { label: 'Legal & compliance', email: 'legal@neuroaligned.com' },
+              { label: 'General enquiries', email: 'hello@neuroaligned.app' },
+              { label: 'Support', email: 'support@neuroaligned.app' },
+              { label: 'Privacy & data requests', email: 'privacy@neuroaligned.app' },
+              { label: 'Legal & compliance', email: 'legal@neuroaligned.app' },
             ].map(row => (
               <div key={row.label} className="flex items-center justify-between gap-4 py-2 border-b border-border/40 last:border-0">
                 <span className="text-muted-foreground">{row.label}</span>
