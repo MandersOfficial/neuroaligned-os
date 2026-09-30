@@ -12,8 +12,8 @@ const PLANS = [
     name: 'Starter',
     price: 30,
     emoji: '🌱',
-    color: 'border-blue-200 bg-blue-50/50',
-    activeColor: 'border-blue-500 bg-blue-50',
+    color: 'border-border bg-card',
+    activeColor: 'border-blue-500 bg-blue-500/10',
     badge: null,
     features: [
       'Energy-aware task management',
@@ -29,8 +29,8 @@ const PLANS = [
     name: 'Pro',
     price: 50,
     emoji: '⚡',
-    color: 'border-purple-200 bg-purple-50/50',
-    activeColor: 'border-primary bg-primary/5',
+    color: 'border-primary/40 bg-primary/5',
+    activeColor: 'border-primary bg-primary/10',
     badge: 'Most Popular',
     features: [
       'Everything in Starter',
@@ -50,7 +50,7 @@ function PlanCard({ plan, selected, onSelect }) {
     <motion.button
       whileTap={{ scale: 0.99 }}
       onClick={() => onSelect(plan.id)}
-      className={`relative w-full text-left rounded-2xl border-2 p-5 transition-all ${selected ? plan.activeColor + ' shadow-sm' : plan.color + ' hover:border-opacity-70'}`}
+      className={`relative w-full text-left rounded-2xl border-2 p-5 transition-all ${selected ? plan.activeColor + ' shadow-sm' : plan.color + ' hover:border-primary/50'}`}
     >
       {plan.badge && (
         <span className="absolute -top-2.5 left-4 bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-0.5 rounded-full">
@@ -65,7 +65,7 @@ function PlanCard({ plan, selected, onSelect }) {
           </div>
           <div className="flex items-baseline gap-1">
             <span className="font-display font-black text-3xl text-foreground">${plan.price}</span>
-            <span className="text-sm text-muted-foreground">/month</span>
+            <span className="text-sm text-foreground/70">/month</span>
           </div>
         </div>
         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${selected ? 'border-primary bg-primary' : 'border-border'}`}>
@@ -74,7 +74,7 @@ function PlanCard({ plan, selected, onSelect }) {
       </div>
       <ul className="mt-4 space-y-1.5">
         {plan.features.map(f => (
-          <li key={f} className="flex items-start gap-2 text-xs text-muted-foreground">
+          <li key={f} className="flex items-start gap-2 text-xs text-foreground/80">
             <Check className="w-3.5 h-3.5 text-green-500 shrink-0 mt-0.5" />
             {f}
           </li>
@@ -139,21 +139,33 @@ export default function Upgrade() {
       setError('Please sign in first to subscribe.');
       return;
     }
-    // Checkout cannot complete inside an iframe (e.g. the builder preview)
-    if (window.self !== window.top) {
-      setError('Checkout is only available from the published app. Open NeuroAligned in a new tab to continue.');
+    // Stripe Checkout must be top-level, never inside an iframe. In the
+    // builder preview we are framed, so open the tab synchronously here —
+    // before any await — or the popup blocker will drop the user's click.
+    const isFramed = window.self !== window.top;
+    const checkoutTab = isFramed ? window.open('', '_blank') : null;
+    if (isFramed && !checkoutTab) {
+      setError('Allow popups to continue to checkout.');
       return;
     }
+    if (checkoutTab) checkoutTab.opener = null;
+
     setCheckoutLoading(true);
     try {
       const res = await base44.functions.invoke('createCheckoutSession', { plan: selectedPlan, user_email: user.email });
       if (res.data?.url) {
-        window.location.href = res.data.url;
+        if (checkoutTab) {
+          checkoutTab.location.replace(res.data.url);
+        } else {
+          window.location.assign(res.data.url);
+        }
       } else {
+        checkoutTab?.close();
         setError(res.data?.error || 'Could not start checkout. Please try again.');
         setCheckoutLoading(false);
       }
     } catch (e) {
+      checkoutTab?.close();
       setError(e?.response?.data?.error || 'Could not start checkout. Please try again.');
       setCheckoutLoading(false);
     }
