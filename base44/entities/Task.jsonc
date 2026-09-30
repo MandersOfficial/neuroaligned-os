@@ -108,6 +108,10 @@
     "last_reminded_at": {
       "type": "string",
       "title": "Last Reminder Sent At"
+    },
+    "google_event_id": {
+      "type": "string",
+      "title": "Google Calendar Event"
     }
   },
   "required": [

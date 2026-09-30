@@ -152,6 +152,20 @@
       "type": "boolean",
       "title": "Push Billing Updates",
       "default": true
+    },
+    "push_checkin_time": {
+      "type": "string",
+      "title": "Check-in Nudge Time",
+      "default": "09:00"
+    },
+    "push_reminder_time": {
+      "type": "string",
+      "title": "Task Reminder Time",
+      "default": "08:00"
+    },
+    "notification_timezone": {
+      "type": "string",
+      "title": "Notification Timezone"
     }
   },
   "required": [

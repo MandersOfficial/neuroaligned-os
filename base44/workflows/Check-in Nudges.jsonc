@@ -1,0 +1,45 @@
+{
+  "name": "Check-in Nudges",
+  "description": "Sends each member their daily check-in push nudge during the hour they chose.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 * * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "check_in_nudges",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_nudges": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendCheckinNudges",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send check-in nudges",
+            "description": "Members in their chosen hour"
+          }
+        }
+      }
+    ]
+  }
+}

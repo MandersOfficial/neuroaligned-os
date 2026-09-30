@@ -9,6 +9,7 @@ import GoogleSheetsSyncPanel from '@/components/integrations/GoogleSheetsSyncPan
 import GoogleTasksSyncPanel from '@/components/integrations/GoogleTasksSyncPanel';
 import ClickUpSyncPanel from '@/components/integrations/ClickUpSyncPanel';
 import TodoistSyncPanel from '@/components/integrations/TodoistSyncPanel';
+import GoogleCalendarSyncPanel from '@/components/integrations/GoogleCalendarSyncPanel';
 import UpcomingMeetingsPanel from '@/components/integrations/UpcomingMeetingsPanel';
 import ProjectSyncPanel from '@/components/integrations/ProjectSyncPanel';
 import MeetingSummaryPanel from '@/components/integrations/MeetingSummaryPanel';
@@ -361,6 +362,16 @@ export default function IntegrationSettings() {
               description="Sync project deadlines as tasks into a Todoist project."
             >
               <TodoistSyncPanel projects={projects} />
+            </FeaturePanel>
+
+            <FeaturePanel
+              icon={Calendar}
+              color="text-blue-500"
+              bg="bg-blue-50"
+              title="Google Calendar Task Sync"
+              description="Put every task with a due date on your Google Calendar."
+            >
+              <GoogleCalendarSyncPanel />
             </FeaturePanel>
 
             <FeaturePanel

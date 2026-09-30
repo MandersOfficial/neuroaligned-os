@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.49';
 import { isOwnerAdmin } from "../../shared/adminGate.ts";
 import { APP_BASE_URL } from "../../shared/appBaseUrl.ts";
 import { sendUserPush, PUSH_PREFS } from "../../shared/pushNotifications.ts";
+import { isPreferredHour, DEFAULT_REMINDER_TIME } from "../../shared/notificationSchedule.ts";
 
 // How long to wait between reminders for each frequency (in hours)
 const INTERVAL_HOURS = {
@@ -104,17 +105,28 @@ Change or remove the reminder anytime by editing the task.
         errors.push({ email, error: emailErr.message });
       }
 
-      // Same digest to the member's phone, if they opted into push reminders
-      const pushResult = await sendUserPush(base44, {
-        userId: ownerTasks[0].created_by_id,
-        profile: profileByEmail.get(email),
-        preferenceKey: PUSH_PREFS.taskReminders,
-        title: ownerTasks.length === 1 ? 'Task reminder' : `${ownerTasks.length} task reminders`,
-        content: ownerTasks.slice(0, 3).map(t => t.title).join(' · ')
-          + (ownerTasks.length > 3 ? ` +${ownerTasks.length - 3} more` : ''),
-        actionLabel: 'Open tasks',
-        actionUrl: `${APP_BASE_URL}/tasks`,
-      });
+      // Same digest to the member's phone — but only during the hour they chose.
+      // Reminder emails keep their own cadence; the phone nudge respects the
+      // member's preferred time so nothing lands outside their window.
+      const profile = profileByEmail.get(email);
+      const inReminderWindow = isPreferredHour(
+        new Date(),
+        profile?.push_reminder_time || DEFAULT_REMINDER_TIME,
+        profile?.notification_timezone
+      );
+
+      const pushResult = inReminderWindow
+        ? await sendUserPush(base44, {
+            userId: ownerTasks[0].created_by_id,
+            profile,
+            preferenceKey: PUSH_PREFS.taskReminders,
+            title: ownerTasks.length === 1 ? 'Task reminder' : `${ownerTasks.length} task reminders`,
+            content: ownerTasks.slice(0, 3).map(t => t.title).join(' · ')
+              + (ownerTasks.length > 3 ? ` +${ownerTasks.length - 3} more` : ''),
+            actionLabel: 'Open tasks',
+            actionUrl: `${APP_BASE_URL}/tasks`,
+          })
+        : 'skipped';
       if (pushResult === 'sent') pushed++;
     }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Check, Bell } from 'lucide-react';
+import { Loader2, Check, Bell, Clock } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 
 const TYPES = [
@@ -8,11 +8,17 @@ const TYPES = [
     key: 'push_task_reminders',
     label: 'Task reminders',
     desc: 'When a task is due or hits the reminder frequency you set on it.',
+    timeKey: 'push_reminder_time',
+    timeLabel: 'Send at',
+    timeDefault: '08:00',
   },
   {
     key: 'push_checkin_nudge',
     label: 'Daily check-in nudge',
-    desc: 'A gentle prompt to run your check-in — sent alongside your daily update.',
+    desc: 'A gentle prompt to run your check-in.',
+    timeKey: 'push_checkin_time',
+    timeLabel: 'Send at',
+    timeDefault: '09:00',
   },
   {
     key: 'push_billing_updates',
@@ -26,6 +32,9 @@ const DEFAULTS = {
   push_task_reminders: true,
   push_checkin_nudge: true,
   push_billing_updates: true,
+  push_checkin_time: '09:00',
+  push_reminder_time: '08:00',
+  notification_timezone: '',
 };
 
 export default function PushNotificationSettings() {
@@ -37,6 +46,7 @@ export default function PushNotificationSettings() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
     base44.auth.me()
       .then(async (me) => {
         setEmail(me.email);
@@ -48,9 +58,12 @@ export default function PushNotificationSettings() {
           push_task_reminders: profile?.push_task_reminders !== false,
           push_checkin_nudge: profile?.push_checkin_nudge !== false,
           push_billing_updates: profile?.push_billing_updates !== false,
+          push_checkin_time: profile?.push_checkin_time || DEFAULTS.push_checkin_time,
+          push_reminder_time: profile?.push_reminder_time || DEFAULTS.push_reminder_time,
+          notification_timezone: profile?.notification_timezone || timezone,
         });
       })
-      .catch(() => setPrefs({ ...DEFAULTS }))
+      .catch(() => setPrefs({ ...DEFAULTS, notification_timezone: timezone }))
       .finally(() => setLoading(false));
   }, []);
 
@@ -81,6 +94,8 @@ export default function PushNotificationSettings() {
     );
   }
 
+  const timezone = prefs.notification_timezone || 'your local time';
+
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-4 rounded-xl border border-border/60 p-4">
@@ -106,20 +121,42 @@ export default function PushNotificationSettings() {
         {TYPES.map(type => (
           <div
             key={type.key}
-            className="flex items-start justify-between gap-4 py-3 border-b border-border/50 last:border-0"
+            className="py-3 border-b border-border/50 last:border-0 space-y-2"
           >
-            <div>
-              <p className="text-sm font-medium text-foreground">{type.label}</p>
-              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{type.desc}</p>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-foreground">{type.label}</p>
+                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{type.desc}</p>
+              </div>
+              <Switch
+                checked={prefs[type.key]}
+                onCheckedChange={v => update(type.key, v)}
+                aria-label={type.label}
+              />
             </div>
-            <Switch
-              checked={prefs[type.key]}
-              onCheckedChange={v => update(type.key, v)}
-              aria-label={type.label}
-            />
+
+            {type.timeKey && prefs[type.key] && (
+              <div className="flex items-center gap-2 pl-0.5">
+                <Clock className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                <label className="text-xs text-muted-foreground">{type.timeLabel}</label>
+                <input
+                  type="time"
+                  value={prefs[type.timeKey] || type.timeDefault}
+                  onChange={e => update(type.timeKey, e.target.value)}
+                  aria-label={`${type.label} time`}
+                  className="px-2.5 py-1.5 rounded-lg border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                />
+              </div>
+            )}
           </div>
         ))}
       </div>
+
+      {prefs.push_notifications && (
+        <p className="text-[11px] text-muted-foreground">
+          Times are in {timezone}. Nothing is sent outside the hours you pick here.
+        </p>
+      )}
 
       <div className="flex items-center gap-1.5 h-4">
         {saving && <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />}

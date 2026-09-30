@@ -10,9 +10,10 @@ import StepEnergy from '../components/onboarding/StepEnergy';
 import StepGoals from '../components/onboarding/StepGoals';
 import StepPersonalize from '../components/onboarding/StepPersonalize';
 import { FOCUS_PRESETS } from '../components/onboarding/StepPersonalize';
+import StepNotifications from '../components/onboarding/StepNotifications';
 import StepComplete from '../components/onboarding/StepComplete';
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
 const STASH_KEY = 'na_onboarding_data';
 
 export default function Onboarding() {
@@ -33,6 +34,10 @@ export default function Onboarding() {
     initial_goals: [],
     focus_preset: '',
     dashboard_widgets: ['energy_checkin', 'ai_insight'],
+    push_notifications: false,
+    push_checkin_time: '09:00',
+    push_reminder_time: '08:00',
+    notification_timezone: '',
   });
 
   useEffect(() => {
@@ -49,7 +54,7 @@ export default function Onboarding() {
           const stashed = JSON.parse(stashRaw);
           sessionStorage.removeItem(STASH_KEY);
           setData(stashed);
-          setStep(7);
+          setStep(8);
           runCompletion(stashed, u);
           return;
         }
@@ -110,6 +115,10 @@ export default function Onboarding() {
       energy_peak: profile.energy_peak,
       work_style: profile.work_style,
       onboarding_completed: true,
+      push_notifications: profile.push_notifications === true,
+      push_checkin_time: profile.push_checkin_time || '09:00',
+      push_reminder_time: profile.push_reminder_time || '08:00',
+      notification_timezone: profile.notification_timezone || '',
     });
 
     // Seed initial tasks from goals
@@ -204,6 +213,9 @@ export default function Onboarding() {
         <StepPersonalize data={data} onChange={onChange} onNext={() => setStep(7)} onBack={() => setStep(5)} />
       )}
       {step === 7 && (
+        <StepNotifications data={data} onChange={onChange} onNext={() => setStep(8)} onBack={() => setStep(6)} />
+      )}
+      {step === 8 && (
         <StepComplete name={data.display_name} data={data} onFinish={handleFinish} loading={loading} />
       )}
     </OnboardingLayout>

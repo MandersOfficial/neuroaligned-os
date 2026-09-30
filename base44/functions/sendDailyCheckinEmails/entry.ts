@@ -1,7 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 import { isOwnerAdmin } from "../../shared/adminGate.ts";
 import { APP_BASE_URL } from "../../shared/appBaseUrl.ts";
-import { sendUserPush, PUSH_PREFS } from "../../shared/pushNotifications.ts";
 
 const BRAIN_STATE_MESSAGES = {
   overwhelmed: {
@@ -91,7 +90,6 @@ Deno.serve(async (req) => {
     const checkinUrl = `${req.headers.get('origin') || 'https://neuroaligned.app'}/check-in`;
 
     let sent = 0;
-    let pushed = 0;
     const errors = [];
 
     for (const profile of profiles) {
@@ -125,25 +123,15 @@ Change it anytime in the app under Settings → Email Updates.
         errors.push({ email: profile.user_email, error: emailErr.message });
       }
 
-      // Nudge the member's phone too, if they opted into check-in pushes
-      const pushResult = await sendUserPush(base44, {
-        userId: idByEmail.get(profile.user_email),
-        profile,
-        preferenceKey: PUSH_PREFS.checkinNudge,
-        title: 'Your daily check-in is ready 🧠',
-        content: 'Two minutes to see where your energy is today.',
-        actionLabel: 'Check in',
-        actionUrl: `${APP_BASE_URL}/check-in`,
-      });
-      if (pushResult === 'sent') pushed++;
+      // The phone nudge is handled separately by sendCheckinNudges, which runs
+      // hourly so each member gets it during the hour they chose.
     }
 
     return Response.json({
       sent,
-      pushed,
       total: profiles.length,
       errors: errors.length > 0 ? errors : undefined,
-      message: `Successfully sent ${sent} of ${profiles.length} check-in emails and ${pushed} push notification(s).`,
+      message: `Successfully sent ${sent} of ${profiles.length} check-in emails.`,
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
