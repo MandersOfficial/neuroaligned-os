@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import {
   Mic, ShieldAlert, BookOpen, Plug, Settings as SettingsIcon,
-  Star, LifeBuoy, HelpCircle, Shield,
+  Star, LifeBuoy, HelpCircle, Shield, LogOut,
 } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import ReadAloudButton from '@/components/accessibility/ReadAloudButton';
 import { requestDictate } from '@/lib/voiceCommandStore';
@@ -59,6 +60,19 @@ export default function MoreMenuSheet({ open, onOpenChange }) {
               <Icon className="w-4 h-4 shrink-0" /> {label}
             </button>
           ))}
+
+          <div className="h-px bg-border my-3" />
+
+          <button
+            type="button"
+            onClick={() => {
+              close();
+              base44.auth.logout('/');
+            }}
+            className={`${ROW} hover:text-destructive hover:bg-destructive/5`}
+          >
+            <LogOut className="w-4 h-4 shrink-0" /> Sign out
+          </button>
         </div>
       </DrawerContent>
     </Drawer>
