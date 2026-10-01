@@ -10,7 +10,7 @@ const PLANS = [
   {
     id: 'starter',
     name: 'Starter',
-    price: 30,
+    price: 19.99,
     emoji: '🌱',
     color: 'border-border bg-card',
     activeColor: 'border-blue-500 bg-blue-500/10',
@@ -27,7 +27,7 @@ const PLANS = [
   {
     id: 'pro',
     name: 'Pro',
-    price: 50,
+    price: 45.99,
     emoji: '⚡',
     color: 'border-primary/40 bg-primary/5',
     activeColor: 'border-primary bg-primary/10',

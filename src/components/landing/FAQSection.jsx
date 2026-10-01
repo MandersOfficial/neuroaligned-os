@@ -25,7 +25,7 @@ const faqs = [
   },
   {
     question: "Why should I pay for this instead of just using Notion templates or free ADHD apps?",
-    answer: "Notion templates are like giving someone a blank canvas and saying 'paint a masterpiece.' Free ADHD apps address one symptom — usually timers or to-do lists. NeuroAligned is an integrated system: your energy levels inform your task suggestions, which connect to your regulation tools, which feed into your burnout prevention system. It's the difference between buying individual ingredients and getting a meal kit designed for your dietary needs. The $30-50/month pays for itself the first time you avoid a 3-day burnout spiral that would've cost you a client.",
+    answer: "Notion templates are like giving someone a blank canvas and saying 'paint a masterpiece.' Free ADHD apps address one symptom — usually timers or to-do lists. NeuroAligned is an integrated system: your energy levels inform your task suggestions, which connect to your regulation tools, which feed into your burnout prevention system. It's the difference between buying individual ingredients and getting a meal kit designed for your dietary needs. The $20-46/month pays for itself the first time you avoid a 3-day burnout spiral that would've cost you a client.",
   },
 ];
 

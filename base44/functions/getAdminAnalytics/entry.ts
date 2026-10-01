@@ -78,8 +78,8 @@ export default async function (req) {
     const totalSubs = subscriptions.length || 1;
     const subBreakdown = [
       { label: 'Free Trial', count: planCounts.trial, pct: Math.round((planCounts.trial / totalSubs) * 100), color: 'bg-amber-400' },
-      { label: 'Starter ($30)', count: planCounts.starter, pct: Math.round((planCounts.starter / totalSubs) * 100), color: 'bg-primary' },
-      { label: 'Pro ($50)', count: planCounts.pro, pct: Math.round((planCounts.pro / totalSubs) * 100), color: 'bg-accent' },
+      { label: 'Starter ($19.99)', count: planCounts.starter, pct: Math.round((planCounts.starter / totalSubs) * 100), color: 'bg-primary' },
+      { label: 'Pro ($45.99)', count: planCounts.pro, pct: Math.round((planCounts.pro / totalSubs) * 100), color: 'bg-accent' },
     ];
 
     const checkins = profiles.reduce((sum, p) => sum + (p.session_count || 0), 0);

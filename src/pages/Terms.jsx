@@ -33,7 +33,7 @@ If you are experiencing a mental health crisis, please contact a qualified healt
     title: '4. Subscription Plans & Billing',
     content: `NeuroAligned offers two paid plans:
 
-Starter — $30/month
+Starter — $19.99/month
 • Energy-aware task management
 • Focus mode presets
 • Burnout risk dashboard
@@ -41,7 +41,7 @@ Starter — $30/month
 • Knowledge base access
 • Community forum
 
-Pro — $50/month
+Pro — $45.99/month
 • Everything in Starter, plus:
 • Unlimited customisable focus modes
 • AI-powered daily guidance & context capture

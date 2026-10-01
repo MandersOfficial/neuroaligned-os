@@ -52,8 +52,8 @@ Don't lose your personalized setup — your focus modes, tasks, check-in history
 Upgrade to keep going →
 https://neuroaligned.app/upgrade
 
-Starter Plan — $30/mo (perfect for solo founders)
-Pro Plan — $50/mo (full AI + body doubling + priority support)
+Starter Plan — $19.99/mo (perfect for solo founders)
+Pro Plan — $45.99/mo (full AI + body doubling + priority support)
 
 If you have questions about which plan is right for your brain, just reply to this email.
 

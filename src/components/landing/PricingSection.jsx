@@ -6,7 +6,7 @@ import { base44 } from '@/api/base44Client';
 const plans = [
   {
     name: 'Starter',
-    price: '$30',
+    price: '$19.99',
     period: '/month',
     description: 'Everything you need to stop fighting your brain and start working with it.',
     features: [
@@ -23,7 +23,7 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '$50',
+    price: '$45.99',
     period: '/month',
     description: 'The full NeuroAligned OS for founders who are done dimming their brilliance.',
     features: [

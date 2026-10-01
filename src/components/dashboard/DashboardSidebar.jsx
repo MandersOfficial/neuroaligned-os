@@ -197,7 +197,7 @@ export default function DashboardSidebar({ user }) {
             <Zap className="w-3.5 h-3.5 text-primary shrink-0" />
             <div className="min-w-0">
               <p className="text-xs font-semibold text-primary leading-none">Upgrade Plan</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Starter $30 · Pro $50/mo</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Starter $19.99 · Pro $45.99/mo</p>
             </div>
           </Link>
         )}

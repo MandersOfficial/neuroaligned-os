@@ -24,9 +24,13 @@ export default async function(req) {
     const plan = String(body.plan || "");
     const userEmail = String(user.email).trim().toLowerCase();
 
+    // Stripe price IDs are public identifiers — they appear in the checkout URL
+    // the buyer is sent to — so they live here rather than in the app's secrets.
+    // A price change then ships with the code that charges it.
+    // Starter $19.99/month · Pro $45.99/month
     const PRICE_IDS = {
-      starter: secrets.get("STRIPE_PRICE_STARTER"),
-      pro: secrets.get("STRIPE_PRICE_PRO"),
+      starter: "price_1ULfoDEnCh8nDvFfZAeXejvL",
+      pro: "price_1ULfoEEnCh8nDvFfoiDSiCXZ",
     };
 
     if (!PRICE_IDS[plan]) {
