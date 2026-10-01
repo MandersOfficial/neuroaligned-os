@@ -3,7 +3,7 @@ import {
   Brain, LayoutDashboard, CheckSquare, LogOut,
   ChevronLeft, ChevronRight, Focus, Plug, ShieldAlert,
   BookOpen, Users, Zap, Moon, Sun, NotebookPen, TrendingUp, FolderKanban,
-  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors, Star, Settings as SettingsIcon, Menu
+  HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors, Star, Settings as SettingsIcon, Menu, Accessibility
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import ReadAloudButton from '@/components/accessibility/ReadAloudButton';
@@ -49,6 +49,7 @@ const NAV_GROUPS = [
       { icon: LifeBuoy, label: 'Support', href: '/support' },
       { icon: HelpCircle, label: 'Help Center', href: '/help-center' },
       { icon: Shield, label: 'Privacy Policy', href: '/privacy' },
+      { icon: Accessibility, label: 'Accessibility', href: '/accessibility' },
     ],
   },
 ];

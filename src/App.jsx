@@ -39,6 +39,7 @@ const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const RegulationFirst = lazy(() => import('./pages/RegulationFirst'));
 const Disclaimer = lazy(() => import('./pages/Disclaimer'));
+const Accessibility = lazy(() => import('./pages/Accessibility'));
 const IntegrationSettings = lazy(() => import('./pages/IntegrationSettings'));
 const HelpCenter = lazy(() => import('./pages/HelpCenter'));
 const Support = lazy(() => import('./pages/Support'));
@@ -109,6 +110,7 @@ const AuthenticatedApp = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="/regulation-first" element={<RegulationFirst />} />
               <Route path="/disclaimer" element={<Disclaimer />} />
+              <Route path="/accessibility" element={<Accessibility />} />
               <Route path="/help-center" element={<HelpCenter />} />
 
               {/* Members only — visitors without a session land on the login page */}
