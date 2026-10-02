@@ -10,6 +10,7 @@ export default function GoogleSheetsSyncPanel({ onSynced }) {
   const [connected, setConnected] = useState(false);
   const [checking, setChecking] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [attempted, setAttempted] = useState(false);
   const [spreadsheets, setSpreadsheets] = useState([]);
   const [sheetId, setSheetId] = useState('');
   const [syncing, setSyncing] = useState(false);
@@ -41,6 +42,7 @@ export default function GoogleSheetsSyncPanel({ onSynced }) {
 
   const handleConnect = async () => {
     setConnecting(true);
+    setAttempted(true);
     const url = await base44.connectors.connectAppUser(SHEETS_CONNECTOR_ID);
     const popup = window.open(url, '_blank');
     const timer = setInterval(() => {
@@ -106,6 +108,15 @@ export default function GoogleSheetsSyncPanel({ onSynced }) {
                 {connecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Link2 className="w-3.5 h-3.5" />}
                 Connect Google Sheets
               </button>
+
+              {attempted && (
+                <p className="text-[11px] text-muted-foreground leading-relaxed bg-secondary/50 border border-border/60 rounded-lg px-3 py-2">
+                  Google didn't finish the connection. If Google showed a <span className="font-semibold">redirect_uri_mismatch</span> error, the
+                  callback URL still needs to be added to your Google OAuth client — open workspace Settings → Connectors →
+                  “View redirect URIs for your apps” and add the URL shown there to your client's authorized redirect URIs in Google Cloud Console.
+                  Changes can take a few minutes, then try again.
+                </p>
+              )}
             </div>
           ) : (
             <>
