@@ -13,7 +13,26 @@ import AIGuidancePanel from '@/components/tasks/AIGuidancePanel';
 import RegulationWidget from '@/components/regulation/RegulationWidget';
 import CreateProjectModal from '@/components/tasks/CreateProjectModal';
 import EnergyFilter from '@/components/tasks/EnergyFilter';
+import MobileSelect from '@/components/ui/MobileSelect';
 import { InlineSpinner } from '@/components/workspace/LoadingScreen';
+
+const STATUS_FILTERS = [
+  { value: 'all', label: 'All statuses' },
+  { value: 'todo', label: 'To Do' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'done', label: 'Done' },
+  { value: 'deferred', label: 'Deferred' },
+];
+
+const CATEGORY_FILTERS = [
+  { value: 'all', label: 'All categories' },
+  { value: 'deep_work', label: '🔭 Deep Work' },
+  { value: 'admin', label: '📋 Admin' },
+  { value: 'creative', label: '🎨 Creative' },
+  { value: 'communication', label: '💬 Communication' },
+  { value: 'self_care', label: '🌱 Self-Care' },
+  { value: 'planning', label: '🗺️ Planning' },
+];
 
 export default function Tasks() {
   const { user } = useOutletContext();
@@ -29,6 +48,8 @@ export default function Tasks() {
   const [loading, setLoading] = useState(true);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [energyFilter, setEnergyFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [editingTask, setEditingTask] = useState(null);
 
   const load = async () => {
@@ -75,6 +96,12 @@ export default function Tasks() {
   const energyFilteredTasks = energyFilter === 'all'
     ? visibleTasks
     : visibleTasks.filter(t => (t.energy_required || 'medium') === energyFilter);
+  const statusFilteredTasks = statusFilter === 'all'
+    ? energyFilteredTasks
+    : energyFilteredTasks.filter(t => t.status === statusFilter);
+  const filteredTasks = categoryFilter === 'all'
+    ? statusFilteredTasks
+    : statusFilteredTasks.filter(t => t.category === categoryFilter);
 
   const selectedProject = projects.find(p => p.id === selectedProjectId);
 
@@ -89,12 +116,12 @@ export default function Tasks() {
             {selectedProject ? `${selectedProject.emoji} ${selectedProject.name}` : 'All Tasks'}
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {energyFilteredTasks.filter(t => t.status !== 'done').length} tasks remaining
+            {filteredTasks.filter(t => t.status !== 'done').length} tasks remaining
           </p>
         </div>
         <div className="flex items-center gap-3">
           <SmartSortButton
-            tasks={energyFilteredTasks}
+            tasks={filteredTasks}
             profile={profile}
             energy={energy}
             focusMinutes={25}
@@ -144,6 +171,31 @@ export default function Tasks() {
         >
           + New Project
         </button>
+
+        <div className="w-px h-5 bg-border shrink-0 mx-1" />
+
+        <MobileSelect
+          value={statusFilter}
+          onChange={setStatusFilter}
+          options={STATUS_FILTERS}
+          label="Filter by status"
+          className={`shrink-0 max-w-[150px] px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+            statusFilter !== 'all'
+              ? 'bg-primary text-primary-foreground border-primary'
+              : 'border-border text-muted-foreground bg-card'
+          }`}
+        />
+        <MobileSelect
+          value={categoryFilter}
+          onChange={setCategoryFilter}
+          options={CATEGORY_FILTERS}
+          label="Filter by category"
+          className={`shrink-0 max-w-[150px] px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+            categoryFilter !== 'all'
+              ? 'bg-primary text-primary-foreground border-primary'
+              : 'border-border text-muted-foreground bg-card'
+          }`}
+        />
       </div>
 
       {/* Energy filter bar */}
@@ -171,7 +223,7 @@ export default function Tasks() {
         {/* Task board */}
         <div className="flex-1 overflow-hidden flex flex-col">
           <TaskBoard
-            tasks={energyFilteredTasks}
+            tasks={filteredTasks}
             projects={projects}
             energy={energy}
             recommendedIds={recommendedIds}
