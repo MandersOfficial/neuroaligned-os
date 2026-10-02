@@ -23,6 +23,8 @@ const ENERGY_FILTERS = [
   { value: 'high_only', label: 'High energy only' },
 ];
 
+const NUMERIC_KEYS = ['work_block_minutes', 'break_minutes', 'long_break_minutes', 'blocks_before_long_break', 'regulation_reminder_minutes'];
+
 const defaults = {
   name: '',
   emoji: '🧠',
@@ -44,6 +46,18 @@ const defaults = {
 export default function FocusModeEditor({ initial, onSave, onClose }) {
   const [form, setForm] = useState(initial ? { ...defaults, ...initial } : { ...defaults });
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  // Number fields keep the raw text while typing so they can be cleared and
+  // retyped freely; they're coerced back to numbers on save.
+  const handleSave = () => {
+    if (!form.name.trim()) return;
+    const payload = { ...form, name: form.name.trim() };
+    NUMERIC_KEYS.forEach(k => {
+      const n = Number(payload[k]);
+      payload[k] = Number.isFinite(n) && n > 0 ? n : defaults[k];
+    });
+    onSave(payload);
+  };
 
   return (
     <motion.div
@@ -122,7 +136,7 @@ export default function FocusModeEditor({ initial, onSave, onClose }) {
                 ].map(({ key, label }) => (
                   <div key={key}>
                     <Label className="text-xs mb-1.5 block">{label}</Label>
-                    <Input type="number" min={1} value={form[key]} onChange={e => set(key, Number(e.target.value))} className="h-9 text-sm" />
+                    <Input type="number" min={1} value={form[key]} onChange={e => set(key, e.target.value)} className="h-9 text-sm" />
                   </div>
                 ))}
               </div>
@@ -180,7 +194,7 @@ export default function FocusModeEditor({ initial, onSave, onClose }) {
                 </div>
                 <div>
                   <Label className="text-xs mb-1.5 block">Regulation reminder (min)</Label>
-                  <Input type="number" min={5} value={form.regulation_reminder_minutes} onChange={e => set('regulation_reminder_minutes', Number(e.target.value))} className="h-9 text-sm" />
+                  <Input type="number" min={5} value={form.regulation_reminder_minutes} onChange={e => set('regulation_reminder_minutes', e.target.value)} className="h-9 text-sm" />
                 </div>
               </div>
             </section>
@@ -189,7 +203,7 @@ export default function FocusModeEditor({ initial, onSave, onClose }) {
 
         <div className="px-6 py-4 border-t border-border/40 flex justify-end gap-3 shrink-0">
           <Button variant="ghost" onClick={onClose} className="rounded-full">Cancel</Button>
-          <Button onClick={() => onSave(form)} disabled={!form.name.trim()} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
+          <Button onClick={handleSave} disabled={!form.name.trim()} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
             <Check className="w-4 h-4 mr-1" /> {initial ? 'Save Changes' : 'Create Mode'}
           </Button>
         </div>
