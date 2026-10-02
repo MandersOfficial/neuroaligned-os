@@ -11,6 +11,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import GlobalPullToRefresh from '@/components/GlobalPullToRefresh';
 import GlobalVoiceAssistant from '@/components/accessibility/GlobalVoiceAssistant';
+import AutoReadAloud from '@/components/accessibility/AutoReadAloud';
 import AppShell from '@/components/workspace/AppShell';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
@@ -145,6 +146,7 @@ const AuthenticatedApp = () => {
       </AnimatePresence>
       <GlobalPullToRefresh />
       <GlobalVoiceAssistant />
+      <AutoReadAloud />
     </MotionConfig>
   );
 };

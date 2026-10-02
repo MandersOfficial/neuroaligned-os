@@ -255,6 +255,15 @@ export default function SensorySettings() {
               Choose the voice for Read Aloud. The device voice is free and always available; premium voices are richer and more natural.
             </p>
             <ReaderVoicePicker />
+
+            <Toggle
+              checked={!!prefs.readAloudAuto}
+              onChange={v => updatePref('readAloudAuto', v)}
+              icon={Volume2}
+              color="bg-indigo-500"
+              label="Read pages aloud automatically"
+              description="When this is on, NeuroAligned starts reading each page as you arrive — and your choice is remembered the next time you open the app. Pause or stop any time from the Read Aloud control."
+            />
           </section>
 
           {/* Email Updates */}

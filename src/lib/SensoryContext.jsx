@@ -137,6 +137,7 @@ const defaultPrefs = {
   darkMode: false,              // dark mode
   readerVoiceId: '',            // '' = free device voice; ElevenLabs voice id for premium
   readerVoiceName: '',          // display name of the chosen reader voice
+  readAloudAuto: false,         // read each page aloud automatically on arrival
 };
 
 function systemPrefersDark() {

@@ -1,166 +1,87 @@
-import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Volume2, Square, Loader2 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { useState, useEffect } from 'react';
+import { Volume2, Pause, Play, Square, Loader2 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
-
-const CHUNK_CHAR_LIMIT = 2500; // must match the backend function's cap
-
-/** Splits text into <=limit chunks at sentence boundaries (hard-split fallback). */
-function splitIntoChunks(text, limit) {
-  const pieces = [];
-  let current = '';
-  for (const sentence of text.split(/(?<=[.!?\u2026])\s+/)) {
-    let s = sentence;
-    while (s.length > limit) {
-      if (current) { pieces.push(current); current = ''; }
-      pieces.push(s.slice(0, limit));
-      s = s.slice(limit);
-    }
-    if (current && (current + ' ' + s).length > limit) {
-      pieces.push(current);
-      current = s;
-    } else {
-      current = current ? current + ' ' + s : s;
-    }
-  }
-  if (current) pieces.push(current);
-  return pieces;
-}
+import { cn } from '@/lib/utils';
+import {
+  getReadAloudState, subscribeReadAloud,
+  startReadAloud, stopReadAloud, pauseReadAloud, resumeReadAloud,
+} from '@/lib/readAloud';
 
 /**
- * Floating read-aloud control: speaks the current page's main content in the
- * user's chosen voice — free device speech by default, or a premium ElevenLabs
- * voice via the backend function. Falls back to device speech if the premium
- * voice fails. Stops automatically on navigation.
+ * Read Aloud control: speaks the current page in the member's chosen voice and
+ * lets them pause, resume or stop. Playback lives in a shared module, so the
+ * desktop sidebar and the mobile More sheet always show the same state.
  */
 export default function ReadAloudButton({ variant = 'floating', collapsed = false }) {
-  const [speaking, setSpeaking] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const location = useLocation();
+  const [status, setStatus] = useState(getReadAloudState());
   const { prefs } = useSensory();
-  const stopRef = useRef(false);
-  const audioRef = useRef(null);
 
-  const stopAll = () => {
-    stopRef.current = true;
-    window.speechSynthesis?.cancel();
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
-    setSpeaking(false);
-    setLoading(false);
-  };
-
-  // Stop speaking whenever the user navigates to another page
-  useEffect(() => {
-    stopAll();
-  }, [location.pathname]);
-
-  useEffect(() => () => {
-    window.speechSynthesis?.cancel();
-    if (audioRef.current) audioRef.current.pause();
-  }, []);
-
-  const getPageText = () =>
-    (document.querySelector('main')?.innerText || '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 30000);
-
-  const speakWithDevice = (text) => {
-    const synth = window.speechSynthesis;
-    if (!synth) return;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1;
-    utterance.onend = () => setSpeaking(false);
-    utterance.onerror = () => setSpeaking(false);
-    synth.cancel();
-    synth.speak(utterance);
-    setSpeaking(true);
-  };
-
-  const speakWithElevenLabs = async (voiceId, text) => {
-    const chunks = splitIntoChunks(text, CHUNK_CHAR_LIMIT);
-    stopRef.current = false;
-    for (const chunk of chunks) {
-      if (stopRef.current) return;
-      const res = await base44.functions.invoke('generateOpenAISpeech', {
-        voice: voiceId,
-        text: chunk,
-      });
-      if (stopRef.current) return;
-      setLoading(false);
-      await new Promise((resolve) => {
-        const audio = new Audio(`data:audio/mpeg;base64,${res.data.audio}`);
-        audioRef.current = audio;
-        audio.onended = resolve;
-        audio.onerror = resolve;
-        audio.play().catch(resolve);
-      });
-      audioRef.current = null;
-    }
-  };
-
-  const toggle = async () => {
-    if (speaking || loading) {
-      stopAll();
-      return;
-    }
-    const text = getPageText();
-    if (!text) return;
-
-    const voiceId = prefs.readerVoiceId;
-    if (voiceId) {
-      setSpeaking(true);
-      setLoading(true);
-      try {
-        await speakWithElevenLabs(voiceId, text);
-      } catch {
-        // Premium voice failed — fall back to device speech so the feature never breaks
-        setLoading(false);
-        speakWithDevice(text);
-        return;
-      }
-      setLoading(false);
-      setSpeaking(false);
-      return;
-    }
-
-    speakWithDevice(text);
-  };
+  useEffect(() => subscribeReadAloud(setStatus), []);
 
   const isSidebar = variant === 'sidebar';
-  const className = isSidebar
-    ? `w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
-        collapsed ? 'justify-center px-0' : ''
-      } ${
-        speaking
-          ? 'bg-primary/10 text-primary border-primary/30'
-          : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary'
-      }`
-    : `flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold shadow-lg border transition-colors ${
-        speaking
-          ? 'bg-primary text-primary-foreground border-primary'
-          : 'bg-card text-foreground border-border hover:bg-secondary'
-      }`;
+  const active = status !== 'idle';
+
+  const handlePrimary = () => {
+    if (status === 'loading') { stopReadAloud(); return; }
+    if (status === 'speaking') { pauseReadAloud(); return; }
+    if (status === 'paused') { resumeReadAloud(); return; }
+    startReadAloud(prefs.readerVoiceId);
+  };
+
+  const label = status === 'loading' ? 'Loading…'
+    : status === 'speaking' ? 'Pause'
+      : status === 'paused' ? 'Resume'
+        : 'Read Aloud';
+
+  const Icon = status === 'loading' ? Loader2
+    : status === 'speaking' ? Pause
+      : status === 'paused' ? Play
+        : Volume2;
+
+  const primaryCls = isSidebar
+    ? cn(
+      'flex items-center gap-2.5 py-2 rounded-lg text-sm font-medium border transition-colors',
+      collapsed ? 'justify-center px-2' : 'px-3 flex-1',
+      active
+        ? 'bg-primary/10 text-primary border-primary/30'
+        : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary'
+    )
+    : cn(
+      'flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold shadow-lg border transition-colors',
+      active
+        ? 'bg-primary text-primary-foreground border-primary'
+        : 'bg-card text-foreground border-border hover:bg-secondary'
+    );
+
+  const stopCls = isSidebar
+    ? 'flex items-center justify-center gap-2 px-2.5 py-2 rounded-lg text-sm font-medium border border-transparent text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors shrink-0'
+    : 'flex items-center gap-2 rounded-full px-3 py-2.5 text-xs font-semibold shadow-lg border border-border bg-card text-foreground hover:bg-secondary transition-colors';
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      className={className}
-      title={loading ? 'Preparing audio…' : speaking ? 'Stop reading' : 'Read this page aloud'}
-    >
-      {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
-      ) : speaking ? (
-        <Square className="w-4 h-4" />
-      ) : (
-        <Volume2 className="w-4 h-4 text-primary" />
+    <div className={isSidebar ? cn('flex items-center gap-1', collapsed && 'flex-col') : 'flex items-center gap-1.5'}>
+      <button
+        type="button"
+        onClick={handlePrimary}
+        className={primaryCls}
+        title={status === 'idle' ? 'Read this page aloud' : label}
+        aria-label={status === 'idle' ? 'Read this page aloud' : label}
+      >
+        <Icon className={cn('w-4 h-4 shrink-0', status === 'loading' && 'animate-spin', !active && 'text-primary')} />
+        {(!isSidebar || !collapsed) && <span>{label}</span>}
+      </button>
+
+      {active && (
+        <button
+          type="button"
+          onClick={stopReadAloud}
+          className={stopCls}
+          title="Stop reading"
+          aria-label="Stop reading"
+        >
+          <Square className="w-4 h-4 shrink-0" />
+          {!isSidebar && <span>Stop</span>}
+        </button>
       )}
-      {(!isSidebar || !collapsed) && (loading ? 'Loading…' : speaking ? 'Stop' : 'Read Aloud')}
-    </button>
+    </div>
   );
 }
