@@ -12,6 +12,7 @@ export default function GoogleCalendarSyncPanel() {
   const [syncing, setSyncing] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [authUrl, setAuthUrl] = useState(null);
 
   // Reading the calendar doubles as the connection check — it uses the same
   // grant the sync does, and never writes anything.
@@ -41,15 +42,29 @@ export default function GoogleCalendarSyncPanel() {
 
   const handleConnect = async () => {
     setConnecting(true);
-    const url = await base44.connectors.connectAppUser(GOOGLE_CALENDAR_CONNECTOR_ID);
-    const popup = window.open(url, '_blank');
-    const timer = setInterval(() => {
-      if (!popup || popup.closed) {
-        clearInterval(timer);
+    setError(null);
+    setAuthUrl(null);
+    try {
+      const url = await base44.connectors.connectAppUser(GOOGLE_CALENDAR_CONNECTOR_ID);
+      const popup = window.open(url, '_blank');
+      // A blocked sign-in window would otherwise leave the button spinning forever
+      if (!popup) {
+        setAuthUrl(url);
+        setError('Your browser blocked the Google sign-in window. Allow pop-ups for this page and try again, or open the sign-in link below.');
         setConnecting(false);
-        checkConnection();
+        return;
       }
-    }, 500);
+      const timer = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(timer);
+          setConnecting(false);
+          checkConnection();
+        }
+      }, 500);
+    } catch (e) {
+      setError(e?.response?.data?.error || e.message || 'Could not start the Google sign-in flow.');
+      setConnecting(false);
+    }
   };
 
   const handleSync = async () => {
@@ -110,6 +125,17 @@ export default function GoogleCalendarSyncPanel() {
                 <p className="text-xs text-destructive bg-destructive/5 border border-destructive/20 rounded-lg px-3 py-2 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3 shrink-0" /> {error}
                 </p>
+              )}
+
+              {authUrl && (
+                <a
+                  href={authUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-border text-xs font-semibold text-foreground hover:bg-secondary transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" /> Open Google sign-in
+                </a>
               )}
             </div>
           ) : (
