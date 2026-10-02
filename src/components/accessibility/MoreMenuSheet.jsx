@@ -13,7 +13,7 @@ const SECONDARY_LINKS = [
   { icon: ShieldAlert, label: 'Burnout Risk', href: '/burnout' },
   { icon: BookOpen, label: 'Knowledge Base', href: '/knowledge' },
   { icon: Plug, label: 'Integrations', href: '/integration-settings' },
-  { icon: SettingsIcon, label: 'Settings', href: '/sensory' },
+  { icon: SettingsIcon, label: 'Sensory Settings', href: '/sensory' },
   { icon: Star, label: 'Feedback', href: '/feedback' },
   { icon: LifeBuoy, label: 'Support', href: '/support' },
   { icon: HelpCircle, label: 'Help Center', href: '/help-center' },

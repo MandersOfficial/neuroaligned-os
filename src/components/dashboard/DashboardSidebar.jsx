@@ -44,7 +44,7 @@ const NAV_GROUPS = [
   {
     label: 'Account & Support',
     items: [
-      { icon: SettingsIcon, label: 'Settings', href: '/sensory' },
+      { icon: SettingsIcon, label: 'Sensory Settings', href: '/sensory' },
       { icon: Star, label: 'Feedback', href: '/feedback' },
       { icon: LifeBuoy, label: 'Support', href: '/support' },
       { icon: HelpCircle, label: 'Help Center', href: '/help-center' },
