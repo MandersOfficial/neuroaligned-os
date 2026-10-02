@@ -23,6 +23,7 @@ const STATUS_COLS = [
   { id: 'todo', label: 'To Do', color: 'bg-secondary' },
   { id: 'in_progress', label: 'In Progress', color: 'bg-blue-100' },
   { id: 'done', label: 'Done', color: 'bg-green-100' },
+  { id: 'deferred', label: 'Deferred', color: 'bg-amber-100' },
 ];
 
 function TaskCard({ task, projects, recommended, onUpdate, onDelete, onEdit }) {
@@ -215,7 +216,7 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
               key={col.id}
               onClick={() => setMobileCol(col.id)}
               className={cn(
-                'flex-1 py-2 rounded-lg text-xs font-semibold transition-colors',
+                'flex-1 py-2 rounded-lg text-xs font-semibold transition-colors truncate',
                 mobileCol === col.id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
               )}
             >
@@ -225,7 +226,7 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
         </div>
       )}
 
-      <div className="grid gap-4" style={isMobile ? { gridTemplateColumns: '1fr' } : { gridTemplateColumns: 'repeat(3, minmax(260px, 1fr))' }}>
+      <div className="grid gap-4" style={isMobile ? { gridTemplateColumns: '1fr' } : { gridTemplateColumns: 'repeat(4, minmax(240px, 1fr))' }}>
       {(isMobile ? STATUS_COLS.filter(c => c.id === mobileCol) : STATUS_COLS).map(col => {
         const colTasks = tasks.filter(t => t.status === col.id);
         const matchingTasks = col.id === 'done' ? colTasks : filteredByEnergy(colTasks);
@@ -256,6 +257,7 @@ export default function TaskBoard({ tasks, projects, energy, recommendedIds, onT
                         ? '🛑 Rest. You don\'t have to do anything right now.'
                         : col.id === 'done' ? '✅ Nothing done yet'
                         : col.id === 'todo' ? '🌿 All clear'
+                        : col.id === 'deferred' ? '🌙 Nothing set aside'
                         : '▶️ Nothing in progress'}
                     </p>
                   </div>
