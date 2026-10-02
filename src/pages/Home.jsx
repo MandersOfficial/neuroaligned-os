@@ -23,5 +23,11 @@ export default function Home() {
     return <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />;
   }
 
+  // Signed-in members go straight to their workspace: "/" must never look like
+  // being logged out (reached via a "Back to home" link or the browser back button).
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return <Landing />;
 }

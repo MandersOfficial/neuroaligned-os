@@ -37,6 +37,14 @@ export default function Accessibility() {
             that means we assume variation in attention, reading, sensory processing, motor control,
             and energy. If the app is hard to use, that's a design failure on our side, not yours.
           </p>
+          <div className="pl-8">
+            <Link
+              to="/sensory"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full text-sm font-semibold transition-colors"
+            >
+              <AccessibilityIcon className="w-4 h-4" /> Open sensory &amp; accessibility settings
+            </Link>
+          </div>
         </section>
 
         {[
