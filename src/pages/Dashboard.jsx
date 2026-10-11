@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { useAppRefresh } from '@/hooks/useAppRefresh';
 import RegulationWidget from '@/components/regulation/RegulationWidget';
 import TrialBanner from '@/components/subscription/TrialBanner';
+import { trialDaysLeft } from '@/lib/subscription';
 import GoogleConnectWidget from '@/components/dashboard/GoogleConnectWidget';
 import GettingStartedFlow, { DONE_KEY } from '@/components/getting-started/GettingStartedFlow';
 import EnergyPicker from '@/components/dashboard/EnergyPicker';
@@ -27,6 +28,7 @@ export default function Dashboard() {
   const [energy, setEnergy] = useState('flow');
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [subscription, setSubscription] = useState(null);
   const [trialDaysLeft, setTrialDaysLeft] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showGettingStarted, setShowGettingStarted] = useState(false);
@@ -34,7 +36,7 @@ export default function Dashboard() {
   const load = async () => {
     const [t, subs, profiles, proj] = await Promise.all([
       base44.entities.Task.filter({ is_today: true }),
-      base44.entities.Subscription.filter({ created_by: user.email }, '-created_date', 1),
+      base44.entities.Subscription.filter({ user_email: user.email }, '-created_date', 1),
       base44.entities.UserProfile.filter({ user_email: user.email }),
       base44.entities.Project.filter({ status: 'active' }, '-created_date', 5),
     ]);
@@ -45,11 +47,10 @@ export default function Dashboard() {
       setProfile(p);
       if (p.last_brain_state) setEnergy(p.last_brain_state);
     }
-    const sub = subs[0];
-    if (sub?.trial_end_date) {
-      const days = Math.max(0, Math.ceil((new Date(sub.trial_end_date) - new Date()) / (1000 * 60 * 60 * 24)));
-      setTrialDaysLeft(days);
-    }
+    const sub = subs[0] || null;
+    setSubscription(sub);
+    // Founding members have free lifetime access, so no countdown for them.
+    setTrialDaysLeft(trialDaysLeft(sub));
     setLoading(false);
   };
 
@@ -118,7 +119,7 @@ export default function Dashboard() {
           {/* Bottom widgets */}
           <div className="grid sm:grid-cols-2 gap-5">
             <GoogleConnectWidget />
-            <ProfileSummaryCard profile={profile} trialDaysLeft={trialDaysLeft} onTakeTour={() => setShowGettingStarted(true)} />
+            <ProfileSummaryCard profile={profile} subscription={subscription} onTakeTour={() => setShowGettingStarted(true)} />
           </div>
 
         </div>

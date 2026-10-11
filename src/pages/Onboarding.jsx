@@ -12,6 +12,7 @@ import StepPersonalize from '../components/onboarding/StepPersonalize';
 import { FOCUS_PRESETS } from '../components/onboarding/StepPersonalize';
 import StepNotifications from '../components/onboarding/StepNotifications';
 import StepComplete from '../components/onboarding/StepComplete';
+import { buildInitialSubscription } from '../lib/subscription';
 
 const TOTAL_STEPS = 8;
 const STASH_KEY = 'na_onboarding_data';
@@ -152,17 +153,8 @@ export default function Onboarding() {
       }
     }
 
-    // Create trial subscription record
-    const now = new Date();
-    const trialEnd = new Date(now);
-    trialEnd.setDate(trialEnd.getDate() + 14);
-    await base44.entities.Subscription.create({
-      user_email: userObj?.email || '',
-      plan: 'trial',
-      status: 'trialing',
-      trial_start_date: now.toISOString().split('T')[0],
-      trial_end_date: trialEnd.toISOString().split('T')[0],
-    });
+    // Founding members get free lifetime access; the free trial starts at the cutoff.
+    await base44.entities.Subscription.create(buildInitialSubscription(userObj?.email || ''));
 
     navigate('/dashboard');
   };

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Brain, Zap } from 'lucide-react';
+import { planLabel } from '@/lib/subscription';
 
-export default function ProfileSummaryCard({ profile, trialDaysLeft, onTakeTour }) {
+export default function ProfileSummaryCard({ profile, subscription, onTakeTour }) {
   return (
     <div className="bg-card border border-border/60 rounded-2xl p-5 space-y-3">
       <p className="text-sm font-semibold text-foreground">Your Setup</p>
@@ -10,7 +11,7 @@ export default function ProfileSummaryCard({ profile, trialDaysLeft, onTakeTour 
           ['Peak Energy', profile?.energy_peak || 'Not set'],
           ['Work Style', profile?.work_style || 'Not set'],
           ['Biggest Challenge', profile?.biggest_challenge?.split(' ').slice(0, 4).join(' ') + '…' || 'Not set'],
-          ['Trial', trialDaysLeft != null ? `${trialDaysLeft} days left` : 'Active'],
+          ['Plan', planLabel(subscription)],
         ].map(([label, val]) => (
           <div key={label} className="flex items-center justify-between text-xs gap-2">
             <span className="text-muted-foreground shrink-0">{label}</span>

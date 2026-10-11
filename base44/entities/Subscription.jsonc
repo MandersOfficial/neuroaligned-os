@@ -12,6 +12,7 @@
       "enum": [
         "trial",
         "beta",
+        "lifetime",
         "starter",
         "pro",
         "cancelled"

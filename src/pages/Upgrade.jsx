@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, ArrowLeft, CreditCard, Lock, Sparkles, Zap, Shield, ExternalLink } from 'lucide-react';
 import { isNativeApp } from '@/lib/isNativeApp';
+import { isGrandfathered, trialDaysLeft } from '@/lib/subscription';
 
 const PLANS = [
   {
@@ -125,12 +126,10 @@ export default function Upgrade() {
       .catch(() => {});
   }, []);
 
-  const daysLeft = subscription?.trial_end_date
-    ? Math.max(0, Math.ceil((new Date(subscription.trial_end_date) - new Date()) / (1000 * 60 * 60 * 24)))
-    : 14;
+  const daysLeft = trialDaysLeft(subscription) ?? 14;
 
   const activePlan = PLANS.find(p => p.id === selectedPlan);
-  const isBeta = subscription?.plan === 'beta';
+  const isFoundingMember = isGrandfathered(subscription);
   const isPaid = ['starter', 'pro'].includes(subscription?.plan) && subscription?.status === 'active';
 
   const handleCheckout = async () => {
@@ -224,11 +223,11 @@ export default function Upgrade() {
             </div>
           </div>
           <h1 className="font-display font-black text-2xl text-foreground">Continue with NeuroAligned</h1>
-          {daysLeft > 0 && !isBeta && !isPaid ? (
+          {daysLeft > 0 && !isFoundingMember && !isPaid ? (
             <p className="text-sm text-muted-foreground">
               Your free trial ends in <span className="font-bold text-foreground">{daysLeft} day{daysLeft !== 1 ? 's' : ''}</span>. Subscribe to keep everything running.
             </p>
-          ) : daysLeft <= 0 && !isBeta && !isPaid ? (
+          ) : daysLeft <= 0 && !isFoundingMember && !isPaid ? (
             <p className="text-sm text-red-600 font-medium">Your trial has ended. Choose a plan to regain full access.</p>
           ) : null}
         </div>
@@ -261,12 +260,12 @@ export default function Upgrade() {
               <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
               <p className="text-sm text-muted-foreground">Confirming your payment…</p>
             </div>
-          ) : isBeta ? (
+          ) : isFoundingMember ? (
             <div className="py-6 space-y-3 text-center">
               <div className="text-3xl">💙</div>
-              <h3 className="font-display font-bold text-lg text-foreground">You're on the Beta plan</h3>
+              <h3 className="font-display font-bold text-lg text-foreground">You have Free Lifetime access</h3>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
-                As one of our founding beta members, your access is grandfathered — free, forever. No payment needed, ever.
+                As a founding member, your access is grandfathered — free, forever. No payment needed, ever.
                 Thank you for helping build NeuroAligned.
               </p>
             </div>
