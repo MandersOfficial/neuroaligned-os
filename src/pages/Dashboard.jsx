@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { useAppRefresh } from '@/hooks/useAppRefresh';
 import RegulationWidget from '@/components/regulation/RegulationWidget';
 import TrialBanner from '@/components/subscription/TrialBanner';
-import { trialDaysLeft } from '@/lib/subscription';
+import { trialDaysLeft as getTrialDaysLeft } from '@/lib/subscription';
 import GoogleConnectWidget from '@/components/dashboard/GoogleConnectWidget';
 import GettingStartedFlow, { DONE_KEY } from '@/components/getting-started/GettingStartedFlow';
 import EnergyPicker from '@/components/dashboard/EnergyPicker';
@@ -50,7 +50,7 @@ export default function Dashboard() {
     const sub = subs[0] || null;
     setSubscription(sub);
     // Founding members have free lifetime access, so no countdown for them.
-    setTrialDaysLeft(trialDaysLeft(sub));
+    setTrialDaysLeft(getTrialDaysLeft(sub));
     setLoading(false);
   };
 
