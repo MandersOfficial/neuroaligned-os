@@ -1,15 +1,33 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
 
-export default async function(req) {
+/**
+ * Stamps a member's last_login when the auth workflow fires.
+ *
+ * The auth workflow passes the id straight from the trigger payload, so the
+ * stamp is driven by the sign-in event itself rather than by an ambient
+ * session — a workflow-invoked function has no logged-in caller, which is why
+ * relying on auth.me() here silently recorded nothing.
+ */
+export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    // Stamp the authenticated caller's own last_login. The service role is
-    // required to write the built-in User field, but the target is scoped to
-    // the caller's id — a logged-in user can never update anyone else's record.
-    await base44.asServiceRole.entities.User.update(user.id, { last_login: new Date().toISOString() });
-    return Response.json({ ok: true });
+
+    let body = {};
+    try { body = await req.json(); } catch { body = {}; }
+
+    // A signed-in caller can only ever stamp their own record; the trigger id is
+    // used for the workflow path, where there is no caller session.
+    const caller = await base44.auth.me().catch(() => null);
+    const userId = caller?.id || body.user_id;
+
+    if (!userId) {
+      return Response.json({ error: 'user_id is required' }, { status: 400 });
+    }
+
+    const at = body.occurred_at || new Date().toISOString();
+    await base44.asServiceRole.entities.User.update(userId, { last_login: at });
+
+    return Response.json({ ok: true, user_id: userId, last_login: at });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

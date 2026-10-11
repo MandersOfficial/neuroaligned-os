@@ -14,7 +14,8 @@
           "with": {
             "function_name": "recordUserLogin",
             "args": {
-              "user_id": "${ .trigger.user_id }"
+              "user_id": "${ .trigger.user_id }",
+              "occurred_at": "${ .trigger.occurred_at }"
             }
           },
           "then": "end",
