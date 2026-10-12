@@ -143,7 +143,7 @@ function TaskCard({ task, projects, recommended, onUpdate, onDelete, onEdit }) {
   );
 }
 
-export default function TaskBoard({ tasks, projects, energy, recommendedIds, onTasksChange, onEditTask }) {
+export default function TaskBoard({ tasks, projects, energy, recommendedIds = [], onTasksChange, onEditTask }) {
   const energyState = ENERGY_STATES.find(s => s.value === energy) || ENERGY_STATES[1];
   const isFiltering = energyState.allowedEnergy.length < 3;
   const isMobile = useIsMobile();

@@ -7,7 +7,7 @@ import { AnimatePresence } from 'framer-motion';
 import SmartSortButton from '@/components/tasks/SmartSortButton';
 import TaskBoard from '@/components/tasks/TaskBoard';
 import TaskForm from '@/components/tasks/TaskForm';
-import EnergyScheduler from '@/components/tasks/EnergyScheduler';
+import EnergyCheckIn from '@/components/dashboard/EnergyCheckIn';
 import AIGuidancePanel from '@/components/tasks/AIGuidancePanel';
 import RegulationWidget from '@/components/regulation/RegulationWidget';
 import CreateProjectModal from '@/components/tasks/CreateProjectModal';
@@ -43,7 +43,6 @@ export default function Tasks() {
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [energy, setEnergy] = useState('flow');
   const [showForm, setShowForm] = useState(false);
-  const [recommendedIds, setRecommendedIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [energyFilter, setEnergyFilter] = useState('all');
@@ -119,6 +118,7 @@ export default function Tasks() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <EnergyCheckIn energy={energy} onEnergyChange={setEnergy} />
           <SmartSortButton
             tasks={filteredTasks}
             profile={profile}
@@ -203,13 +203,7 @@ export default function Tasks() {
       {/* Body */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Energy & AI guidance — sits above the board instead of in a side column */}
-        <div className="hidden xl:grid grid-cols-2 gap-4 px-6 py-4 border-b border-border/40 shrink-0 max-h-[45vh] overflow-y-auto">
-          <EnergyScheduler
-            energy={energy}
-            onEnergyChange={setEnergy}
-            tasks={energyFilteredTasks}
-            onRecommend={setRecommendedIds}
-          />
+        <div className="hidden xl:block px-6 py-4 border-b border-border/40 shrink-0 max-h-[45vh] overflow-y-auto">
           <AIGuidancePanel energy={energy} tasks={energyFilteredTasks} />
         </div>
 
@@ -219,7 +213,6 @@ export default function Tasks() {
             tasks={filteredTasks}
             projects={projects}
             energy={energy}
-            recommendedIds={recommendedIds}
             onTasksChange={setTasks}
             onEditTask={t => { setEditingTask(t); setShowForm(true); }}
           />
