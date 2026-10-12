@@ -95,12 +95,9 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* Energy check-in */}
-          <div className="bg-card border border-border/60 rounded-2xl p-5 space-y-4">
-            <div>
-              <p className="text-sm font-semibold text-foreground">How's your energy right now?</p>
-              <p className="text-xs text-muted-foreground mt-0.5">This filters your tasks to match your capacity.</p>
-            </div>
+          {/* Energy check-in — one slim row of pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Energy right now</span>
             <EnergyPicker energy={energy} onChange={setEnergy} />
           </div>
 

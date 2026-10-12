@@ -15,21 +15,22 @@ export const ENERGY_TASK_FILTER = {
 
 export default function EnergyPicker({ energy, onChange }) {
   return (
-    <div className="grid grid-cols-4 gap-2">
-      {ENERGY_OPTIONS.map(opt => (
-        <button
-          key={opt.value}
-          onClick={() => onChange(opt.value)}
-          className={`flex flex-col items-center gap-1.5 px-2 py-3 rounded-xl border-2 text-center transition-all ${
-            energy === opt.value ? opt.bg + ' shadow-sm' : 'border-border bg-card hover:bg-secondary'
-          }`}
-        >
-          <span className="text-xl leading-none">{opt.emoji}</span>
-          <span className={`text-[10px] font-semibold leading-tight ${energy === opt.value ? opt.color : 'text-muted-foreground'}`}>
+    <div className="flex flex-wrap gap-1.5">
+      {ENERGY_OPTIONS.map(opt => {
+        const active = energy === opt.value;
+        return (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium transition-all ${
+              active ? `${opt.bg} ${opt.color}` : 'border-border text-muted-foreground hover:bg-secondary'
+            }`}
+          >
+            <span className="text-sm leading-none">{opt.emoji}</span>
             {opt.label}
-          </span>
-        </button>
-      ))}
+          </button>
+        );
+      })}
     </div>
   );
 }
