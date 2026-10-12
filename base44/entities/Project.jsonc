@@ -57,6 +57,10 @@
         "high"
       ],
       "default": "medium"
+    },
+    "notion_page_id": {
+      "type": "string",
+      "title": "Linked Notion Row"
     }
   },
   "required": [

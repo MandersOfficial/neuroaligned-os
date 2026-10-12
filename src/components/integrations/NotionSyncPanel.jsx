@@ -76,8 +76,9 @@ export default function NotionSyncPanel({ connected }) {
       <p className="text-xs text-muted-foreground leading-relaxed">
         Two-way sync with the Notion database you pick: your projects become Notion rows (status, priority,
         due date and client stay in sync both ways), and a "NeuroAligned Tasks" page refreshes with your
-        current task list. Every row in the selected database is treated as a project — use a dedicated
-        database for syncing.
+        current task list. Each project is linked to its row, so renaming either side updates the same row
+        instead of creating a duplicate, and whichever side you edited last wins. Every row in the selected
+        database is treated as a project — use a dedicated database for syncing.
       </p>
 
       {/* Database picker */}
@@ -152,6 +153,14 @@ export default function NotionSyncPanel({ connected }) {
               <p className="text-[11px] text-muted-foreground">Tasks (refreshed)</p>
             </div>
           </div>
+          {result.in_sync > 0 && (
+            <p className="text-[11px] text-muted-foreground text-center">{result.in_sync} already in sync</p>
+          )}
+          {result.failed?.length > 0 && (
+            <p className="text-[11px] text-destructive text-center">
+              {result.failed.length} row(s) couldn't be updated in Notion
+            </p>
+          )}
           {result.created_in_app?.length > 0 && (
             <div className="pt-1">
               <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">New projects from Notion</p>

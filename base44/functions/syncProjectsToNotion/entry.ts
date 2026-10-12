@@ -1,36 +1,26 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.46';
+import {
+  NOTION_API, NOTION_CONNECTOR_ID, notionFetch, notionHeaders,
+  rowTitle, selValue, dateValue, richTextValue,
+} from '../../shared/notion.ts';
 
-const CONNECTOR_ID = '6a9c83fae18c151ef517de3b';
-const NOTION_VERSION = '2025-09-03';
 const TASKS_PAGE_TITLE = 'NeuroAligned Tasks';
 const MAX_CHILDREN = 100; // Notion page-create limit
 
 const STATUS_OPTIONS = ['active', 'paused', 'completed', 'archived'];
 const PRIORITY_OPTIONS = ['low', 'medium', 'high'];
 
-// Notion averages ~3 requests/sec per connection; 429/529 responses carry a
-// Retry-After header we respect before retrying (docs: retry rate-limited
-// requests with capped backoff).
-async function notionFetch(url, options = {}, attempt = 0) {
-  const res = await fetch(url, options);
-  if ((res.status === 429 || res.status === 529) && attempt < 3) {
-    const retryAfter = Number(res.headers.get('Retry-After'));
-    const delay = Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter : Math.min(2 ** attempt, 10);
-    await new Promise(resolve => setTimeout(resolve, delay * 1000));
-    return notionFetch(url, options, attempt + 1);
-  }
-  return res;
-}
-
-// Two-way sync between the user's NeuroAligned projects/tasks and a Notion
-// data source they chose (listNotionDatabases).
-//   Pull (Notion → app): rows become projects; edits to Status/Priority/Due
-//     Date/Client flow back into the matching project.
-//   Push (app → Notion): projects are created/updated as rows; a
-//     "NeuroAligned Tasks" page is refreshed with the current task list.
-// Runs on demand from the integrations page and automatically once per
-// sign-in session (AppShell) for users who enabled auto-sync.
-export default async function(req) {
+// Two-way sync between the user's NeuroAligned projects and a Notion data
+// source they chose (listNotionDatabases).
+//
+//   Matching: each project stores the Notion page id, so renaming a project in
+//     either app updates the same row instead of creating a duplicate. Rows are
+//     only matched by title once, to link projects that predate this.
+//   Conflicts: for every field that differs, whichever side was edited last
+//     wins — so an edit made in the app is no longer overwritten by Notion.
+//   Tasks: a "NeuroAligned Tasks" page mirrors the task list, rewritten only
+//     when its content actually changed.
+export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
@@ -40,15 +30,12 @@ export default async function(req) {
     const dataSourceId = String(body.data_source_id || '').trim();
     if (!dataSourceId) return Response.json({ error: 'Pick a Notion database first' }, { status: 400 });
 
-    const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection(CONNECTOR_ID);
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-      'Notion-Version': NOTION_VERSION,
-      'Content-Type': 'application/json',
-    };
+    const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection(NOTION_CONNECTOR_ID);
+    const headers = notionHeaders(accessToken);
+    const text = (content) => ({ type: 'text', text: { content } });
 
-    // 1. Load the data source schema and add missing sync properties
-    const dsRes = await notionFetch(`https://api.notion.com/v1/data_sources/${encodeURIComponent(dataSourceId)}`, { headers });
+    // 1. Load the data source schema and add the properties the sync needs
+    const dsRes = await notionFetch(`${NOTION_API}/data_sources/${encodeURIComponent(dataSourceId)}`, { headers });
     const ds = await dsRes.json();
     if (!dsRes.ok) {
       const msg = ds.code === 'object_not_found'
@@ -66,18 +53,18 @@ export default async function(req) {
     if (!props['Due Date']) missing['Due Date'] = { date: {} };
     if (!props.Client) missing.Client = { rich_text: {} };
     if (Object.keys(missing).length > 0) {
-      await notionFetch(`https://api.notion.com/v1/data_sources/${encodeURIComponent(dataSourceId)}`, {
+      await notionFetch(`${NOTION_API}/data_sources/${encodeURIComponent(dataSourceId)}`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify({ properties: missing }),
       });
     }
 
-    // 2. Query all rows (paginated)
+    // 2. Query every row (paginated)
     const rows = [];
     let cursor = null;
     do {
-      const qRes = await notionFetch(`https://api.notion.com/v1/data_sources/${encodeURIComponent(dataSourceId)}/query`, {
+      const qRes = await notionFetch(`${NOTION_API}/data_sources/${encodeURIComponent(dataSourceId)}/query`, {
         method: 'POST',
         headers,
         body: JSON.stringify(cursor ? { page_size: 100, start_cursor: cursor } : { page_size: 100 }),
@@ -91,99 +78,158 @@ export default async function(req) {
       cursor = qData.has_more ? qData.next_cursor : null;
     } while (cursor && rows.length < 500);
 
-    const rowTitle = (page) => (page.properties?.[titleKey]?.title || []).map(t => t.plain_text).join('').trim();
     const rowsByTitle = new Map();
     for (const r of rows) {
-      const t = rowTitle(r);
+      const t = rowTitle(r, titleKey);
       if (t) rowsByTitle.set(t.toLowerCase(), r);
     }
-    const sel = (p) => p?.select?.name || null;
-    const dateVal = (p) => p?.date?.start || null;
-    const rtVal = (p) => (p?.rich_text || []).map(x => x.plain_text).join('').trim() || null;
 
-    // 3. PULL — Notion → NeuroAligned (the generated tasks page is excluded)
-    const projects = await base44.entities.Project.list('-created_date', 100);
-    const tasks = await base44.entities.Task.list('-created_date', 500);
-    const naByTitle = new Map(projects.map(p => [(p.name || '').trim().toLowerCase(), p]));
+    const isTasksPage = (title) => (title || '').trim().toLowerCase() === TASKS_PAGE_TITLE.toLowerCase();
+
+    // The Notion values for one row, limited to the fields the sync owns
+    const notionValues = (row) => ({
+      status: STATUS_OPTIONS.includes(selValue(row.properties.Status)) ? selValue(row.properties.Status) : null,
+      priority: PRIORITY_OPTIONS.includes(selValue(row.properties.Priority)) ? selValue(row.properties.Priority) : null,
+      due_date: dateValue(row.properties['Due Date']) || null,
+      client_name: richTextValue(row.properties.Client),
+    });
+
+    const notionPayload = (project, keys) => {
+      const payload = {};
+      if (keys.includes('name') && project.name) payload[titleKey] = { title: [text(project.name)] };
+      if (keys.includes('status') && STATUS_OPTIONS.includes(project.status)) payload.Status = { select: { name: project.status } };
+      if (keys.includes('priority') && PRIORITY_OPTIONS.includes(project.priority)) payload.Priority = { select: { name: project.priority } };
+      if (keys.includes('due_date') && project.due_date) payload['Due Date'] = { date: { start: project.due_date } };
+      if (keys.includes('client_name') && project.client_name) payload.Client = { rich_text: [text(project.client_name)] };
+      return payload;
+    };
+
+    const projects = await base44.entities.Project.list('-created_date', 200);
+    const byPageId = new Map();
+    for (const p of projects) if (p.notion_page_id) byPageId.set(p.notion_page_id, p);
 
     let pulledCreated = 0;
     let pulledUpdated = 0;
+    let pushedNew = 0;
+    let pushedUpdated = 0;
+    let inSync = 0;
     const createdInApp = [];
-    for (const [key, row] of rowsByTitle) {
-      if (key === TASKS_PAGE_TITLE.toLowerCase()) continue;
-      const p = naByTitle.get(key);
-      const nStatus = STATUS_OPTIONS.includes(sel(row.properties.Status)) ? sel(row.properties.Status) : null;
-      const nPriority = PRIORITY_OPTIONS.includes(sel(row.properties.Priority)) ? sel(row.properties.Priority) : null;
-      const nDue = dateVal(row.properties['Due Date']) || null;
-      const nClient = rtVal(row.properties.Client);
-      if (!p) {
-        await base44.entities.Project.create({
-          name: rowTitle(row),
-          status: nStatus || 'active',
-          priority: nPriority || 'medium',
-          due_date: nDue,
-          client_name: nClient,
+    const createdInNotion = [];
+    const failed = [];
+
+    // 3. Link each project to its row once, by title. From then on the stored
+    //    page id is the only match, so renames never duplicate.
+    for (const p of projects) {
+      if (p.notion_page_id) continue;
+      const row = rowsByTitle.get((p.name || '').trim().toLowerCase());
+      if (!row || isTasksPage(rowTitle(row, titleKey))) continue;
+      await base44.entities.Project.update(p.id, { notion_page_id: row.id });
+      p.notion_page_id = row.id;
+      byPageId.set(row.id, p);
+    }
+
+    // 4. Rows with no project yet become projects
+    for (const row of rows) {
+      const title = rowTitle(row, titleKey);
+      if (!title || isTasksPage(title) || byPageId.has(row.id)) continue;
+      const nv = notionValues(row);
+      const created = await base44.entities.Project.create({
+        name: title,
+        status: nv.status || 'active',
+        priority: nv.priority || 'medium',
+        due_date: nv.due_date,
+        client_name: nv.client_name,
+        notion_page_id: row.id,
+      });
+      byPageId.set(row.id, created);
+      pulledCreated++;
+      createdInApp.push(title);
+    }
+
+    // 5. Reconcile every linked pair — most recently edited side wins per field
+    for (const row of rows) {
+      const project = byPageId.get(row.id);
+      if (!project || isTasksPage(project.name)) continue;
+
+      const nv = notionValues(row);
+      const title = rowTitle(row, titleKey);
+      const notionNewer = Date.parse(row.last_edited_time || 0) > Date.parse(project.updated_date || 0);
+
+      const pullKeys = [];
+      const pushKeys = [];
+      const consider = (key, appVal, notionVal) => {
+        const a = appVal || null;
+        const n = notionVal || null;
+        if (a === n) return;
+        if (!a || (n && notionNewer)) pullKeys.push(key);
+        else pushKeys.push(key);
+      };
+      consider('name', (project.name || '').trim(), title);
+      consider('status', project.status, nv.status);
+      consider('priority', project.priority, nv.priority);
+      consider('due_date', project.due_date, nv.due_date);
+      consider('client_name', project.client_name, nv.client_name);
+
+      if (pullKeys.length === 0 && pushKeys.length === 0) {
+        inSync++;
+        continue;
+      }
+
+      if (pullKeys.length > 0) {
+        const patch = {};
+        for (const k of pullKeys) patch[k] = k === 'name' ? title : nv[k];
+        await base44.entities.Project.update(project.id, patch);
+        Object.assign(project, patch);
+        pulledUpdated++;
+      }
+
+      if (pushKeys.length > 0) {
+        const res = await notionFetch(`${NOTION_API}/pages/${row.id}`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({ properties: notionPayload(project, pushKeys) }),
         });
-        pulledCreated++;
-        createdInApp.push(rowTitle(row));
-      } else {
-        const changes = {};
-        if (nStatus && nStatus !== p.status) changes.status = nStatus;
-        if (nPriority && nPriority !== p.priority) changes.priority = nPriority;
-        if (nDue && nDue !== p.due_date) changes.due_date = nDue;
-        if (nClient && nClient !== (p.client_name || null)) changes.client_name = nClient;
-        if (Object.keys(changes).length > 0) {
-          await base44.entities.Project.update(p.id, changes);
-          pulledUpdated++;
+        if (res.ok) {
+          pushedUpdated++;
+        } else {
+          const err = await res.json().catch(() => null);
+          console.error('Notion page update error:', err?.message || res.status);
+          failed.push(project.name || row.id);
         }
       }
     }
 
-    // Re-read after the pull so the push reflects the merged state
-    const merged = await base44.entities.Project.list('-created_date', 200);
-
-    // 4. PUSH — NeuroAligned → Notion (create or update project rows)
-    const text = (content) => ({ type: 'text', text: { content } });
-    let pushedNew = 0;
-    let pushedUpdated = 0;
-    const createdInNotion = [];
-    for (const p of merged) {
+    // 6. Projects with no Notion row yet get one
+    for (const p of projects) {
+      if (p.notion_page_id) continue;
       const name = (p.name || '').trim();
       if (!name) continue;
-      const payload = { [titleKey]: { title: [text(name)] } };
-      if (STATUS_OPTIONS.includes(p.status)) payload.Status = { select: { name: p.status } };
-      if (PRIORITY_OPTIONS.includes(p.priority)) payload.Priority = { select: { name: p.priority } };
-      if (p.due_date) payload['Due Date'] = { date: { start: p.due_date } };
-      if (p.client_name) payload.Client = { rich_text: [text(p.client_name)] };
-
-      const existing = rowsByTitle.get(name.toLowerCase());
-      const res = existing
-        ? await notionFetch(`https://api.notion.com/v1/pages/${existing.id}`, { method: 'PATCH', headers, body: JSON.stringify({ properties: payload }) })
-        : await notionFetch('https://api.notion.com/v1/pages', {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ parent: { type: 'data_source_id', data_source_id: dataSourceId }, properties: payload }),
-          });
+      const res = await notionFetch(`${NOTION_API}/pages`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          parent: { type: 'data_source_id', data_source_id: dataSourceId },
+          properties: notionPayload(p, ['name', 'status', 'priority', 'due_date', 'client_name']),
+        }),
+      });
       if (!res.ok) {
         const err = await res.json().catch(() => null);
-        console.error('Notion page write error:', err?.message || res.status);
+        console.error('Notion page create error:', err?.message || res.status);
+        failed.push(name);
         continue;
       }
-      if (existing) pushedUpdated++;
-      else { pushedNew++; createdInNotion.push(name); }
+      const created = await res.json();
+      await base44.entities.Project.update(p.id, { notion_page_id: created.id });
+      byPageId.set(created.id, p);
+      pushedNew++;
+      createdInNotion.push(name);
     }
 
-    // 5. Tasks page — refreshed every run so it mirrors the current task list
+    // 7. Tasks page — rewritten only when its content actually changed, so a
+    //    quiet sign-in no longer archives and recreates it every session.
+    const tasks = await base44.entities.Task.list('-created_date', 500);
     let tasksPushed = 0;
     if (tasks.length > 0) {
-      const oldPage = rowsByTitle.get(TASKS_PAGE_TITLE.toLowerCase());
-      if (oldPage) {
-        await notionFetch(`https://api.notion.com/v1/pages/${oldPage.id}`, {
-          method: 'PATCH',
-          headers,
-          body: JSON.stringify({ archived: true }),
-        });
-      }
       const byStatus = {};
       for (const t of tasks) {
         const s = t.status || 'todo';
@@ -191,35 +237,70 @@ export default async function(req) {
       }
       const labels = { in_progress: 'In Progress', todo: 'To Do', deferred: 'Deferred', done: 'Done' };
       const children = [];
+      const lines = [];
       let counted = 0;
       for (const [status, label] of Object.entries(labels)) {
         const group = byStatus[status] || [];
         if (!group.length || children.length + 1 >= MAX_CHILDREN) continue;
         children.push({ object: 'block', type: 'heading_2', heading_2: { rich_text: [text(label)] } });
+        lines.push(label);
         for (const t of group) {
           if (children.length >= MAX_CHILDREN) break;
           const suffix = [
             t.due_date ? `due ${t.due_date}` : null,
             t.estimated_minutes ? `${t.estimated_minutes}m` : null,
           ].filter(Boolean).join(' · ');
+          const line = t.title + (suffix ? ` (${suffix})` : '');
           children.push({
             object: 'block',
             type: 'to_do',
-            to_do: { rich_text: [text(t.title + (suffix ? ` (${suffix})` : ''))], checked: status === 'done' },
+            to_do: { rich_text: [text(line)], checked: status === 'done' },
           });
+          lines.push(line);
           counted++;
         }
       }
-      const res = await notionFetch('https://api.notion.com/v1/pages', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          parent: { type: 'data_source_id', data_source_id: dataSourceId },
-          properties: { [titleKey]: { title: [text(TASKS_PAGE_TITLE)] } },
-          children: children.slice(0, MAX_CHILDREN),
-        }),
-      });
-      if (res.ok) tasksPushed = counted;
+
+      const oldPage = rowsByTitle.get(TASKS_PAGE_TITLE.toLowerCase());
+      let unchanged = false;
+      if (oldPage) {
+        const blocks = [];
+        let childCursor = null;
+        do {
+          const url = `${NOTION_API}/blocks/${oldPage.id}/children?page_size=100${childCursor ? `&start_cursor=${childCursor}` : ''}`;
+          const bRes = await notionFetch(url, { headers });
+          const bData = await bRes.json();
+          if (!bRes.ok) break;
+          blocks.push(...(bData.results || []));
+          childCursor = bData.has_more ? bData.next_cursor : null;
+        } while (childCursor && blocks.length < MAX_CHILDREN);
+        const existing = blocks
+          .map(b => (b[b.type]?.rich_text || []).map(x => x.plain_text).join(''))
+          .join('\n');
+        unchanged = existing === lines.join('\n');
+      }
+
+      if (unchanged) {
+        tasksPushed = counted;
+      } else {
+        if (oldPage) {
+          await notionFetch(`${NOTION_API}/pages/${oldPage.id}`, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ archived: true }),
+          });
+        }
+        const res = await notionFetch(`${NOTION_API}/pages`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            parent: { type: 'data_source_id', data_source_id: dataSourceId },
+            properties: { [titleKey]: { title: [text(TASKS_PAGE_TITLE)] } },
+            children: children.slice(0, MAX_CHILDREN),
+          }),
+        });
+        if (res.ok) tasksPushed = counted;
+      }
     }
 
     return Response.json({
@@ -230,6 +311,8 @@ export default async function(req) {
       pulled_updated: pulledUpdated,
       created_in_app: createdInApp,
       tasks_pushed: tasksPushed,
+      in_sync: inSync,
+      failed: failed.length > 0 ? failed : undefined,
     });
   } catch (error) {
     console.error('syncProjectsToNotion error:', error?.message);
