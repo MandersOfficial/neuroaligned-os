@@ -7,6 +7,7 @@ import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import ReaderVoicePicker from '@/components/accessibility/ReaderVoicePicker';
 import EmailUpdateFrequency from '@/components/settings/EmailUpdateFrequency';
 import PushNotificationSettings from '@/components/settings/PushNotificationSettings';
+import DownloadMobileCard from '@/components/settings/DownloadMobileCard';
 import ThemePreview from '@/components/settings/ThemePreview';
 import { base44 } from '@/api/base44Client';
 import { getCommandMode, setCommandMode as persistCommandMode, subscribeCommandMode, loadCommandMode } from '@/lib/voiceCommandStore';
@@ -289,6 +290,9 @@ export default function SensorySettings() {
             </p>
             <PushNotificationSettings />
           </section>
+
+          {/* Download on mobile */}
+          <DownloadMobileCard />
 
           {/* Current state indicator */}
           <div className="text-center py-4">
