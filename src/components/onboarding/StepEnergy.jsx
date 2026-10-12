@@ -53,7 +53,7 @@ export default function StepEnergy({ data, onChange, onNext, onBack }) {
           When does your brain shine? ✨
         </h2>
         <p className="text-muted-foreground text-base">
-          This is how NeuroAligned assigns your most important tasks to your peak windows — automatically.
+          This is how NeuroAligned assigns your most important tasks to your peak windows — automatically. Your first tasks get matched to these answers, and every task you add later follows the same rhythm.
         </p>
       </div>
 
@@ -88,7 +88,7 @@ export default function StepEnergy({ data, onChange, onNext, onBack }) {
           disabled={!canProceed}
           className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-10 py-6 text-base font-semibold group disabled:opacity-50"
         >
-          Almost done!
+          Next: your tasks
           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
         </Button>
       </div>

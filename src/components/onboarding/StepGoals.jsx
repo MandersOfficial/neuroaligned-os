@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, ArrowLeft, Plus, X } from 'lucide-react';
+import { inferEnergy, peakWindow, ENERGY_META } from '@/lib/onboardingEnergy';
 
 const SUGGESTIONS = [
   'Finish my website homepage',
@@ -35,22 +36,35 @@ export default function StepGoals({ data, onChange, onNext, onBack }) {
           What are you working on right now? 🎯
         </h2>
         <p className="text-muted-foreground text-base leading-relaxed">
-          Add up to 3 goals or tasks. These will appear in your dashboard the moment you log in — no blank slate paralysis.
+          Add up to 3 goals or tasks. We'll tag each one with the energy it needs and slot it into the hours your brain shines — so your dashboard is ready to start, not just another list.
         </p>
       </div>
 
       {/* Added goals */}
       {goals.length > 0 && (
         <div className="space-y-2">
-          {goals.map((g, i) => (
-            <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/6 border border-primary/20" style={{ background: 'hsl(var(--primary) / 0.06)' }}>
-              <span className="text-primary font-bold text-sm shrink-0">{i + 1}</span>
-              <span className="flex-1 text-sm text-foreground">{g}</span>
-              <button onClick={() => removeGoal(g)} className="text-muted-foreground hover:text-destructive transition-colors">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
+          {data.energy_peak && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5 pb-1">
+              <span>✨</span>
+              Matching these to your <strong className="text-foreground font-medium">{peakWindow(data.energy_peak)}</strong> peak
+            </p>
+          )}
+          {goals.map((g, i) => {
+            const meta = ENERGY_META[inferEnergy(g, data.work_style)];
+            return (
+              <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-primary/20" style={{ background: 'hsl(var(--primary) / 0.06)' }}>
+                <span className="text-primary font-bold text-sm shrink-0">{i + 1}</span>
+                <span className="flex-1 text-sm text-foreground min-w-0">{g}</span>
+                <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold text-muted-foreground bg-secondary rounded-full px-2 py-1">
+                  <span aria-hidden="true">{meta.emoji}</span>
+                  {meta.label}
+                </span>
+                <button onClick={() => removeGoal(g)} aria-label={`Remove ${g}`} className="text-muted-foreground hover:text-destructive transition-colors shrink-0">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
 

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Check, Rocket } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { peakWindow } from '@/lib/onboardingEnergy';
 
 const BUILD_STEPS = [
   { label: 'Analysing your neurotype profile', duration: 900 },
   { label: 'Calibrating your focus mode', duration: 800 },
-  { label: 'Seeding your task queue', duration: 700 },
+  { label: 'Matching tasks to your peak energy', duration: 700 },
   { label: 'Starting your 14-day free trial', duration: 600 },
   { label: 'Personalising your dashboard', duration: 700 },
 ];
@@ -15,6 +16,7 @@ export default function StepComplete({ name, data, onFinish, loading }) {
   const neurotypes = data?.neurotypes || [];
   const focusPreset = data?.focus_preset;
   const challenge = data?.biggest_challenge;
+  const energyPeak = data?.energy_peak;
 
   const [building, setBuilding] = useState(false);
   const [completedSteps, setCompletedSteps] = useState([]);
@@ -32,6 +34,7 @@ export default function StepComplete({ name, data, onFinish, loading }) {
     focusPreset && focusLabel,
     challenge && `Tuned to tackle: ${challenge}`,
     goals.length > 0 && `${goals.length} task${goals.length > 1 ? 's' : ''} waiting in your dashboard`,
+    goals.length > 0 && energyPeak && `Matched to your ${peakWindow(energyPeak)} peak`,
   ].filter(Boolean);
 
   const runAnimation = async () => {

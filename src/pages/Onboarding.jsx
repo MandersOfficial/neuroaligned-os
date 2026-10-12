@@ -13,6 +13,7 @@ import { FOCUS_PRESETS } from '../components/onboarding/StepPersonalize';
 import StepNotifications from '../components/onboarding/StepNotifications';
 import StepComplete from '../components/onboarding/StepComplete';
 import { buildInitialSubscription } from '../lib/subscription';
+import { planEnergyTasks } from '@/lib/onboardingEnergy';
 
 const TOTAL_STEPS = 8;
 const STASH_KEY = 'na_onboarding_data';
@@ -122,14 +123,14 @@ export default function Onboarding() {
       notification_timezone: profile.notification_timezone || '',
     });
 
-    // Seed initial tasks from goals
+    // Seed initial tasks, each matched to the member's peak-energy window
     if (profile.initial_goals?.length > 0) {
       await Promise.all(
-        profile.initial_goals.map(title =>
+        planEnergyTasks(profile.initial_goals, profile.energy_peak, profile.work_style).map(task =>
           base44.entities.Task.create({
-            title,
+            title: task.title,
             status: 'todo',
-            energy_required: 'medium',
+            energy_required: task.energy_required,
             is_today: true,
           })
         )

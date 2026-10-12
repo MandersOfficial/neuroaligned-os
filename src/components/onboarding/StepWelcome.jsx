@@ -21,7 +21,8 @@ export default function StepWelcome({ data, onChange, onNext }) {
         </h1>
         <p className="text-muted-foreground text-base leading-relaxed">
           No long forms. No overwhelming setup. Just a few quick questions so NeuroAligned 
-          can start working <em>with</em> your brain from day one.
+          can start working <em>with</em> your brain from day one — including matching your 
+          first tasks to the hours your energy is highest.
         </p>
       </div>
 
