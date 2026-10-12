@@ -5,7 +5,6 @@ import { useAppRefresh } from '@/hooks/useAppRefresh';
 import { Plus } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import SmartSortButton from '@/components/tasks/SmartSortButton';
-import ProjectPanel from '@/components/tasks/ProjectPanel';
 import TaskBoard from '@/components/tasks/TaskBoard';
 import TaskForm from '@/components/tasks/TaskForm';
 import EnergyScheduler from '@/components/tasks/EnergyScheduler';
@@ -205,12 +204,6 @@ export default function Tasks() {
       <div className="flex flex-1 overflow-hidden">
         {/* Project sidebar */}
         <div className="hidden xl:block w-52 border-r border-border/40 py-5 overflow-y-auto shrink-0 space-y-6 px-3">
-          <ProjectPanel
-            projects={projects}
-            selectedProjectId={selectedProjectId}
-            onSelectProject={setSelectedProjectId}
-            onProjectsChange={setProjects}
-          />
           <EnergyScheduler
             energy={energy}
             onEnergyChange={setEnergy}
