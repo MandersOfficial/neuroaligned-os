@@ -3,7 +3,7 @@ import {
   LayoutDashboard, CheckSquare, LogOut, Focus, Plug, ShieldAlert,
   BookOpen, Zap, Moon, Sun, NotebookPen, TrendingUp, FolderKanban,
   HelpCircle, Shield, LifeBuoy, ShieldCheck, Scissors, Star,
-  Settings as SettingsIcon, Menu, Accessibility, Target, MoreHorizontal,
+  Settings as SettingsIcon, Menu, Accessibility, Target, ChevronDown,
 } from 'lucide-react';
 import { useSensory } from '@/lib/SensoryContext';
 import ReadAloudButton from '@/components/accessibility/ReadAloudButton';
@@ -18,30 +18,27 @@ import {
   DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
-// Always visible in the horizontal top bar
+// The core destinations, matching the mobile bottom tabs so both navs agree
 const PRIMARY_LINKS = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: CheckSquare, label: 'Tasks', href: '/tasks' },
   { icon: Scissors, label: 'Break It Down', href: '/task-breakdown' },
-  { icon: Target, label: 'Accountability', href: '/accountability' },
-  { icon: FolderKanban, label: 'Projects', href: '/projects' },
   { icon: NotebookPen, label: 'Journal', href: '/journal' },
   { icon: Focus, label: 'Focus Modes', href: '/focus-modes' },
-  { icon: TrendingUp, label: 'Trends', href: '/productivity' },
 ];
 
-// Everything else lives in the More menu so the bar stays uncluttered
-const MORE_GROUPS = [
+// Everything else lives in the user menu so the bar stays uncluttered
+const MENU_GROUPS = [
   {
-    label: 'Wellbeing',
+    label: 'Workspace',
     items: [
+      { icon: FolderKanban, label: 'Projects', href: '/projects' },
+      { icon: Target, label: 'Accountability', href: '/accountability' },
+      { icon: TrendingUp, label: 'Trends', href: '/productivity' },
       { icon: ShieldAlert, label: 'Burnout Risk', href: '/burnout' },
       { icon: BookOpen, label: 'Knowledge Base', href: '/knowledge' },
+      { icon: Plug, label: 'Integrations', href: '/integration-settings' },
     ],
-  },
-  {
-    label: 'Integrations',
-    items: [{ icon: Plug, label: 'Integrations', href: '/integration-settings' }],
   },
   {
     label: 'Account & Support',
@@ -50,8 +47,8 @@ const MORE_GROUPS = [
       { icon: Star, label: 'Feedback', href: '/feedback' },
       { icon: LifeBuoy, label: 'Support', href: '/support' },
       { icon: HelpCircle, label: 'Help Center', href: '/help-center' },
-      { icon: Shield, label: 'Privacy Policy', href: '/privacy' },
       { icon: Accessibility, label: 'Accessibility', href: '/accessibility' },
+      { icon: Shield, label: 'Privacy Policy', href: '/privacy' },
     ],
   },
 ];
@@ -72,7 +69,7 @@ export default function DashboardSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [moreOpen, setMoreOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [me, setMe] = useState(null);
   // Bottom-tab selection that survives navigation to interior pages and reloads
   const [lastTab, setLastTab] = useState(() => localStorage.getItem('na_last_tab') || '/dashboard');
   // Navigation state memory: the last sub-page viewed while each tab was active
@@ -82,9 +79,12 @@ export default function DashboardSidebar() {
   const { prefs, updatePref } = useSensory();
 
   useEffect(() => {
-    // Owner-only: the admin console is never exposed to other accounts
-    base44.auth.me().then(u => setIsAdmin(u?.role === 'admin' && u?.email === 'mandersofficial@gmail.com')).catch(() => {});
+    base44.auth.me().then(setMe).catch(() => {});
   }, []);
+
+  // Owner-only: the admin console is never exposed to other accounts
+  const isAdmin = me?.role === 'admin' && me?.email === 'mandersofficial@gmail.com';
+  const initials = (me?.full_name || me?.email || 'U').trim().charAt(0).toUpperCase();
 
   // A tab stays selected on interior pages (like native apps): match the
   // current route exactly or by prefix, otherwise fall back to the last tab
@@ -169,15 +169,24 @@ export default function DashboardSidebar() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
-                <MoreHorizontal className="w-4 h-4" />
-                More
+              <button
+                title="Your account"
+                className="flex items-center gap-1 pl-1 pr-2 py-1 rounded-full hover:bg-secondary transition-all"
+              >
+                <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-semibold flex items-center justify-center">
+                  {initials}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 max-h-[75vh] overflow-y-auto">
-              {MORE_GROUPS.map((group, i) => (
+            <DropdownMenuContent align="end" className="w-60 max-h-[75vh] overflow-y-auto">
+              <DropdownMenuLabel className="flex flex-col gap-0.5">
+                <span className="text-sm font-semibold text-foreground truncate">{me?.full_name || 'Your account'}</span>
+                {me?.email && <span className="text-[11px] font-normal text-muted-foreground truncate">{me.email}</span>}
+              </DropdownMenuLabel>
+              {MENU_GROUPS.map((group) => (
                 <div key={group.label}>
-                  {i > 0 && <DropdownMenuSeparator />}
+                  <DropdownMenuSeparator />
                   <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/60">
                     {group.label}
                   </DropdownMenuLabel>

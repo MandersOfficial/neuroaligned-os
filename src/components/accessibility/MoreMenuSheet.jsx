@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Mic, ShieldAlert, BookOpen, Plug, Settings as SettingsIcon,
   Star, LifeBuoy, HelpCircle, Shield, LogOut,
+  FolderKanban, Target, TrendingUp,
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
@@ -10,6 +11,9 @@ import { requestDictate } from '@/lib/voiceCommandStore';
 
 // Everything in the sidebar that does not already have a bottom-bar tab
 const SECONDARY_LINKS = [
+  { icon: FolderKanban, label: 'Projects', href: '/projects' },
+  { icon: Target, label: 'Accountability', href: '/accountability' },
+  { icon: TrendingUp, label: 'Trends', href: '/productivity' },
   { icon: ShieldAlert, label: 'Burnout Risk', href: '/burnout' },
   { icon: BookOpen, label: 'Knowledge Base', href: '/knowledge' },
   { icon: Plug, label: 'Integrations', href: '/integration-settings' },
