@@ -46,6 +46,7 @@ const HelpCenter = lazy(() => import('./pages/HelpCenter'));
 const Support = lazy(() => import('./pages/Support'));
 const Feedback = lazy(() => import('./pages/Feedback'));
 const TaskBreakdown = lazy(() => import('./pages/TaskBreakdown'));
+const Accountability = lazy(() => import('./pages/Accountability'));
 const FocusRoom = lazy(() => import('./pages/FocusRoom'));
 
 function PageLoader() {
@@ -138,6 +139,7 @@ const AuthenticatedApp = () => {
                 <Route path="/support" element={<Support />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/task-breakdown" element={<TaskBreakdown />} />
+                <Route path="/accountability" element={<Accountability />} />
               </Route>
               <Route path="*" element={<PageNotFound />} />
             </Routes>
