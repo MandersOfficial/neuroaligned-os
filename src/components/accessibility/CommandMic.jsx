@@ -69,10 +69,18 @@ export default function CommandMic({ variant = 'floating', collapsed = false }) 
   if (!enabled) return null;
 
   const isSidebar = variant === 'sidebar';
+  const isTopbar = variant === 'topbar';
   const buttonClass = isSidebar
     ? cn(
         'w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium border transition-colors',
         collapsed ? 'justify-center px-0' : '',
+        listening
+          ? 'bg-red-600/10 text-red-600 border-red-600/30'
+          : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary'
+      )
+    : isTopbar
+    ? cn(
+        'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors',
         listening
           ? 'bg-red-600/10 text-red-600 border-red-600/30'
           : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary'
@@ -121,8 +129,10 @@ export default function CommandMic({ variant = 'floating', collapsed = false }) 
   );
 
   return (
-    <div className={cn(isSidebar ? 'w-full space-y-2' : 'flex flex-col items-end gap-2')}>
-      {panel}
+    <div className={cn(isSidebar ? 'w-full space-y-2' : isTopbar ? 'relative' : 'flex flex-col items-end gap-2')}>
+      {isTopbar
+        ? panel && <div className="absolute top-full right-0 mt-2 z-50">{panel}</div>
+        : panel}
       <button
         type="button"
         onClick={listening ? stop : start}

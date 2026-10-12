@@ -7,7 +7,6 @@ import { AnimatePresence } from 'framer-motion';
 import SmartSortButton from '@/components/tasks/SmartSortButton';
 import TaskBoard from '@/components/tasks/TaskBoard';
 import TaskForm from '@/components/tasks/TaskForm';
-import EnergyCheckIn from '@/components/dashboard/EnergyCheckIn';
 import AIGuidancePanel from '@/components/tasks/AIGuidancePanel';
 import RegulationWidget from '@/components/regulation/RegulationWidget';
 import CreateProjectModal from '@/components/tasks/CreateProjectModal';
@@ -41,7 +40,8 @@ export default function Tasks() {
   const [sortReasons, setSortReasons] = useState({});
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
-  const [energy, setEnergy] = useState('flow');
+  // The energy control now lives on the Dashboard and Burnout Risk pages
+  const energy = 'flow';
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCreateProject, setShowCreateProject] = useState(false);
@@ -118,7 +118,6 @@ export default function Tasks() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <EnergyCheckIn energy={energy} onEnergyChange={setEnergy} />
           <SmartSortButton
             tasks={filteredTasks}
             profile={profile}
@@ -207,12 +206,12 @@ export default function Tasks() {
           <AIGuidancePanel energy={energy} tasks={energyFilteredTasks} />
         </div>
 
-        {/* Task board */}
+        {/* Task board — energy is set on the Dashboard/Burnout pages, so every task shows here */}
         <div className="flex-1 overflow-hidden flex flex-col">
           <TaskBoard
             tasks={filteredTasks}
             projects={projects}
-            energy={energy}
+            energy="hyperfocus"
             onTasksChange={setTasks}
             onEditTask={t => { setEditingTask(t); setShowForm(true); }}
           />

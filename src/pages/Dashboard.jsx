@@ -7,7 +7,7 @@ import TrialBanner from '@/components/subscription/TrialBanner';
 import { trialDaysLeft as getTrialDaysLeft } from '@/lib/subscription';
 import GoogleConnectWidget from '@/components/dashboard/GoogleConnectWidget';
 import GettingStartedFlow, { DONE_KEY } from '@/components/getting-started/GettingStartedFlow';
-import EnergyPicker from '@/components/dashboard/EnergyPicker';
+import EnergyCheckIn from '@/components/dashboard/EnergyCheckIn';
 import TodayFocusList from '@/components/dashboard/TodayFocusList';
 import PersonalizedInsight from '@/components/dashboard/PersonalizedInsight';
 import ActiveProjectsCard from '@/components/dashboard/ActiveProjectsCard';
@@ -95,10 +95,10 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* Energy check-in — one slim row of pills */}
+          {/* Energy check-in — one small pill */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-medium text-muted-foreground">Energy right now</span>
-            <EnergyPicker energy={energy} onChange={setEnergy} />
+            <EnergyCheckIn energy={energy} onEnergyChange={setEnergy} />
           </div>
 
           {/* Personalized insight */}

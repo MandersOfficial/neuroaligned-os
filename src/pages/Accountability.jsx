@@ -72,7 +72,7 @@ export default function Accountability() {
   }
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
       <main className="flex-1 flex flex-col overflow-hidden pt-[env(safe-area-inset-top)]">
         {/* Header */}

@@ -36,7 +36,7 @@ export default function Productivity() {
   const topEnergy = Object.entries(energyDist).sort((a, b) => b[1] - a[1])[0];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
 
       <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0">

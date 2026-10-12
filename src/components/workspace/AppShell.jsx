@@ -26,7 +26,7 @@ export default function AppShell() {
   if (loading) return <LoadingScreen />;
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
       <main className="flex-1 min-w-0 flex flex-col overflow-hidden pt-[env(safe-area-inset-top)] pb-mobile-safe md:pb-0">
         <UpdateAnnouncement user={user} />

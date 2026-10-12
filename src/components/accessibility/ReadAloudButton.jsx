@@ -19,6 +19,7 @@ export default function ReadAloudButton({ variant = 'floating', collapsed = fals
   useEffect(() => subscribeReadAloud(setStatus), []);
 
   const isSidebar = variant === 'sidebar';
+  const isTopbar = variant === 'topbar';
   const active = status !== 'idle';
 
   const handlePrimary = () => {
@@ -46,6 +47,13 @@ export default function ReadAloudButton({ variant = 'floating', collapsed = fals
         ? 'bg-primary/10 text-primary border-primary/30'
         : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary'
     )
+    : isTopbar
+    ? cn(
+      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors',
+      active
+        ? 'bg-primary/10 text-primary border-primary/30'
+        : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-secondary'
+    )
     : cn(
       'flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold shadow-lg border transition-colors',
       active
@@ -55,6 +63,8 @@ export default function ReadAloudButton({ variant = 'floating', collapsed = fals
 
   const stopCls = isSidebar
     ? 'flex items-center justify-center gap-2 px-2.5 py-2 rounded-lg text-sm font-medium border border-transparent text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors shrink-0'
+    : isTopbar
+    ? 'flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium border border-transparent text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors shrink-0'
     : 'flex items-center gap-2 rounded-full px-3 py-2.5 text-xs font-semibold shadow-lg border border-border bg-card text-foreground hover:bg-secondary transition-colors';
 
   return (

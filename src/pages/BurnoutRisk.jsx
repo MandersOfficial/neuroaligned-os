@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import BurnoutMeter from '../components/burnout/BurnoutMeter';
+import EnergyCheckIn from '../components/dashboard/EnergyCheckIn';
 import RiskFactors from '../components/burnout/RiskFactors';
 import RecoveryPlan from '../components/burnout/RecoveryPlan';
 import { motion } from 'framer-motion';
@@ -29,6 +30,7 @@ export default function BurnoutRisk() {
   const [missedBreaks, setMissedBreaks] = useState(2);
   const [hoursWorked, setHoursWorked] = useState(8);
   const [energyPattern, setEnergyPattern] = useState('stable');
+  const [energy, setEnergy] = useState('flow');
 
   useEffect(() => {
     Promise.all([base44.auth.me(), base44.entities.Task.list('-created_date', 100)])
@@ -120,7 +122,7 @@ export default function BurnoutRisk() {
   }
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       <DashboardSidebar user={user} />
 
       <main className="flex-1 overflow-y-auto pb-mobile-safe md:pb-0 pt-[env(safe-area-inset-top)]">
@@ -144,6 +146,12 @@ export default function BurnoutRisk() {
             >
               <RefreshCw className="w-3.5 h-3.5" /> Reset
             </button>
+          </div>
+
+          {/* Energy check-in — one small pill */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Energy right now</span>
+            <EnergyCheckIn energy={energy} onEnergyChange={setEnergy} />
           </div>
 
           {/* Meter + Summary */}
