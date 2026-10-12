@@ -166,6 +166,11 @@
     "notification_timezone": {
       "type": "string",
       "title": "Notification Timezone"
+    },
+    "welcome_email_sent": {
+      "type": "boolean",
+      "title": "Welcome Email Sent",
+      "default": false
     }
   },
   "required": [

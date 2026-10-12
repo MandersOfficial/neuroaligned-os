@@ -23,6 +23,14 @@ export default function AppShell() {
     base44.functions.invoke('syncProjectsToNotion', { data_source_id: user.notion_sync_datasource_id }).catch(() => {});
   }, [user]);
 
+  // Stamp last_login once per sign-in session. The function reads the member
+  // from their own session, so it can only ever record the signed-in user.
+  useEffect(() => {
+    if (!user || sessionStorage.getItem('na_login_stamped')) return;
+    sessionStorage.setItem('na_login_stamped', '1');
+    base44.functions.invoke('recordUserLogin', {}).catch(() => {});
+  }, [user]);
+
   if (loading) return <LoadingScreen />;
 
   return (

@@ -19,11 +19,18 @@ Deno.serve(async (req) => {
 
     // Freshness check — only send for a profile created in the last 5 minutes.
     // The entity automation fires within seconds of signup; an external caller
-    // replaying an old entity_id (the only unauthenticated vector) is rejected here.
+    // replaying an old entity_id is rejected here.
     const createdMs = profileData.created_date ? new Date(profileData.created_date).getTime() : NaN;
     if (!Number.isFinite(createdMs) || Date.now() - createdMs > 5 * 60 * 1000) {
       return Response.json({ skipped: true, reason: 'Profile not freshly created' });
     }
+
+    // Exactly-once delivery: claim the send before dispatching, so a replayed
+    // request (or a duplicate automation run) can never deliver a second copy.
+    if (profileData.welcome_email_sent) {
+      return Response.json({ skipped: true, reason: 'Welcome email already sent' });
+    }
+    await base44.asServiceRole.entities.UserProfile.update(event.entity_id, { welcome_email_sent: true });
 
     const name = profileData.display_name || profileData.user_email.split('@')[0];
     const neurotypes = profileData.neurotypes?.join(', ') || 'neurodivergent';
@@ -58,12 +65,20 @@ You're not broken. You just needed the right tools. Welcome home.
 Questions? Reply to this email anytime. We read every message.
 `;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: profileData.user_email,
-      subject,
-      body,
-      from_name: 'NeuroAligned',
-    });
+    try {
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        to: profileData.user_email,
+        subject,
+        body,
+        from_name: 'NeuroAligned',
+      });
+    } catch (sendErr) {
+      // Release the claim so a genuine retry can still deliver the welcome mail
+      await base44.asServiceRole.entities.UserProfile
+        .update(event.entity_id, { welcome_email_sent: false })
+        .catch(() => {});
+      throw sendErr;
+    }
 
     return Response.json({ sent: true });
   } catch (error) {
