@@ -201,9 +201,9 @@ export default function Tasks() {
       <EnergyFilter value={energyFilter} onChange={setEnergyFilter} tasks={visibleTasks} />
 
       {/* Body */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Project sidebar */}
-        <div className="hidden xl:block w-52 border-r border-border/40 py-5 overflow-y-auto shrink-0 space-y-6 px-3">
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Energy & AI guidance — sits above the board instead of in a side column */}
+        <div className="hidden xl:grid grid-cols-2 gap-4 px-6 py-4 border-b border-border/40 shrink-0 max-h-[45vh] overflow-y-auto">
           <EnergyScheduler
             energy={energy}
             onEnergyChange={setEnergy}
