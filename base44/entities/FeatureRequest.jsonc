@@ -47,7 +47,21 @@
     },
     "submitter_email": {
       "type": "string",
-      "title": "Submitter Email"
+      "title": "Submitter Email",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "submitter_name": {
       "type": "string",
@@ -56,7 +70,21 @@
     "admin_notes": {
       "type": "string",
       "title": "Admin Notes",
-      "maxLength": 4000
+      "maxLength": 4000,
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "admin_response": {
       "type": "string",
